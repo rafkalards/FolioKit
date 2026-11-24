@@ -30,12 +30,18 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
   - Ikon: `I(nama)` membaca peta `P`. Tambahkan ikon baru ke `P` dulu, karena nama yang tidak ada menghasilkan ikon kosong.
   - Data materi `M`, aktivitas `AK`, praktik `PR`, kuis `QZ`, FAQ offline Kak Folio `FAQ`, rujukan `REFS`, tur `TOURS`.
   - Aksesibilitas ada di bagian akhir file: `inert`, focus trap, live region, dan skip link.
-- `intro.mp4` dan `intro-poster.jpg`: video intro. Di claude.ai diambil dari `/_blob/...`, di hosting lain otomatis memakai file lokal.
+  - Mode offline ada di paling akhir file: pendaftaran `sw.js` dan pesan "butuh internet" untuk YouTube, Canva, dan tautan luar.
+- `intro.mp4` dan `intro-poster.jpg`: video intro. Alamat `/_blob/...` hanya ada di claude.ai, di hosting lain otomatis memakai file lokal.
+- `sw.js` (service worker) dan `manifest.json`: mode offline dan install sebagai aplikasi (PWA). File disajikan dari simpanan dulu, lalu diperbarui diam-diam saat online.
+  - **Kalau menambah, menghapus, atau mengganti nama file yang dipakai web, perbarui daftar `FILES` dan naikkan `VER` di `sw.js`.**
+- `fonts/`: Poppins dan Inter (subset latin) disimpan lokal lewat `fonts/fonts.css`, supaya tampilan sama saat offline. Jangan kembali ke Google Fonts.
+- `icons/`: ikon aplikasi untuk manifest dan layar utama HP.
 
-## Dua tempat web ini berjalan
+## Tempat web ini berjalan
 
-1. **Artifact claude.ai** (link yang dibagikan ke dosen). Fitur `sample` (AI online), `db` (progres ke server), `user` (peran), `downloads`, dan `assets` hanya aktif di sini. Artifact hanya bisa diperbarui dari sesi claude.ai yang punya alat Artifact.
-2. **GitHub** `rafkalards/FolioKit` (branch `main`), bisa dipasang di GitHub Pages. Di sini Kak Folio memakai jawaban offline dan video YouTube bisa diputar langsung.
+**GitHub** `rafkalards/FolioKit` (branch `main`), dipasang di GitHub Pages: https://rafkalards.github.io/FolioKit/. Ini satu-satunya versi yang dipakai dan dibagikan (artifact claude.ai lama sudah dihapus). Di sini Kak Folio memakai jawaban offline, video YouTube bisa diputar langsung, dan web bisa dibuka tanpa internet setelah sekali dibuka online.
+
+Fitur yang memakai layanan Claude (`sample`, `db`, `user`, `downloads`, `assets`) tidak aktif di GitHub Pages dan kodenya otomatis memakai cadangan. Jangan dihapus kecuali diminta.
 
 Setiap perubahan harus di-commit dan di-push ke `main` (permintaan tetap dari pemilik).
 
