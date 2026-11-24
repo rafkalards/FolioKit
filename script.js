@@ -85,6 +85,9 @@ const P = {
   out: '<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/>',
   crown: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
   spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+  ai: '<path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>',
+  grid: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>',
+  dl: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
 };
 const I = (n) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n] || ''}</svg>`;
 const esc = (s) =>
@@ -680,6 +683,38 @@ function hdr() {
   document.getElementById('crumb').innerHTML = /^a\d$/.test(cur.r)
     ? `Aktivitas <b>${cur.r[1]} dari 7</b>`
     : C[cur.r] || '';
+  sideR();
+}
+/* ---------- sidebar kiri (laptop dan tablet) ---------- */
+function sideR() {
+  const sd = document.getElementById('side');
+  if (!sd) return;
+  const r = cur.r,
+    p = pct(),
+    ac = S.acc || {};
+  const it = (k, ic, l, on, go_, lk, bd) =>
+    `<button class="sit${on ? ' on' : ''}${lk ? ' lk' : ''}" data-k="${k}" onclick="${go_}" title="${l}"${on ? ' aria-current="page"' : ''}><span class="sic">${I(ic)}</span><span class="stx">${l}</span>${lk ? `<span class="sbg">${I('lock')}</span>` : bd ? `<span class="sbg">${bd}</span>` : ''}</button>`;
+  const fr = (n, t) => (n >= t ? I('chk') : n + '/' + t);
+  const learn = [
+    it('home', 'home', 'Beranda', r == 'home' || r == 'pre', "go('home')"),
+    it('materi', 'book', 'Materi', r == 'materi', 'go(\'materi\',firstM())', '', fr(mN(), 8)),
+    it('konsep', 'map', 'Peta konsep', r == 'konsep', "go('konsep')", lock('konsep')),
+    it('akt', 'task', 'Aktivitas', r == 'akt' || /^a\d$/.test(r), "go('akt')", lock('akt'), fr(aN(), 7)),
+    it('praktik', 'lap', 'Praktik', r == 'praktik', "go('praktik')", lock('praktik'), fr(prN(), 4)),
+    it('evaluasi', 'flag', 'Evaluasi', r == 'evaluasi', "go('evaluasi')", lock('evaluasi'), S.ev.tries ? String(S.ev.best) : ''),
+    it('refleksi', 'ref', 'Refleksi', r == 'refleksi', "go('refleksi')", lock('refleksi'), S.rf.done ? I('chk') : ''),
+    it('rapor', 'star', 'Rapor', r == 'rapor', "go('rapor')"),
+  ].join('');
+  const more =
+    it('ai', 'ai', 'Tanya Kak Folio', 0, "sheet('ai')") +
+    it('book', 'doc', 'Contoh portofolio', 0, "sheet('book')") +
+    it('menu', 'grid', 'Menu lainnya', 0, "sheet('menu')");
+  const tags =
+    (ROLE.owner ? `<button class="stag" onclick="sheet('owner')">Pemilik</button>` : '') +
+    (S.prev && ROLE.edit ? `<button class="stag pv" onclick="sheet('prev')">Mode pratinjau</button>` : '');
+  sd.innerHTML = `<button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>Portofolio Digital</b><small>dengan Canva</small></span></button>
+<div class="snav"><p class="slab">Belajar</p>${learn}<p class="slab">Lainnya</p>${more}</div>
+<div class="sfoot">${tags ? `<div class="stags">${tags}</div>` : ''}<div class="sprog" title="Progres belajar ${p}%"><div class="spt"><span>Progres</span><b>${p}%</b></div><div class="spb"><i style="width:${p}%"></i></div></div><button class="sacc" onclick="sheet('acc')" title="Profil"><span class="sav">${ac.pic ? `<img src="${esc(ac.pic)}" alt="" referrerpolicy="no-referrer">` : `<b>${esc((S.name || 'T')[0].toUpperCase())}</b>`}</span><span class="stx"><b>${esc(S.name || 'Tamu')}</b><small>Profil</small></span></button></div>`;
 }
 function conf() {
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -3549,9 +3584,10 @@ const TOURS = {
       'Alur belajar',
       'Lima tahap ini kebuka berurutan. Yang kekunci bakal kebuka setelah tahap sebelumnya selesai.',
     ],
-    ['#aib:not([hidden])', 'Tanya Kak Folio', 'Bingung? Tanya aja ke asisten AI ini kapan pun.'],
+    ['.side .snav', 'Navigasi', 'Semua tahap belajar ada di sini. Yang bergembok kebuka setelah tahap sebelumnya selesai.'],
+    ['#aib:not([hidden]), .side [data-k="ai"]', 'Tanya Kak Folio', 'Bingung? Tanya aja ke asisten AI ini kapan pun.'],
     [
-      '.top .ib[aria-label="Buka menu"]',
+      '.top .ib[aria-label="Buka menu"], .side [data-k="menu"]',
       'Menu',
       'Pindah ke bagian mana pun, buka peta konsep, sertifikat, atau ulangi tur ini.',
     ],
@@ -3586,10 +3622,13 @@ function tourMaybe(k) {
     tourStart(k);
   }, 1200);
 }
+/* elemen pertama yang benar-benar terlihat (sidebar di laptop, header di HP) */
+function vq(sel) {
+  return [...document.querySelectorAll(sel)].find((e) => e.offsetParent && e.getBoundingClientRect().width > 0) || null;
+}
 function tourStart(k, force) {
   const st = (TOURS[k] || []).filter((x) => {
-    const e = document.querySelector(x[0]);
-    return e && e.offsetParent && e.getBoundingClientRect().width > 0;
+    return !!vq(x[0]);
   });
   if (!st.length) return;
   tourEnd(true);
@@ -3613,7 +3652,7 @@ function tourStart(k, force) {
 function tourShow() {
   if (!TR) return;
   const [sel, t, x] = TR.st[TR.i],
-    e = document.querySelector(sel);
+    e = vq(sel);
   if (!e) {
     TR.i++;
     if (TR.i >= TR.st.length) return tourEnd();

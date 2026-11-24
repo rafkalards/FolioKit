@@ -21,6 +21,7 @@ Dikembangkan oleh Kelompok 1, Teknologi Pendidikan A, Universitas Negeri Jakarta
 - **Kak Folio**, asisten tanya jawab dengan 51 jawaban offline.
 - Galeri template Canva, lencana, tur panduan, pencarian menu, dan halaman sumber materi.
 - Progres tersimpan otomatis di browser, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
+- Tampilan seperti aplikasi: di laptop dan tablet navigasi ada di sidebar kiri (jadi rel ikon di layar sedang), di HP pakai header ringkas.
 - Satu layar tanpa scroll, menyesuaikan HP, tablet, dan laptop, serta bisa dipakai dengan keyboard.
 
 ## Teknologi
