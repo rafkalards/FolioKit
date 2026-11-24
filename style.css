@@ -10143,3 +10143,107 @@ a.srci:hover {
     transition: none;
   }
 }
+
+/* ===== Beranda: ringkasan progres dan target kecil hari ini ===== */
+.pathh {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pathm {
+  font-size: 13px;
+  color: var(--p);
+  font-weight: 600;
+  background: var(--pl);
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.nextc .nxs {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--mute);
+}
+.tgb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px dashed var(--line);
+  background: var(--card2);
+  flex: none;
+}
+.tgb.ok {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--ok) 45%, transparent);
+  background: var(--okl);
+}
+.tgi {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  color: var(--p);
+  flex: none;
+}
+.tgb.ok .tgi {
+  color: var(--ok);
+}
+.tgt {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+.tgt small {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.tgt b {
+  display: block;
+  font: 600 14px Poppins;
+}
+.tgt span {
+  display: block;
+  font-size: 13px;
+  color: var(--mute);
+}
+.tgc {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+.tgc .chip {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.tgb .link {
+  flex: none;
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  .pathh {
+    flex: none;
+  }
+  .tgb {
+    padding: 8px 10px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tgi {
+    width: 30px;
+    height: 30px;
+  }
+  .tgt span {
+    display: none;
+  }
+}

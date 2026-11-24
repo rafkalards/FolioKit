@@ -32,10 +32,11 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
   - Aksesibilitas ada di bagian akhir file: `inert`, focus trap, live region, dan skip link.
 - `intro.mp4` dan `intro-poster.jpg`: video intro. Di claude.ai diambil dari `/_blob/...`, di hosting lain otomatis memakai file lokal.
 
-## Dua tempat web ini berjalan
+## Tempat web ini berjalan
 
-1. **Artifact claude.ai** (link yang dibagikan ke dosen). Fitur `sample` (AI online), `db` (progres ke server), `user` (peran), `downloads`, dan `assets` hanya aktif di sini. Artifact hanya bisa diperbarui dari sesi claude.ai yang punya alat Artifact.
-2. **GitHub** `rafkalards/FolioKit` (branch `main`), bisa dipasang di GitHub Pages. Di sini Kak Folio memakai jawaban offline dan video YouTube bisa diputar langsung.
+**GitHub** `rafkalards/FolioKit` (branch `main`), dipasang di GitHub Pages: https://rafkalards.github.io/FolioKit/. Ini satu-satunya versi yang dipakai dan dibagikan (artifact claude.ai lama sudah dihapus). Di sini Kak Folio memakai jawaban offline dan video YouTube bisa diputar langsung.
+
+Fitur yang memakai layanan Claude (`sample`, `db`, `user`, `downloads`, `assets`) tidak aktif di GitHub Pages dan kodenya otomatis memakai cadangan. Jangan dihapus kecuali diminta.
 
 Setiap perubahan harus di-commit dan di-push ke `main` (permintaan tetap dari pemilik).
 

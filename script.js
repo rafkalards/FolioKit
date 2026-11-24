@@ -525,6 +525,7 @@ const def = () => ({
   bd: {},
   sim: null,
   simOk: 0,
+  tg: null,
 });
 let UID = null,
   S = def();
@@ -863,10 +864,55 @@ function nameSheet() {
   return `<div class="nmw"><div class="nml">${shelfH()}</div><div class="nmr"><span class="tag">${I('spark')} Sebelum mulai</span><h4>Mau dipanggil siapa?</h4><p class="small">Boleh dikosongkan.</p><form class="nm" onsubmit="event.preventDefault();const v=this.querySelector('input').value;loadBtn(this.querySelector('button'),()=>{closeSh();startNow(v)},'Menyiapkan...')"><input id="nmI" maxlength="24" placeholder="Nama panggilanmu" autocomplete="given-name" aria-label="Nama panggilan" value="${esc(S.name)}"><button class="btn" type="submit">Mulai belajar ${I('arr')}</button></form><button class="link" onclick="closeSh();startNow('')">Lewati, langsung mulai</button></div></div>`;
 }
 /* ---------- beranda ---------- */
+/* Perkiraan waktu belajar (menit). Kasar saja, buat gambaran pengguna, bukan target. */
+const estM = (r, i = 0) =>
+  r == 'materi'
+    ? Math.max(3, Math.round((M[i].p.length + 5) * 0.8))
+    : /^a\d$/.test(r)
+      ? 3
+      : ({ pre: 4, praktik: 20, evaluasi: 8, refleksi: 3 }[r] ?? 0);
+const doneN = () => mN() + aN() + (prN() == 4 ? 1 : 0) + (S.ev.tries ? 1 : 0) + (S.rf.done ? 1 : 0);
+const sisaM = () =>
+  [0, 1, 2, 3, 4, 5, 6, 7].reduce((t, i) => t + (S.md[i] ? 0 : estM('materi', i)), 0) +
+  AK.reduce((t, a) => t + (S.a[a.k] ? 0 : estM(a.k)), 0) +
+  (prN() == 4 ? 0 : estM('praktik')) +
+  (S.ev.tries ? 0 : estM('evaluasi')) +
+  (S.rf.done ? 0 : estM('refleksi'));
+/* Target kecil hari ini: opsional, tanpa streak atau hukuman. Disimpan di S.tg = {d: tanggal, k: 'm'|'a', b: jumlah awal}. */
+const hariIni = () => {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+};
+function tgSet(k) {
+  S.tg = k ? { d: hariIni(), k, b: k == 'm' ? mN() : aN() } : null;
+  save();
+  sfx(k ? 'ok' : 'tap');
+  go('home', 0);
+}
+function tgH() {
+  const t = S.tg && S.tg.d == hariIni() ? S.tg : null;
+  const bisaM = mN() < 8,
+    bisaA = mN() >= 8 && aN() < 7;
+  if (t) {
+    const ok = (t.k == 'm' ? mN() : aN()) > t.b;
+    const lbl = t.k == 'm' ? 'Selesaikan 1 materi' : 'Selesaikan 1 aktivitas';
+    return `<div class="tgb ${ok ? 'ok' : ''}"><span class="tgi">${I(ok ? 'chk' : 'target')}</span><div class="tgt"><small>Target hari ini</small><b>${lbl}</b><span>${ok ? 'Tercapai. Sisanya santai aja.' : 'Belum tercapai. Pelan-pelan aja.'}</span></div><button class="link" onclick="tgSet(null)">${ok ? 'Tutup' : 'Batal'}</button></div>`;
+  }
+  if (!bisaM && !bisaA) return '';
+  return `<div class="tgb"><span class="tgi">${I('target')}</span><div class="tgt"><small>Target kecil hari ini</small><span>Opsional. Pilih satu kalau mau.</span></div><div class="tgc">${bisaM ? `<button class="chip" onclick="tgSet('m')">1 materi</button>` : ''}${bisaA ? `<button class="chip" onclick="tgSet('a')">1 aktivitas</button>` : ''}</div></div>`;
+}
 SCR.home = () => {
   const n = nxt(),
     p = pct(),
     nm = S.name ? ', ' + esc(S.name) : '';
+  const lanjut = n.r == 'materi' && S.sr && S.sr[n.i] > 0 && !S.md[n.i];
+  const durN =
+    p >= 100
+      ? 0
+      : lanjut
+        ? Math.max(1, Math.round(estM('materi', n.i) * (1 - S.sr[n.i] / (M[n.i].p.length + 5))))
+        : estM(n.r, n.i);
+  const sisa = sisaM();
   const msg =
     p == 0
       ? 'Mulai dari dasar, satu per satu.'
@@ -882,7 +928,7 @@ SCR.home = () => {
   ];
   const ci = { materi: 0, praktik: 2, evaluasi: 3, refleksi: 4 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
   return `<div class="home"><div class="card hello stagger"><div class="htop">${buildH()}${skyH()}</div><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
- <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${n.r == 'materi' && S.sr && S.sr[n.i] > 0 && !S.md[n.i] ? `<span class="nxs">Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}</span>` : ''}</div></div>
+ <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ' · ' : ''}${durN ? `±${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
  <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div>
  <div class="qk" role="group" aria-label="Pintasan">${[
    ['intro', 'play', 'Intro', '53 detik', '#2d6fd6,#60a5fa'],
@@ -896,13 +942,13 @@ SCR.home = () => {
        `<button class="qki" style="--g:linear-gradient(135deg,${q[4]});--k:${k}" onclick="sheet('${q[0]}')"><span class="qic">${I(q[1])}</span><span class="qtx"><b>${q[2]}</b><small>${q[3]}</small></span></button>`,
    )
    .join('')}</div></div>
- <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<h3>Alur belajarmu</h3>${st
+ <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? ` · sisa ±${sisa} menit` : ' · semua beres'}</span></div>${st
    .map((s, k) => {
      const lk = lock(s[2]),
        dn = s[3] >= 1;
      return `<button class="stg ${dn ? 'done' : ''} ${lk ? 'lock' : ''} ${k == ci ? 'cur glowb' : ''}" onclick="${s[2] == 'materi' ? "go('materi',firstM())" : `go('${s[2]}')`}"><span class="n">${lk ? I('lock') : dn ? I('chk') : k + 1}</span><span class="t"><b>${s[0]}</b><small>${lk ? (s[2] == 'akt' && mN() < 8 ? `Terbuka setelah 8 materi. Tinggal ${8 - mN()} lagi.` : lk) : s[4]}</small></span><span class="mini"><i style="width:${Math.round(s[3] * 100)}%"></i></span></button>`;
    })
-   .join('')}</div></div>`;
+   .join('')}${tgH()}</div></div>`;
 };
 
 /* animasi beranda: portofolio dirakit */
