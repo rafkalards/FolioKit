@@ -1,0 +1,11 @@
+{
+  "name": "portofolio-digital-canva",
+  "private": true,
+  "description": "Tes otomatis untuk web Pembelajaran Portofolio Digital Menggunakan Canva",
+  "scripts": {
+    "test": "node tests/flow.js hp && node tests/flow.js lap && node tests/nav.js && node tests/keyboard.js && node tests/keyboard-hp.js"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

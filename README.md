@@ -36,6 +36,8 @@ style.css         semua tampilan
 script.js         semua logika dan isi materi
 intro.mp4         video intro (53 detik)
 intro-poster.jpg  gambar sampul video intro
+tests/            tes otomatis (Playwright)
+CLAUDE.md         catatan proyek untuk Claude Code
 ```
 
 ## Cara menjalankan

@@ -1,0 +1,28 @@
+const __P=require('path'),__fs=require('fs');const PAGE='file://'+__P.resolve(__dirname,'..','index.html');const OUT=__P.join(__dirname,'out');__fs.mkdirSync(OUT,{recursive:true});process.chdir(OUT);
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:844}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto(PAGE);await p.waitForTimeout(800);
+await p.evaluate(()=>{window.txGo=f=>f();localStorage.clear();S.started=1;S.name='Rafli';S.iv=1;S.tour={home:1,materi:1};S.pre={done:1,sc:25};S.md={0:1};save();document.getElementById('splash')?.remove();go('home')});await p.waitForTimeout(600);
+const act=()=>p.evaluate(()=>{const e=document.activeElement;return e?(e.getAttribute('aria-label')||e.innerText||e.id||e.tagName).trim().slice(0,40):'-'});const log=[];const ok=(c,m)=>log.push((c?'OK   ':'GAGAL ')+m);
+await p.evaluate(()=>document.activeElement.blur());await p.keyboard.press('Tab');ok((await act())=='Lewati ke konten','Tab pertama ke "Lewati ke konten" -> '+await act());
+await p.keyboard.press('Enter');await p.waitForTimeout(200);ok(await p.evaluate(()=>document.activeElement.id=='view'),'Enter pindah fokus ke konten');
+await p.focus('.top .ib[aria-label="Buka menu"]');await p.keyboard.press('Enter');await p.waitForTimeout(400);
+ok(await p.evaluate(()=>document.getElementById('sh').contains(document.activeElement)),'buka menu -> fokus di dalam menu ('+await act()+')');
+let inside=true;for(let k=0;k<40;k++){await p.keyboard.press('Tab');const r=await p.evaluate(()=>document.getElementById('sh').contains(document.activeElement)||document.activeElement===document.body);if(!r){inside=false;break}}
+ok(inside,'Tab 40x tetap di dalam menu (latar belakang terkunci)');
+await p.keyboard.press('Escape');await p.waitForTimeout(400);ok((await act())=='Buka menu','Esc tutup menu -> fokus balik ke tombol menu ('+await act()+')');
+await p.evaluate(()=>go('materi',0));await p.waitForTimeout(500);
+const dots=await p.evaluate(()=>[...document.querySelectorAll('#sdots i')].map(d=>d.tabIndex+'|'+d.getAttribute('role')));ok(dots.every(x=>x=='0|button'),'titik slide bisa di-Tab ('+dots.length+' titik)');
+await p.evaluate(()=>slShow(2,0));await p.focus('#sdots i:nth-child(2)');await p.keyboard.press('Enter');await p.waitForTimeout(300);ok(await p.evaluate(()=>SL.k==1),'Enter di titik slide 2 -> pindah ke slide 2');
+const hidFocus=await p.evaluate(()=>[...document.querySelectorAll('.sld:not(.on) button,.sld:not(.on) a')].filter(e=>!e.closest('[inert]')).length);ok(hidFocus==0,'isi slide tersembunyi tidak bisa difokus');
+await p.keyboard.press('ArrowRight');await p.waitForTimeout(300);ok(await p.evaluate(()=>SL.k==2),'panah kanan -> slide berikutnya');
+await p.focus('#crumb');ok(await p.evaluate(()=>document.activeElement.id=='crumb'),'judul kecil "Materi x dari 8" bisa di-Tab');await p.keyboard.press('Enter');await p.waitForTimeout(400);ok(await p.evaluate(()=>document.getElementById('sht').textContent=='Peta materi'),'Enter di judul kecil -> buka peta materi');
+await p.keyboard.press('Escape');await p.waitForTimeout(300);
+await p.evaluate(()=>sheet('book'));await p.waitForTimeout(400);await p.focus('#bkd i:nth-child(3)');await p.keyboard.press('Enter');await p.waitForTimeout(400);ok(await p.evaluate(()=>BK==2),'Enter di titik halaman buku -> halaman 3');
+await p.focus('.bk2n li:nth-child(2)');await p.keyboard.press(' ');await p.waitForTimeout(200);ok(await p.evaluate(()=>BKS==1),'Spasi di daftar penjelasan -> pilih poin 2');
+await p.evaluate(()=>document.querySelector('.bk2h .link').focus());await p.keyboard.press('Enter');await p.waitForTimeout(500);ok(await p.evaluate(()=>document.getElementById('bkfs').contains(document.activeElement)),'layar penuh -> fokus di tombol tutup');
+await p.keyboard.press('Escape');await p.waitForTimeout(500);ok(await p.evaluate(()=>!document.getElementById('bkfs')&&document.getElementById('sh').classList.contains('on')),'Esc tutup layar penuh, buku tetap terbuka');
+await p.keyboard.press('Escape');await p.waitForTimeout(300);
+await p.evaluate(()=>{S.tour={};go('home')});await p.waitForTimeout(1700);ok(await p.evaluate(()=>document.activeElement&&document.activeElement.classList.contains('tnx')),'tur muncul -> fokus di tombol Lanjut');
+for(let k=0;k<9;k++){await p.keyboard.press('Enter');await p.waitForTimeout(300)}ok(await p.evaluate(()=>!document.getElementById('tour')&&!document.getElementById('app').inert),'Enter terus sampai tur selesai, layar kebuka lagi');
+console.log(log.join('\n'));console.log('errors:',errs);await b.close()})();

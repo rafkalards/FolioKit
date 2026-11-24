@@ -1,0 +1,11 @@
+const __P=require('path'),__fs=require('fs');const PAGE='file://'+__P.resolve(__dirname,'..','index.html');const OUT=__P.join(__dirname,'out');__fs.mkdirSync(OUT,{recursive:true});process.chdir(OUT);
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:844}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto(PAGE);await p.waitForTimeout(3500);
+await p.evaluate(()=>{window.txGo=f=>f();document.getElementById('splash')?.remove();ROLE.edit=1;S.started=1;S.tour={home:1,materi:1};save();go('home')});
+await p.click('.phint .btn');await p.waitForTimeout(500);await p.click('#sh button:has-text("Buka semua bagian")');await p.waitForTimeout(800);
+console.log('pratinjau:',await p.evaluate(()=>S.prev),'kunci aktivitas:',await p.evaluate(()=>lock('akt')||'terbuka'),'petunjuk hilang:',await p.evaluate(()=>!document.querySelector('.phint')));
+await p.evaluate(()=>{prevOff();go('home')});await p.click('.phint .x');console.log('tutup petunjuk tersimpan:',await p.evaluate(()=>S.phint));
+await p.evaluate(()=>sheet('menu'));await p.fill('#msq','daftar pustaka');await p.waitForTimeout(300);console.log('cari:',(await p.textContent('#msres')).slice(0,60));
+await p.evaluate(()=>{ROLE.edit=0;S.phint=0;go('home')});console.log('non-editor tanpa petunjuk:',await p.evaluate(()=>!document.querySelector('.phint')));
+console.log('error:',errs);await b.close()})();
