@@ -472,10 +472,13 @@ const VIDS = () => M.filter((m) => m.v).map((m, i) => [m.v[0], m.v[1], M.indexOf
 function srcSheet() {
   const li = (t, u, s) =>
     `<a class="srci" href="${u}" target="_blank" rel="noopener"><span>${t}</span>${s ? `<small>${s}</small>` : ''}</a>`;
-  return `<p class="small" style="margin-bottom:12px">Materi di web ini disusun dari rujukan berikut. Semua tautan dibuka di tab baru.</p>
+  return `<p class="small" style="margin-bottom:12px">Materi di web ini disusun dari rujukan berikut. Artikel dibuka di tab baru, video diputar langsung di sini.</p>
 <p class="srch">Artikel dan jurnal</p>${REFS.map((r) => li(r[0], r[1], r[1].split('/')[2])).join('')}
 <p class="srch">Video materi</p>${VIDS()
-    .map((v) => li(esc(v[1]), 'https://www.youtube.com/watch?v=' + v[0], 'YouTube · dipakai di Materi ' + v[2]))
+    .map(
+      (v) =>
+        `<button class="srci" onclick="vPick('${v[0]}','${esc(v[1]).replace(/'/g, '&#39;')}')"><span>${I('play')} ${esc(v[1])}</span><small>Dipakai di Materi ${v[2]} · putar di sini</small></button>`,
+    )
     .join('')}
 <p class="srch">Model pengembangan</p><div class="srci"><span>Hannafin, M. J., &amp; Peck, K. L. (1988). <i>The Design, Development, and Evaluation of Instructional Software</i>. New York: Macmillan.</span></div>`;
 }
@@ -713,7 +716,7 @@ function sideR() {
   const tags =
     (ROLE.owner ? `<button class="stag" onclick="sheet('owner')">Pemilik</button>` : '') +
     (S.prev && ROLE.edit ? `<button class="stag pv" onclick="sheet('prev')">Mode pratinjau</button>` : '');
-  sd.innerHTML = `<button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>Portofolio Digital</b><small>dengan Canva</small></span></button>
+  sd.innerHTML = `<button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>FolioKit</b><small>Portofolio Digital Canva</small></span></button>
 <div class="snav"><p class="slab">Belajar</p>${learn}<p class="slab">Lainnya</p>${more}</div>
 <div class="sfoot">${tags ? `<div class="stags">${tags}</div>` : ''}<div class="sprog" title="Progres belajar ${p}%"><div class="spt"><span>Progres</span><b>${p}%</b></div><div class="spb"><i style="width:${p}%"></i></div></div><button class="sacc" onclick="sheet('acc')" title="Profil"><span class="sav">${ac.pic ? `<img src="${esc(ac.pic)}" alt="" referrerpolicy="no-referrer">` : `<b>${esc((S.name || 'T')[0].toUpperCase())}</b>`}</span><span class="stx"><b>${esc(S.name || 'Tamu')}</b><small>Profil</small></span></button></div>`;
 }
@@ -796,7 +799,7 @@ function go(r, i = 0, dir) {
     const V = document.getElementById('view'),
       keep = same ? (V.querySelector('.pb.scroll') || {}).scrollTop || 0 : 0;
     cur = { r, i };
-    V.innerHTML = `<section class="scr${same ? ' still' : ''}"><div class="wrap">${SCR[r](i)}</div></section>`;
+    V.innerHTML = `<section class="scr${same ? ' still' : ''}" data-r="${r}"><div class="wrap">${SCR[r](i)}</div></section>`;
     if (same) {
       const pb = V.querySelector('.pb.scroll');
       if (pb) pb.scrollTop = keep;
@@ -809,7 +812,7 @@ function go(r, i = 0, dir) {
   navPush(r, i);
   document.title =
     ({
-      welcome: 'Portofolio Digital Canva',
+      welcome: 'Portofolio Digital dengan Canva',
       home: 'Beranda',
       materi: 'Materi ' + (i + 1),
       akt: 'Aktivitas',
@@ -817,7 +820,7 @@ function go(r, i = 0, dir) {
       evaluasi: 'Evaluasi',
       refleksi: 'Refleksi',
       rapor: 'Rapor',
-    }[r] || 'Aktivitas ' + r[1]) + ' · Portofolio Digital Canva';
+    }[r] || 'Aktivitas ' + r[1]) + ' · FolioKit';
 }
 document.addEventListener('keydown', (e) => {
   if (e.key == 'Escape') closeSh();
@@ -846,12 +849,13 @@ SCR.welcome = () => {
   ];
   return `<div class="wel"><div class="wtop stagger"><span class="tag">${I('spark')} Multimedia pembelajaran interaktif untuk fresh graduate</span><h1>Pembelajaran Portofolio Digital <br>Menggunakan <span class="shine">Canva</span></h1><p class="lead">Belajar bikin portofolio yang rapi dan nyambung dengan kerjaan incaranmu. Sedikit baca, banyak coba.</p><div class="row wcta">${UID && S.started ? `<button class="btn big shim" onclick="go('home',0,'f')">Lanjut belajar${S.name ? ', ' + esc(S.name) : ''} ${I('arr')}</button>` : `<button class="btn big shim" onclick="sheet('nama')">Mulai ${I('arr')}</button>`}<button class="btn g big" onclick="sheet('goal')">${I('target')} Tujuan belajar</button></div></div>
  <div class="jrn" aria-label="Alur belajar"><svg class="jl" viewBox="0 0 1000 20" preserveAspectRatio="none" aria-hidden="true"><path d="M40 10H960"/><path class="jlg" d="M40 10H960" pathLength="100"/></svg>${J.map((x, k) => `<div class="js" style="--k:${k}"><span class="ji">${I(x[0])}<i>${k + 1}</i></span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
- <div class="wmk" aria-hidden="true"><span class="wm1"></span><span class="wm2"></span><span class="wm3"></span><i class="spk" style="left:14%;top:18%;--d:0s;--s:1"></i><i class="spk" style="left:84%;top:14%;--d:1.1s;--s:0.8"></i><i class="spk" style="left:9%;top:52%;--d:2.2s;--s:0.7"></i><i class="spk" style="left:91%;top:48%;--d:0.6s;--s:1"></i><i class="spk" style="left:22%;top:80%;--d:1.7s;--s:0.8"></i><i class="spk" style="left:78%;top:78%;--d:2.8s;--s:0.9"></i><i class="spk" style="left:50%;top:6%;--d:3.3s;--s:0.6"></i><i class="spk" style="left:64%;top:62%;--d:4.1s;--s:0.6"></i></div><div class="wspot" aria-hidden="true"></div><div class="wbg" aria-hidden="true"><span class="au a1"></span><span class="au a2"></span><span class="au a3"></span><canvas id="wcv"></canvas><div class="wv w1"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#93c5fd" fill-opacity=".35"/></svg></div><div class="wv w2"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#3b82f6" fill-opacity=".18"/></svg></div><div class="wv w3"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#7c3aed" fill-opacity=".12"/></svg></div></div></div>`;
+ <div class="wmk" aria-hidden="true"><span class="wm1"></span><span class="wm2"></span><span class="wm3"></span><i class="spk" style="left:14%;top:18%;--d:0s;--s:1"></i><i class="spk" style="left:84%;top:14%;--d:1.1s;--s:0.8"></i><i class="spk" style="left:9%;top:52%;--d:2.2s;--s:0.7"></i><i class="spk" style="left:91%;top:48%;--d:0.6s;--s:1"></i><i class="spk" style="left:22%;top:80%;--d:1.7s;--s:0.8"></i><i class="spk" style="left:78%;top:78%;--d:2.8s;--s:0.9"></i><i class="spk" style="left:50%;top:6%;--d:3.3s;--s:0.6"></i><i class="spk" style="left:64%;top:62%;--d:4.1s;--s:0.6"></i></div><div class="wspot" aria-hidden="true"></div><div class="wbg" aria-hidden="true"><span class="au a1"></span><span class="au a2"></span><span class="au a3"></span><canvas id="wcv"></canvas><canvas id="w3d" aria-hidden="true"></canvas><div class="wv w1"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#93c5fd" fill-opacity=".35"/></svg></div><div class="wv w2"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#3b82f6" fill-opacity=".18"/></svg></div><div class="wv w3"><svg viewBox="0 0 2880 200" preserveAspectRatio="none"><path d="M0 120 C 240 60 480 60 720 120 S 1200 180 1440 120 S 1920 60 2160 120 S 2640 180 2880 120 V200 H0 Z" fill="#7c3aed" fill-opacity=".12"/></svg></div></div></div>`;
 };
 AFT.welcome = () => {
   wTitle();
   wSpot();
   wNet();
+  w3d();
 };
 function startNow(nv) {
   S.name = String(nv || '').trim();
@@ -1149,51 +1153,49 @@ function ex7(j, v, b) {
 }
 
 /* ===== Video YouTube (dimuat saat diklik) ===== */
-/* YouTube tidak bisa diputar di dalam halaman pratinjau Claude, jadi di sana video dibuka di tab baru.
-   Kalau web dipasang di hosting sendiri (https), video diputar langsung di halaman. */
-const EMBED_OK = /^https:$/.test(location.protocol) && !/claude|anthropic/i.test(location.hostname);
-const vph = (id, t) =>
-  EMBED_OK
-    ? `<button class="vph" onclick="vLoad('${id}')" aria-label="Putar video"><img class="vth" src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" onload="vChk(this)" onerror="this.remove()"><span class="pl">${I('play')}</span><b>${t}</b><small>Klik untuk memutar di sini</small></button>`
-    : `<a class="vph" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" aria-label="Tonton video di YouTube"><img class="vth" src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" onload="vChk(this)" onerror="this.remove()"><span class="pl">${I('play')}</span><b>${t}</b><small>Klik untuk menonton di YouTube (tab baru)</small></a>`;
-const ytB = (id, t) =>
-  `<div class="emb" id="v_${id}" data-t="${esc(t)}">${vph(id, esc(t))}</div>${EMBED_OK ? '' : '<p class="small" style="margin-top:6px">Video dibuka di tab baru.</p>'}<div class="row" style="margin-top:8px;${EMBED_OK ? '' : 'display:none'}"><a class="btn sm g" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">${I('ext')} Tonton di YouTube</a><button class="link vx" style="display:none" onclick="vOff('${id}')">${I('x')} Tutup video</button></div><p class="small vnote" style="display:none;margin-top:4px">Kalau videonya tidak mau diputar di sini, klik <b>Tonton di YouTube</b>.</p>`;
-/* Video yang sudah dihapus dari YouTube memberi gambar abu-abu 120px.
-   Kalau itu yang muncul, tombolnya diarahkan ke pencarian YouTube dengan judul yang sama. */
+/* Video selalu diputar langsung di dalam halaman (permintaan pemilik: jangan pindah tab).
+   Tidak ada tombol atau tulisan yang mengajak membuka YouTube di tab baru. */
+/* Tiap tampilan video punya id sendiri (u), karena video yang sama bisa muncul di materi dan di jendela video sekaligus. */
+let VUID = 0;
+const vph = (id, t, u) =>
+  `<button class="vph" onclick="vLoad('${u}')" aria-label="Putar video"><img class="vth" src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" onload="vChk(this)" onerror="this.remove()"><span class="pl">${I('play')}</span><b>${t}</b><small>Klik untuk memutar di sini</small></button>`;
+const ytB = (id, t) => {
+  const u = 'v_' + id + '_' + ++VUID;
+  return `<div class="emb" id="${u}" data-id="${id}" data-t="${esc(t)}">${vph(id, esc(t), u)}</div><div class="row vrow" style="margin-top:8px;display:none"><button class="link vx" onclick="vOff('${u}')">${I('x')} Tutup video</button></div>`;
+};
+/* Video yang sudah dihapus dari YouTube memberi gambar abu-abu 120px. Kalau itu yang muncul, cukup beri keterangan. */
 function vChk(img) {
   if (img.naturalWidth > 120) return;
   const w = img.closest('.emb');
   if (!w) return;
-  const t = w.dataset.t || 'portofolio canva';
-  const q = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(t);
-  w.innerHTML = `<a class="vph" href="${q}" target="_blank" rel="noopener"><span class="pl">${I('ext')}</span><b>${esc(t)}</b><small>Video ini sudah tidak tersedia. Klik untuk cari video serupa di YouTube.</small></a>`;
-  w.parentNode.querySelectorAll('a[href*="watch?v="]').forEach((a) => (a.href = q));
+  w.innerHTML = `<div class="vph vgone"><span class="pl">${I('info')}</span><b>${esc(w.dataset.t || 'Video')}</b><small>Video ini sudah tidak tersedia.</small></div>`;
 }
-function vLoad(id) {
-  const w = document.getElementById('v_' + id);
+function vLoad(u) {
+  const w = document.getElementById(u);
   if (!w) return;
+  const id = w.dataset.id;
   const og = /^https?:/.test(location.origin) ? '&origin=' + encodeURIComponent(location.origin) : '';
   w.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1${og}" title="Video YouTube" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>`;
-  const r = w.nextElementSibling,
-    x = r && r.querySelector('.vx'),
-    n = r && r.nextElementSibling;
-  if (x) x.style.display = '';
-  if (n && n.classList.contains('vnote')) n.style.display = '';
+  const r = w.nextElementSibling;
+  if (r && r.classList.contains('vrow')) r.style.display = '';
 }
-function vOff(id) {
-  const w = document.getElementById('v_' + id);
+function vOff(u) {
+  const w = document.getElementById(u);
   if (!w) return;
-  w.innerHTML = vph(id, w.dataset.t);
-  const r = w.nextElementSibling,
-    x = r && r.querySelector('.vx'),
-    n = r && r.nextElementSibling;
-  if (x) x.style.display = 'none';
-  if (n && n.classList.contains('vnote')) n.style.display = 'none';
+  w.innerHTML = vph(w.dataset.id, w.dataset.t, u);
+  const r = w.nextElementSibling;
+  if (r && r.classList.contains('vrow')) r.style.display = 'none';
+}
+/* Video dari halaman Sumber materi diputar di jendela video, bukan di tab baru. */
+let VSEL = null;
+function vPick(id, t) {
+  VSEL = [id, t];
+  sheet('vplay');
 }
 
 function unload(root) {
   root.querySelectorAll('.emb').forEach((e) => {
-    if (e.querySelector('iframe')) vOff(e.id.slice(2));
+    if (e.querySelector('iframe')) vOff(e.id);
   });
   root.querySelectorAll('.aslot').forEach((s) => {
     if (s.innerHTML) {
@@ -1284,7 +1286,7 @@ function doneM(i) {
 SCR.akt = () => {
   const n = nxt(),
     pl = lock('praktik');
-  return `<div class="ah2"><div><h2>Aktivitas</h2><p>Boleh diulang sampai benar.</p></div><span class="tag">${aN()} dari 7 selesai</span></div>
+  return `<div class="ah2"><div><h2>Aktivitas</h2><p>Boleh diulang sampai benar.</p></div><span class="tag">${aN()} dari 7 selesai${aN() < 7 ? ` · sisa ±${(7 - aN()) * estM('a1')} menit` : ''}</span></div>
  <div class="agrid stagger">${AK.map((a, j) => `<button class="at ${S.a[a.k] ? 'ok' : ''} ${n.r == a.k ? 'nx glowb' : ''}" onclick="go('${a.k}')"><span class="num">${S.a[a.k] ? '✓ Selesai' : 'Aktivitas ' + (j + 1)}</span><b>${a.t}</b><span class="ad">${AD[j]}</span><small>${a.m}<span class="ago">${S.a[a.k] ? 'Ulangi' : 'Mulai'} ${I('arr')}</span></small></button>`).join('')}<button class="at prk ${pl ? 'lkd' : ''}" onclick="go('praktik')"><span class="num">${pl ? 'Terkunci' : 'Terbuka'}</span><b>Lanjut ke praktik</b><small>${pl ? 'Selesaikan semua aktivitas dulu' : 'Saatnya bikin di Canva'}</small></button></div>`;
 };
 function shell(k, q, body) {
@@ -1684,7 +1686,7 @@ SCR.rapor = () => {
  <div class="pf"><button class="btn g" onclick="sheet('reset')">${I('rst')}<span class="lbl">Mulai dari awal</span></button><div class="row"><button class="btn g" onclick="sheet('survey')">${I('star')}<span class="lbl">Beri penilaian</span></button><button class="btn g" onclick="loadBtn(this,copyR,'Menyalin...',1)">${I('copy')}<span class="lbl">Salin ringkasan</span></button><button class="btn" onclick="go('home',0,'b')">${I('home')} Beranda</button></div></div></article>`;
 };
 function copyR() {
-  const t = `Rapor belajar Portofolio Digital Canva${S.name ? ' - ' + S.name : ''}\nMateri ${mN()}/8, Aktivitas ${aN()}/7, Praktik ${prN()}/4, Evaluasi ${S.ev.best ?? '-'}\nProgres ${pct()}%${S.link ? '\nPortofolio: ' + S.link : ''}`;
+  const t = `Rapor belajar FolioKit${S.name ? ' - ' + S.name : ''}\nMateri ${mN()}/8, Aktivitas ${aN()}/7, Praktik ${prN()}/4, Evaluasi ${S.ev.best ?? '-'}\nProgres ${pct()}%${S.link ? '\nPortofolio: ' + S.link : ''}`;
   const f = () => toast('Tidak bisa menyalin otomatis di browser ini.', 'x');
   try {
     navigator.clipboard.writeText(t).then(() => toast('Ringkasan disalin.', 'chk'), f);
@@ -1803,6 +1805,12 @@ function sheet(k) {
       'Tutorial membuat portofolio',
       () => ytB('lqKBnNoWVVU', 'Tutorial Lengkap Membuat Portofolio Digital dengan Canva'),
     ],
+    vplay: [
+      'Video materi',
+      () =>
+        (VSEL ? ytB(VSEL[0], VSEL[1]) : '') +
+        `<button class="link" style="margin-top:10px" onclick="sheet('src')">${I('arr')} Kembali ke sumber materi</button>`,
+    ],
     reset: [
       'Mulai dari awal?',
       () =>
@@ -1895,7 +1903,7 @@ document.addEventListener(
 /* kartu sedikit miring dan bercahaya mengikuti kursor */
 function fx() {
   if (!HOV.matches || RM.matches) return;
-  document.querySelectorAll('.at,.stg,.pv,.vm').forEach((el) => {
+  document.querySelectorAll('.at,.stg,.pv,.vm,.qki,.nextc,.kc,.op').forEach((el) => {
     if (el._fx) return;
     el._fx = 1;
     el.classList.add('tilt', 'glow');
@@ -1905,8 +1913,13 @@ function fx() {
         y = (e.clientY - r.top) / r.height;
       el.style.setProperty('--mx', x * 100 + '%');
       el.style.setProperty('--my', y * 100 + '%');
-      el.style.setProperty('--rx', ((0.5 - y) * 5).toFixed(2) + 'deg');
-      el.style.setProperty('--ry', ((x - 0.5) * 6).toFixed(2) + 'deg');
+      // kartu kecil miring lebih jelas, kartu lebar lebih halus supaya tetap nyaman dibaca
+      const k = r.width > 420 ? 4 : 10;
+      el.style.setProperty('--rx', ((0.5 - y) * k).toFixed(2) + 'deg');
+      el.style.setProperty('--ry', ((x - 0.5) * k * 1.2).toFixed(2) + 'deg');
+      // bayangan bergeser berlawanan arah miring, supaya kartu terasa terangkat
+      el.style.setProperty('--shx', ((0.5 - x) * 14).toFixed(1) + 'px');
+      el.style.setProperty('--shy', (8 + (y - 0.5) * 12).toFixed(1) + 'px');
     });
     el.addEventListener('pointerleave', () => {
       el.style.setProperty('--rx', '0deg');
@@ -2120,7 +2133,7 @@ function svSend() {
 function svCopy() {
   const v = svD(),
     t =
-      `Penilaian media Portofolio Digital Canva${S.name ? ' - ' + S.name : ''}\n` +
+      `Penilaian media FolioKit${S.name ? ' - ' + S.name : ''}\n` +
       SVQ.map((q, i) => `${i + 1}. ${q} ${v.r[i] || '-'}/5`).join('\n') +
       (v.t ? `\nSaran: ${v.t}` : '');
   const f = () => toast('Tidak bisa menyalin otomatis di browser ini.', 'x');
@@ -5791,3 +5804,239 @@ document.querySelector('.skip').addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('view').focus();
 });
+
+
+/* ===== Loading antar halaman: garis progres tipis + kilau skeleton sekilas ===== */
+/* Konten tetap langsung tampil, efek ini hanya memberi kesan "sedang memuat" tanpa menambah jeda. */
+{
+  const bar = document.createElement('div');
+  bar.id = 'ldb';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  let ldT = 0;
+  let ldN = 0;
+  const ldStart = (r) => {
+    if (RM.matches) return;
+    clearTimeout(ldT);
+    bar.className = '';
+    void bar.offsetWidth;
+    bar.className = 'run';
+    ldT = setTimeout(() => (bar.className = 'end'), 520);
+    // kilau skeleton di kartu layar baru: tunggu sampai layar baru benar-benar terpasang (transisi bisa menunda)
+    const id = ++ldN,
+      t0 = Date.now();
+    const cek = () => {
+      if (id != ldN || document.documentElement.classList.contains('lite')) return;
+      const s = document.querySelector(`#view .scr[data-r="${r}"]:not(.still)`);
+      if (!s) return Date.now() - t0 < 1500 && setTimeout(cek, 50);
+      s.classList.add('ldsk');
+      setTimeout(() => s.classList.remove('ldsk'), 650);
+    };
+    cek();
+  };
+  const go1 = go;
+  go = function (r, i = 0, dir) {
+    const pindah = cur.r && !(r == cur.r && i == cur.i) && !lock(r, i);
+    go1(r, i, dir);
+    if (pindah) ldStart(r);
+  };
+}
+
+/* ===== Ilustrasi 3D halaman awal (Three.js) ===== */
+/* Kartu portofolio mini mengambang di pinggir layar, di belakang judul, dan ikut miring mengikuti kursor.
+   Three.js dimuat hanya di halaman awal dari vendor/three-folio.min.js (bagian Three.js yang dipakai saja).
+   Kalau browser tidak mendukung WebGL, file dibuka langsung (file://), pengguna memilih kurangi animasi,
+   atau perangkat lemah (.lite), ilustrasi biasa tetap tampil seperti sebelumnya. */
+var W3D = null; // var: dipanggil dari AFT.welcome sebelum baris ini dijalankan
+function w3d() {
+  const c = document.getElementById('w3d');
+  if (!c || W3D || RM.matches || document.documentElement.classList.contains('lite')) return;
+  if (!/^https?:$/.test(location.protocol)) return;
+  let ok = false;
+  try {
+    const t = document.createElement('canvas');
+    ok = !!(t.getContext('webgl2') || t.getContext('webgl'));
+  } catch (e) {}
+  if (!ok) return;
+  W3D = 'muat';
+  import('./vendor/three-folio.min.js')
+    .then((T) => w3dRun(T, c))
+    .catch(() => (W3D = null));
+}
+function w3dRun(T, c) {
+  if (!document.contains(c)) return (W3D = null);
+  const hp = innerWidth < 761;
+  const R = new T.WebGLRenderer({ canvas: c, alpha: true, antialias: true, powerPreference: 'low-power' });
+  R.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+  R.outputColorSpace = T.SRGBColorSpace;
+  const scene = new T.Scene();
+  const cam = new T.PerspectiveCamera(35, 1, 0.1, 100);
+  cam.position.z = 14;
+  const grp = new T.Group();
+  scene.add(grp);
+  const PAL = [
+    ['#2d6fd6', '#93c5fd'],
+    ['#7c3aed', '#c4b5fd'],
+    ['#0891b2', '#a5f3fc'],
+    ['#3b82f6', '#dbeafe'],
+    ['#1e4fb0', '#bfdbfe'],
+    ['#5aa3f0', '#e0e7ff'],
+    ['#6d28d9', '#ddd6fe'],
+  ];
+  const rr = (g, x, y, w, h, r) => {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  };
+  // gambar isi kartu: pita judul, foto profil, baris teks, dan tiga karya
+  const tex = (k) => {
+    const cv = document.createElement('canvas');
+    cv.width = 256;
+    cv.height = 336;
+    const g = cv.getContext('2d'),
+      [a, b] = PAL[k % PAL.length];
+    g.fillStyle = '#ffffff';
+    rr(g, 0, 0, 256, 336, 26);
+    g.fill();
+    const gr = g.createLinearGradient(0, 0, 256, 90);
+    gr.addColorStop(0, a);
+    gr.addColorStop(1, b);
+    g.save();
+    rr(g, 0, 0, 256, 336, 26);
+    g.clip();
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 256, 92);
+    g.restore();
+    g.fillStyle = '#ffffff';
+    g.beginPath();
+    g.arc(52, 92, 30, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = b;
+    g.beginPath();
+    g.arc(52, 92, 24, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#123a8f';
+    rr(g, 26, 138, 150, 14, 7);
+    g.fill();
+    g.fillStyle = '#bcd6f6';
+    rr(g, 26, 162, 200, 9, 5);
+    g.fill();
+    rr(g, 26, 178, 160, 9, 5);
+    g.fill();
+    for (let j = 0; j < 3; j++) {
+      const c2 = PAL[(k + j + 1) % PAL.length];
+      const gg = g.createLinearGradient(0, 210, 0, 290);
+      gg.addColorStop(0, c2[1]);
+      gg.addColorStop(1, c2[0]);
+      g.fillStyle = gg;
+      rr(g, 26 + j * 70, 206, 62, 84, 12);
+      g.fill();
+    }
+    g.fillStyle = '#e3effd';
+    rr(g, 26, 304, 120, 9, 5);
+    g.fill();
+    const t = new T.CanvasTexture(cv);
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 4;
+    return t;
+  };
+  // bentuk kartu bersudut bulat, UV dipetakan ke ukuran kartu
+  const W = 2.2,
+    H = 2.9,
+    sh = new T.Shape(),
+    r = 0.22;
+  sh.moveTo(-W / 2 + r, -H / 2);
+  sh.lineTo(W / 2 - r, -H / 2);
+  sh.quadraticCurveTo(W / 2, -H / 2, W / 2, -H / 2 + r);
+  sh.lineTo(W / 2, H / 2 - r);
+  sh.quadraticCurveTo(W / 2, H / 2, W / 2 - r, H / 2);
+  sh.lineTo(-W / 2 + r, H / 2);
+  sh.quadraticCurveTo(-W / 2, H / 2, -W / 2, H / 2 - r);
+  sh.lineTo(-W / 2, -H / 2 + r);
+  sh.quadraticCurveTo(-W / 2, -H / 2, -W / 2 + r, -H / 2);
+  const geo = new T.ShapeGeometry(sh, 6);
+  const pos = geo.attributes.position,
+    uv = geo.attributes.uv;
+  for (let i = 0; i < pos.count; i++) uv.setXY(i, (pos.getX(i) + W / 2) / W, (pos.getY(i) + H / 2) / H);
+  const shadowMat = new T.MeshBasicMaterial({ color: new T.Color('#1e4fb0'), transparent: true, opacity: 0.1, depthWrite: false });
+  // posisi kartu: melingkar di pinggir, menjauhi judul di tengah
+  const SPOT = hp
+    ? [
+        [-1.7, 4.6, -3, 0.5],
+        [1.9, 4.2, -5, 0.45],
+        [-1.9, -4.5, -4, 0.5],
+        [1.7, -4.8, -3, 0.45],
+      ]
+    : [
+        [-7.6, 2.7, -2, 0.82],
+        [-8.6, -1.4, -5, 0.7],
+        [-7.9, -4.1, -2, 0.55],
+        [7.8, 3.0, -3, 0.78],
+        [8.8, -0.6, -6, 0.75],
+        [8.0, -4.2, -2, 0.55],
+        [0.2, 5.2, -9, 0.6],
+      ];
+  const cards = SPOT.map(([x, y, z, s], k) => {
+    const m = new T.Group();
+    const face = new T.Mesh(geo, new T.MeshBasicMaterial({ map: tex(k), transparent: true, opacity: hp ? 0.55 : 0.95, side: T.DoubleSide }));
+    const shd = new T.Mesh(geo, shadowMat);
+    shd.position.set(0.12, -0.16, -0.05);
+    m.add(shd, face);
+    m.position.set(x, y, z);
+    m.scale.setScalar(s);
+    m.rotation.set((Math.random() - 0.5) * 0.4, (x > 0 ? -1 : 1) * (0.35 + Math.random() * 0.25), (Math.random() - 0.5) * 0.25);
+    m.userData = { x, y, z, ph: Math.random() * Math.PI * 2, sp: 0.5 + Math.random() * 0.5, ry: m.rotation.y, rx: m.rotation.x };
+    grp.add(m);
+    return m;
+  });
+  let tx = 0,
+    ty = 0;
+  const onMove = (e) => {
+    tx = e.clientX / innerWidth - 0.5;
+    ty = e.clientY / innerHeight - 0.5;
+  };
+  addEventListener('pointermove', onMove, { passive: true });
+  const size = () => {
+    const w = c.clientWidth || innerWidth,
+      h = c.clientHeight || innerHeight;
+    R.setSize(w, h, false);
+    cam.aspect = w / h;
+    cam.updateProjectionMatrix();
+  };
+  size();
+  addEventListener('resize', size);
+  const t0 = performance.now();
+  let raf = 0;
+  const stop = () => {
+    cancelAnimationFrame(raf);
+    removeEventListener('pointermove', onMove);
+    removeEventListener('resize', size);
+    cards.forEach((m) => m.children[1].material.map.dispose() || m.children[1].material.dispose());
+    geo.dispose();
+    shadowMat.dispose();
+    R.dispose();
+    W3D = null;
+  };
+  const loop = (now) => {
+    if (!document.contains(c)) return stop();
+    raf = requestAnimationFrame(loop);
+    if (document.hidden || document.documentElement.classList.contains('hid')) return;
+    const t = (now - t0) / 1000;
+    grp.rotation.y += (tx * 0.22 - grp.rotation.y) * 0.05;
+    grp.rotation.x += (ty * 0.14 - grp.rotation.x) * 0.05;
+    for (const m of cards) {
+      const u = m.userData;
+      m.position.y = u.y + Math.sin(t * u.sp + u.ph) * 0.18;
+      m.rotation.y = u.ry + Math.sin(t * 0.4 * u.sp + u.ph) * 0.12;
+      m.rotation.x = u.rx + Math.cos(t * 0.35 * u.sp + u.ph) * 0.06;
+    }
+    R.render(scene, cam);
+  };
+  raf = requestAnimationFrame(loop);
+  W3D = 'jalan';
+  requestAnimationFrame(() => c.classList.add('on'));
+}

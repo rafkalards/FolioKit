@@ -10247,3 +10247,219 @@ a.srci:hover {
     display: none;
   }
 }
+
+/* ===== Video diputar di dalam halaman ===== */
+button.srci {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+button.srci:hover {
+  border-color: #9cc1f2;
+  background: #f4f9ff;
+}
+button.srci svg.i {
+  vertical-align: -2px;
+  color: var(--p);
+}
+.vph.vgone {
+  cursor: default;
+}
+
+/* ===== Tata letak: sidebar, halaman Aktivitas, dan isi aktivitas ===== */
+.sbt small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (min-width: 761px) {
+  /* Daftar aktivitas mulai dari atas dan mengisi tinggi layar, deskripsi selalu terlihat */
+  .scr[data-r='akt'] .agrid {
+    align-content: stretch;
+    grid-auto-rows: minmax(150px, 1fr);
+  }
+  .scr[data-r='akt'] .at .ad {
+    max-height: none;
+    opacity: 1;
+    transform: none;
+  }
+  .scr[data-r='akt'] .at small {
+    margin-top: auto;
+  }
+  /* Isi aktivitas di tengah kartu kalau isinya pendek, dan sedikit lebih besar */
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb {
+    display: flex;
+    flex-direction: column;
+  }
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb > :first-child {
+    margin-top: auto;
+  }
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb > :last-child {
+    margin-bottom: auto;
+  }
+  .scr[data-r='a1'] .op {
+    padding: 16px 18px;
+    font-size: 16px;
+  }
+  .scr[data-r='a1'] .q {
+    font-size: 19px;
+  }
+  .scr[data-r='a4'] .vm {
+    padding: 16px;
+  }
+  .scr[data-r='a4'] .vm > :first-child {
+    min-height: 200px;
+  }
+}
+
+/* ===== Beranda di HP: tahap terkunci lebih tipis supaya tahap dan target lebih banyak terlihat ===== */
+@media (max-width: 760px) {
+  .path .stg.lock {
+    min-height: 38px;
+    padding: 5px 12px;
+  }
+  .path .stg.lock .n {
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
+  }
+  .path .stg.lock .n svg.i {
+    width: 14px;
+    height: 14px;
+  }
+  .path .stg.lock b {
+    font-size: 14px;
+  }
+  .path .stg.lock .mini {
+    display: none;
+  }
+}
+
+/* ===== Efek 3D ===== */
+/* Logo intro: berputar masuk dengan ketebalan, lalu bergoyang pelan */
+#splash .lg {
+  animation:
+    lg3d 0.95s var(--bd, 2.85s) cubic-bezier(0.2, 1.15, 0.35, 1) both,
+    lgsway 2.2s calc(var(--bd, 2.85s) + 0.95s) ease-in-out infinite alternate;
+  box-shadow:
+    0 1px 0 #1a4199,
+    0 2px 0 #183a8d,
+    0 3px 0 #163381,
+    0 4px 0 #142d75,
+    0 20px 40px -14px rgba(30, 79, 176, 0.65);
+}
+@keyframes lg3d {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(-200deg) rotateX(35deg) scale(1.6);
+    filter: blur(6px);
+  }
+  55% {
+    opacity: 1;
+    filter: none;
+  }
+  to {
+    transform: perspective(600px) rotateY(0) rotateX(0) scale(1);
+  }
+}
+@keyframes lgsway {
+  from {
+    transform: perspective(600px) rotateY(-12deg) rotateX(6deg);
+  }
+  to {
+    transform: perspective(600px) rotateY(12deg) rotateX(-4deg);
+  }
+}
+/* Efek miring bawaan (.tilt dari fx()) diberi bayangan yang ikut bergerak */
+.tilt.tilt:hover {
+  box-shadow: var(--shx, 0px) var(--shy, 10px) 28px -14px rgba(30, 79, 176, 0.38);
+}
+@media (prefers-reduced-motion: reduce) {
+  #splash .lg {
+    animation: none;
+  }
+}
+.lite #splash .lg {
+  animation: lgin 0.8s var(--bd, 2.85s) cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+/* ===== Loading antar halaman ===== */
+#ldb {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: linear-gradient(90deg, #2d6fd6, #5aa3f0, #93c5fd);
+  box-shadow: 0 0 10px rgba(45, 111, 214, 0.55);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+}
+#ldb.run {
+  opacity: 1;
+  animation: ldrun 0.52s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+#ldb.end {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s 0.05s;
+}
+@keyframes ldrun {
+  0% {
+    width: 0;
+  }
+  60% {
+    width: 72%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+/* kilau skeleton: pita terang menyapu kartu baru sekali */
+.ldsk .card {
+  position: relative;
+  overflow: hidden;
+}
+.ldsk .card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 30%, rgba(219, 234, 254, 0.75) 48%, rgba(255, 255, 255, 0.9) 52%, transparent 70%);
+  background-size: 250% 100%;
+  animation: ldsk 0.65s ease-out forwards;
+}
+@keyframes ldsk {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ldb,
+  .ldsk .card::after {
+    display: none;
+  }
+}
+
+/* ===== Ilustrasi 3D halaman awal ===== */
+#w3d {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+#w3d.on {
+  opacity: 1;
+}

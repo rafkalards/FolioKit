@@ -117,6 +117,9 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 - 💾 **Progres tersimpan otomatis** di browser, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
 - 🧩 **Terasa seperti aplikasi**: di laptop dan tablet navigasi ada di sidebar kiri (jadi rel ikon di layar sedang), di HP pakai header ringkas.
 - 📱 **Responsif**: satu layar tanpa scroll, menyesuaikan HP, tablet, dan laptop.
+- 🏠 **Beranda ringkas**: perkiraan durasi tiap langkah, sisa waktu belajar, dan target kecil hari ini yang opsional.
+- 🎬 **Video diputar langsung di dalam web**, tanpa pindah tab.
+- ✨ **Efek 3D ringan**: kartu portofolio 3D di halaman awal, logo intro berputar, kartu miring mengikuti kursor, dan garis loading antar halaman. Otomatis dimatikan di perangkat lemah atau kalau animasi dikurangi.
 - ⌨️ **Bisa dipakai dengan keyboard** (panah kiri/kanan untuk ganti slide, Esc untuk menutup panel).
 
 ## Galeri tampilan
@@ -153,6 +156,7 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 
 - **HTML, CSS, dan JavaScript murni**: tanpa framework, tanpa proses build.
 - **Google Fonts**: Poppins dan Inter.
+- **Three.js** (MIT): ilustrasi 3D halaman awal, hanya bagian yang dipakai (folder `vendor/`).
 - **localStorage**: menyimpan progres belajar di browser.
 - **GitHub Pages**: hosting gratis.
 
@@ -165,6 +169,7 @@ FolioKit/
 ├── script.js           semua logika dan isi materi
 ├── intro.mp4           video intro (53 detik)
 ├── intro-poster.jpg    gambar sampul video intro
+├── vendor/             Three.js versi ringkas untuk ilustrasi 3D
 ├── tests/              tes otomatis (Playwright)
 ├── package.json        dependensi untuk tes
 ├── CLAUDE.md           catatan proyek untuk Claude Code

@@ -30,6 +30,11 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
   - Ikon: `I(nama)` membaca peta `P`. Tambahkan ikon baru ke `P` dulu, karena nama yang tidak ada menghasilkan ikon kosong.
   - Data materi `M`, aktivitas `AK`, praktik `PR`, kuis `QZ`, FAQ offline Kak Folio `FAQ`, rujukan `REFS`, tur `TOURS`.
   - Aksesibilitas ada di bagian akhir file: `inert`, focus trap, live region, dan skip link.
+  - Setiap layar ditandai `data-r="<rute>"` di `section.scr`, dipakai CSS untuk gaya khusus per layar (misalnya Aktivitas).
+  - Beranda: `estM()` (perkiraan menit), `sisaM()`, `doneN()`, dan target kecil hari ini `tgH()`/`tgSet()` yang disimpan di `S.tg`.
+  - Video YouTube **selalu diputar di dalam halaman** (`ytB`, `vLoad`, `vPick` + sheet `vplay`). Jangan tambahkan tombol atau tulisan yang membuka YouTube di tab baru (permintaan pemilik).
+  - Efek: `fx()` memberi `.tilt` + `.glow` (kartu miring mengikuti kursor), loading antar halaman (`#ldb` + kelas `.ldsk`) di akhir file, dan ilustrasi 3D halaman awal `w3d()`/`w3dRun()`.
+- `vendor/three-folio.min.js`: Three.js (MIT) berisi bagian yang dipakai `w3dRun()` saja, dimuat hanya di halaman awal lewat http/https. Dibuat dari `vendor/three-folio.entry.js` dengan `npx esbuild vendor/three-folio.entry.js --bundle --minify --format=esm --legal-comments=inline --outfile=vendor/three-folio.min.js` (butuh `npm install three esbuild`). Kalau `w3dRun()` memakai kelas Three.js baru, tambahkan ke file entry lalu buat ulang.
 - `intro.mp4` dan `intro-poster.jpg`: video intro. Di claude.ai diambil dari `/_blob/...`, di hosting lain otomatis memakai file lokal.
 
 ## Tempat web ini berjalan
