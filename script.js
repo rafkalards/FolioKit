@@ -6040,3 +6040,34 @@ function w3dRun(T, c) {
   W3D = 'jalan';
   requestAnimationFrame(() => c.classList.add('on'));
 }
+/* ===== Mode offline (PWA) ===== */
+/* sw.js menyimpan semua file web di browser, jadi setelah sekali dibuka pakai internet,
+   web tetap bisa dibuka tanpa jaringan. Hanya dipasang di hosting sendiri (misalnya GitHub Pages),
+   tidak di dalam pratinjau Claude atau saat dibuka langsung dari file. */
+if (
+  'serviceWorker' in navigator &&
+  /^https?:$/.test(location.protocol) &&
+  window.top === window &&
+  !/claude|anthropic/i.test(location.hostname)
+) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+// Video YouTube, Canva, dan rujukan luar butuh internet. Saat offline, beri tahu dengan halus.
+const NEED_NET = 'Bagian ini butuh internet. Materi lain tetap bisa dibuka.';
+document.addEventListener(
+  'click',
+  (e) => {
+    if (navigator.onLine) return;
+    const a = e.target.closest && e.target.closest('a[href^="http"], button.vph');
+    if (!a) return;
+    if (a.tagName === 'A' && new URL(a.href, location.href).origin === location.origin) return;
+    e.preventDefault();
+    e.stopPropagation();
+    toast(NEED_NET, 'info');
+  },
+  true,
+);
+window.addEventListener('offline', () => toast('Kamu lagi offline. Materi tetap bisa dibuka.', 'info'));
+window.addEventListener('online', () => toast('Kembali online.', 'chk'));

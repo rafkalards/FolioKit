@@ -114,6 +114,7 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 - 🎨 **Galeri gaya template** Canva.
 - 🧭 **Tur panduan** di setiap halaman untuk pengguna baru.
 - 🔍 **Pencarian menu** dan halaman **sumber materi**.
+- 📴 **Bisa dibuka tanpa internet** setelah sekali dibuka online, dan bisa di-install sebagai aplikasi di HP atau laptop.
 - 💾 **Progres tersimpan otomatis** di browser, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
 - 🧩 **Terasa seperti aplikasi**: di laptop dan tablet navigasi ada di sidebar kiri (jadi rel ikon di layar sedang), di HP pakai header ringkas.
 - 📱 **Responsif**: satu layar tanpa scroll, menyesuaikan HP, tablet, dan laptop.
@@ -155,9 +156,10 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 ## Teknologi
 
 - **HTML, CSS, dan JavaScript murni**: tanpa framework, tanpa proses build.
-- **Google Fonts**: Poppins dan Inter.
+- **Poppins dan Inter** (Google Fonts, disimpan lokal di folder `fonts/`).
 - **Three.js** (MIT): ilustrasi 3D halaman awal, hanya bagian yang dipakai (folder `vendor/`).
 - **localStorage**: menyimpan progres belajar di browser.
+- **Service worker + Web App Manifest (PWA)**: bisa dibuka tanpa internet dan di-install seperti aplikasi.
 - **GitHub Pages**: hosting gratis.
 
 ## Struktur folder
@@ -169,6 +171,10 @@ FolioKit/
 ├── script.js           semua logika dan isi materi
 ├── intro.mp4           video intro (53 detik)
 ├── intro-poster.jpg    gambar sampul video intro
+├── sw.js               mode offline (menyimpan file di browser)
+├── manifest.json       pengaturan install sebagai aplikasi
+├── fonts/              font Poppins dan Inter
+├── icons/              ikon aplikasi
 ├── vendor/             Three.js versi ringkas untuk ilustrasi 3D
 ├── tests/              tes otomatis (Playwright)
 ├── package.json        dependensi untuk tes
@@ -181,6 +187,17 @@ FolioKit/
 ### Online
 
 Buka 👉 **https://rafkalards.github.io/FolioKit/**
+
+### Offline (tanpa internet)
+
+1. Buka link di atas **sekali pakai internet**. Semua materi, gambar, dan video intro otomatis tersimpan di browser.
+2. Setelah itu, link yang sama tetap bisa dibuka walaupun tidak ada jaringan, di HP atau laptop dan browser yang sama.
+3. Biar lebih gampang, **install sebagai aplikasi**:
+   - **HP Android (Chrome):** menu ⋮ → **Tambahkan ke layar utama** / **Instal aplikasi**.
+   - **iPhone (Safari):** tombol Bagikan → **Tambahkan ke Layar Utama**.
+   - **Laptop (Chrome/Edge):** klik ikon install di ujung kanan kolom alamat.
+
+Video YouTube di materi, tombol **Buka Canva**, dan rujukan jurnal tetap butuh internet. Saat offline, bagian itu memberi tahu dengan pesan singkat.
 
 ### Di komputer sendiri
 
@@ -214,7 +231,7 @@ Daftar lengkap tes ada di [CLAUDE.md](CLAUDE.md).
 
 ## Catatan
 
-- Fitur yang memakai layanan Claude (jawaban AI langsung, cek portofolio pakai AI, dan penyimpanan progres ke server) hanya aktif saat dibuka sebagai artifact di claude.ai. Di GitHub Pages, Kak Folio tetap menjawab dari daftar jawaban bawaan.
+- Kak Folio menjawab dari daftar jawaban bawaan, jadi tetap jalan tanpa internet.
 - Progres disimpan di browser masing-masing. Pakai menu **cadangkan progres** kalau mau pindah perangkat.
 
 ---
