@@ -1,16 +1,18 @@
 <div align="center">
 
-# Pembelajaran Portofolio Digital Menggunakan Canva
+# FolioKit
+
+### Pembelajaran Portofolio Digital Menggunakan Canva
 
 **Multimedia pembelajaran interaktif berbasis web untuk fresh graduate yang mau bikin portofolio digital pertamanya di Canva.**
 
-<a href="https://rafkalards.github.io/lms/"><img src="https://img.shields.io/badge/Buka%20Web-Live%20Demo-2d6fd6?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Buka web"></a>
+<a href="https://rafkalards.github.io/FolioKit/"><img src="https://img.shields.io/badge/Buka%20Web-Live%20Demo-2d6fd6?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Buka web"></a>
 &nbsp;
 <img src="https://img.shields.io/badge/Dibuat%20dengan-HTML%20%7C%20CSS%20%7C%20JS-7c3aed?style=for-the-badge" alt="HTML CSS JavaScript">
 &nbsp;
 <img src="https://img.shields.io/badge/Tanpa%20install-langsung%20pakai-22c55e?style=for-the-badge" alt="Tanpa install">
 
-🔗 **Akses langsung:** https://rafkalards.github.io/lms/
+🔗 **Akses langsung:** https://rafkalards.github.io/FolioKit/
 
 <img src="docs/preview/welcome.png" alt="Halaman awal" width="900">
 
@@ -157,7 +159,7 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 ## Struktur folder
 
 ```
-lms/
+FolioKit/
 ├── index.html          halaman utama
 ├── style.css           semua tampilan
 ├── script.js           semua logika dan isi materi
@@ -173,15 +175,15 @@ lms/
 
 ### Online
 
-Buka 👉 **https://rafkalards.github.io/lms/**
+Buka 👉 **https://rafkalards.github.io/FolioKit/**
 
 ### Di komputer sendiri
 
 1. Download repo ini (**Code → Download ZIP**) atau clone:
 
    ```bash
-   git clone https://github.com/rafkalards/lms.git
-   cd lms
+   git clone https://github.com/rafkalards/FolioKit.git
+   cd FolioKit
    ```
 
 2. Jalankan web server sederhana:

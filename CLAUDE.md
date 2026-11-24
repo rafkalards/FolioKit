@@ -35,7 +35,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 ## Dua tempat web ini berjalan
 
 1. **Artifact claude.ai** (link yang dibagikan ke dosen). Fitur `sample` (AI online), `db` (progres ke server), `user` (peran), `downloads`, dan `assets` hanya aktif di sini. Artifact hanya bisa diperbarui dari sesi claude.ai yang punya alat Artifact.
-2. **GitHub** `rafkalards/lms` (branch `main`), bisa dipasang di GitHub Pages. Di sini Kak Folio memakai jawaban offline dan video YouTube bisa diputar langsung.
+2. **GitHub** `rafkalards/FolioKit` (branch `main`), bisa dipasang di GitHub Pages. Di sini Kak Folio memakai jawaban offline dan video YouTube bisa diputar langsung.
 
 Setiap perubahan harus di-commit dan di-push ke `main` (permintaan tetap dari pemilik).
 
