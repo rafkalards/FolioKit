@@ -43,7 +43,7 @@ for(let i=0;i<8;i++){step='materi'+(i+1);await expect(i=>cur.r=='materi'&&cur.i=
  await expect(()=>/Sudah paham/.test(document.getElementById('sln').textContent),'tombol Sudah paham tidak ada di slide terakhir');
  await tap('#sln');await p.waitForTimeout(1200);await idle();
 }
-step='setelahMateri';await shot('setelah_materi');await expect(()=>cur.r=='konsep','setelah materi 8 harusnya ke peta konsep');await tap('#view .kn >> nth=3');await shot('konsep_klik');await expect(()=>mN()==8,'8 materi belum tercatat selesai');
+step='setelahMateri';await shot('setelah_materi');await expect(()=>cur.r=='konsep','setelah materi 8 harusnya ke peta konsep');await tap('#view .knote >> nth=3');await shot('konsep_klik');await expect(()=>mN()==8,'8 materi belum tercatat selesai');
 if(await p.evaluate(()=>cur.r!='akt'))await p.evaluate(()=>go('akt'));await idle();await shot('akt');
 // aktivitas
 const actv=async k=>{await p.evaluate(k=>go(k),k);await idle();step=k;await shot(k+'_awal')};

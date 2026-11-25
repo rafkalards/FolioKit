@@ -1017,7 +1017,7 @@ SCR.home = () => {
      (q, k) =>
        `<button class="qki" style="--g:linear-gradient(135deg,${q[4]});--k:${k}" onclick="sheet('${q[0]}')"><span class="qic">${I(q[1])}</span><span class="qtx"><b>${q[2]}</b><small>${q[3]}</small></span></button>`,
    )
-   .join('')}</div></div></div></div></div>`;
+   .join('')}</div></div><div class="card hsc hst"><h3>Ringkasan</h3><div class="hstg">${[['Materi', mN() + '/8'], ['Aktivitas', aN() + '/7'], ['Lencana', bdN() + '/' + BD.length], ['Nilai evaluasi', S.ev.tries ? String(S.ev.best) : '-']].map((x) => `<div><b>${x[1]}</b><small>${x[0]}</small></div>`).join('')}</div></div></div></div></div>`;
 };
 
 /* animasi beranda: portofolio dirakit */
@@ -3682,7 +3682,29 @@ SCR.konsep = () => {
         `<path class="kl" style="--k:${k}" d="M${cx} ${cy} Q${(cx + x) / 2 + (k % 2 ? 4 : -4)} ${(cy + y) / 2 + (k % 2 ? -4 : 4)} ${x} ${y}" pathLength="1"/>`,
     )
     .join('');
-  return `<div class="km"><article class="card kmc"><div class="ph"><span class="tag">${I('net')} Rangkuman</span><h2>Peta konsep</h2><p>Klik tiap cabang buat lihat poin pentingnya.</p></div><div class="kmap" id="kmap"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg><div class="kc0"><span>${I('doc')}</span><b>Portofolio<br>Digital</b></div>${pos.map(([x, y], k) => `<button class="kn ${k == KSEL ? 'on' : ''}" style="left:${x}%;top:${y}%;--c1:${COVC[k][0]};--c2:${COVC[k][1]};--k:${k}" onclick="kSel(${k})" aria-label="Materi ${k + 1}: ${M[k].t}"><span>${k + 1}</span><b>${MSH[k]}</b></button>`).join('')}</div></article><article class="card kpan" id="kpan">${kPan(KSEL)}</article></div>`;
+  void lines;
+  /* Papan catatan: tiap materi jadi kertas tempel, disambung benang sesuai urutan (zig-zag). */
+  const NC = ['#ffffff', '#e3effd', '#ede9fe', '#dff5f2', '#fff6d9', '#e8f0ff', '#f3e8ff', '#e0f2fe'],
+    ROT = [-3, 2, -2, 3, 2, -3, 3, -2];
+  const place = (k) => {
+    const dc = k < 4 ? k + 1 : 8 - k,
+      dr = k < 4 ? 1 : 2,
+      mr = Math.floor(k / 2) + 1,
+      mc = Math.floor(k / 2) % 2 == 0 ? (k % 2) + 1 : 2 - (k % 2);
+    return { dc, dr, mc, mr };
+  };
+  const str = (pts) =>
+    'M' +
+    pts
+      .map(([x, y], j) => (j ? `Q${(pts[j - 1][0] + x) / 2} ${(pts[j - 1][1] + y) / 2 + 5} ${x} ${y}` : `${x} ${y}`))
+      .join(' ');
+  const dPts = [...Array(8)].map((_, k) => { const p = place(k); return [(p.dc - 0.5) * 25, p.dr == 1 ? 25 : 75]; }),
+    mPts = [...Array(8)].map((_, k) => { const p = place(k); return [(p.mc - 0.5) * 50, (p.mr - 0.5) * 25]; });
+  const notes = M.map((m, k) => {
+    const p = place(k);
+    return `<button class="knote ${k == KSEL ? 'on' : ''}" style="--nc:${NC[k]};--rot:${ROT[k]}deg;--dc:${p.dc};--dr:${p.dr};--mc:${p.mc};--mr:${p.mr}" onclick="kSel(${k})" aria-label="Materi ${k + 1}: ${m.t}"><i class="kpin" aria-hidden="true"></i><small>Materi ${k + 1}</small><b>${MSH[k]}</b><span>${TK[k][0]}</span></button>`;
+  }).join('');
+  return `<div class="km"><article class="card kmc"><div class="ph"><span class="tag">${I('net')} Rangkuman</span><h2>Peta konsep</h2><p>Klik kertasnya buat lihat poin pentingnya.</p></div><div class="kboard" id="kmap"><svg class="kstr d" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${str(dPts)}"/></svg><svg class="kstr m" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${str(mPts)}"/></svg>${notes}</div></article><article class="card kpan" id="kpan">${kPan(KSEL)}</article></div>`;
 };
 function kPan(k) {
   const m = M[k];
@@ -3691,7 +3713,8 @@ function kPan(k) {
 function kSel(k) {
   KSEL = Math.max(0, Math.min(7, k));
   sfx('tap');
-  document.querySelectorAll('.kn').forEach((b, j) => b.classList.toggle('on', j == KSEL));
+  document.querySelectorAll('.kn, .knote').forEach((b) => b.classList.remove('on'));
+  document.querySelectorAll('.knote').forEach((b, j) => b.classList.toggle('on', j == KSEL));
   const p = document.getElementById('kpan');
   if (p) {
     p.innerHTML = kPan(KSEL);
