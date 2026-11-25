@@ -7018,6 +7018,7 @@ function setApply() {
   h.classList.toggle('lite', LITE0 || !!s.calm);
   h.classList.toggle('hc', !!s.hc);
   h.classList.toggle('sp', !!s.sp);
+  h.classList.toggle('nofx', s.fx === 0);
   thApply(s.th);
   h.classList.toggle('dark', !!THK); // rapikan kelas yang dipasang lebih awal dari <head>
   try {
@@ -7148,6 +7149,7 @@ function setSheet() {
       row('lines', 'Spasi baca', 'Jarak antarbaris dan antarkata lebih lega, enak buat bacaan panjang.', seg("setOpt('sp',$V)", [[0, 'Normal'], [1, 'Lega']], s.sp)) +
       row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc)) +
       row('spark', 'Animasi', 'Pilih Tenang kalau bikin pusing atau HP terasa berat.', seg("setOpt('calm',$V)", [[0, 'Biasa'], [1, 'Tenang']], s.calm)) +
+      row('target', 'Efek kursor & scroll', 'Tombol ketarik halus ke arah kursor, riak saat klik, dan isi yang muncul halus saat digulir.', seg("setOpt('fx',$V)", [[1, 'Nyala'], [0, 'Mati']], s.fx)) +
       row('grid', 'Sidebar di laptop', 'Mau lebar, cuma ikon, atau ikut ukuran layar.', seg('setSide($V)', [['', 'Otomatis'], ['max', 'Lebar'], ['min', 'Ikon saja']], side));
   } else if (SETTAB == 'sua') {
     const mus = [['', 'Mati', 'mute', 'Sepi aja']].concat(Object.keys(MUSK).map((k) => [k, MUSK[k][0], MUSK[k][1], MUSK[k][2]]));
@@ -7181,3 +7183,117 @@ function setSheet() {
   return `${tabs}<div class="setbody">${body}</div><p class="small setft">Pengaturan ini cuma berlaku di browser ini.</p>`;
 }
 setApply();
+
+/* ===== Efek kursor dan scroll =====
+   Kursor (hanya mouse/trackpad): tombol ketarik halus ke arah kursor (magnet) dan riak kecil saat klik.
+   Kursor asli tetap dipakai.
+   Scroll: isi yang belum kelihatan muncul halus saat digulir, plus garis progres tipis di atas layar.
+   Mati otomatis di mode Animasi Tenang, perangkat lemah (.lite), prefers-reduced-motion, atau lewat Pengaturan. */
+SETD.fx = 1;
+const fxOn = () => setG().fx && !document.documentElement.classList.contains('lite') && !RM.matches;
+{
+  const FINE = matchMedia('(pointer: fine)').matches;
+  /* magnet: tombol ketarik halus ke arah kursor (pakai properti translate, jadi tidak bentrok dengan transform lain) */
+  const MAG = '.btn, .chip, .ib, .qk, .stog, .muop, .setseg button, .settabs button, .mnd button, .tmenu, .aib, .avb, .lwt';
+  let magEl = null;
+  const magOff = () => {
+    if (!magEl) return;
+    const el = magEl;
+    el.style.translate = '';
+    setTimeout(() => el !== magEl && el.classList.remove('mag'), 260); // balik pelan dulu baru lepas transisinya
+    magEl = null;
+  };
+  if (FINE) {
+    document.addEventListener(
+      'pointermove',
+      (e) => {
+        if (e.pointerType != 'mouse' || !fxOn()) return magOff();
+        const t = e.target.closest && e.target.closest(MAG);
+        if (t !== magEl) magOff();
+        if (!t || t.disabled) return;
+        const r = t.getBoundingClientRect();
+        if (r.width > 340 || r.height > 120) return; // tombol besar/kartu tidak ikut bergeser
+        magEl = t;
+        t.classList.add('mag');
+        const max = Math.min(10, Math.max(4, r.width / 14));
+        const dx = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width / 2)) * 0.3));
+        const dy = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height / 2)) * 0.3));
+        t.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
+      },
+      { passive: true },
+    );
+    document.addEventListener('pointerdown', (e) => {
+      if (e.pointerType != 'mouse' || !fxOn()) return;
+      const r = document.createElement('i');
+      r.className = 'curRip';
+      r.setAttribute('aria-hidden', 'true');
+      r.style.left = e.clientX + 'px';
+      r.style.top = e.clientY + 'px';
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+    document.documentElement.addEventListener('mouseleave', magOff);
+    window.addEventListener('blur', magOff);
+  }
+
+  /* scroll: garis progres tipis di atas layar */
+  const bar = document.createElement('div');
+  bar.id = 'scrb';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  let hideT = 0;
+  document.addEventListener(
+    'scroll',
+    (e) => {
+      const el = e.target;
+      if (!fxOn() || !(el instanceof Element) || el.scrollHeight - el.clientHeight < 80) return;
+      const p = el.scrollTop / (el.scrollHeight - el.clientHeight);
+      bar.style.transform = `scaleX(${Math.min(1, Math.max(0, p))})`;
+      bar.classList.add('on');
+      clearTimeout(hideT);
+      hideT = setTimeout(() => bar.classList.remove('on'), 900);
+    },
+    { capture: true, passive: true },
+  );
+  // isi di bawah lipatan (belum kelihatan) diberi kelas .rv lalu muncul saat masuk layar
+  const io =
+    'IntersectionObserver' in window
+      ? new IntersectionObserver(
+          (es) =>
+            es.forEach((x) => {
+              if (!x.isIntersecting) return;
+              x.target.classList.add('in');
+              io.unobserve(x.target);
+            }),
+          { threshold: 0.08 },
+        )
+      : null;
+  const SEL = '.card, .opt, .setr, .muop, li, .knote, .kv > *, .stitem, .tln > *, .refs a, .mi';
+  const rvScan = (root) => {
+    if (!io || !root || !fxOn()) return;
+    const vh = innerHeight;
+    root.querySelectorAll(SEL).forEach((el) => {
+      if (el.classList.contains('rv') || el.closest('.stpg,.pg,svg,.sld:not(.on)')) return;
+      const r = el.getBoundingClientRect();
+      let lim = vh;
+      for (let a = el.parentElement; a && a !== root.parentElement; a = a.parentElement) {
+        if (/(auto|scroll)/.test(getComputedStyle(a).overflowY)) {
+          lim = Math.min(vh, a.getBoundingClientRect().bottom);
+          break;
+        }
+      }
+      if (!r.height || r.top < lim - 4) return; // yang sudah kelihatan tidak diubah
+      el.classList.add('rv');
+      io.observe(el);
+    });
+  };
+  let rvT = 0;
+  new MutationObserver(() => {
+    clearTimeout(rvT);
+    rvT = setTimeout(() => {
+      rvScan(document.getElementById('view'));
+      const sh = document.getElementById('sh');
+      if (sh && sh.classList.contains('on')) rvScan(sh);
+    }, 120);
+  }).observe(document.body, { childList: true, subtree: true });
+}

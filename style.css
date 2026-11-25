@@ -13293,3 +13293,87 @@ html.dark #splash .lwt {
   background: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(173, 200, 255, 0.2) !important;
 }
+
+/* ===== Efek kursor dan scroll ===== */
+/* magnet: tombol mengikuti kursor sedikit, lalu balik pelan */
+.mag {
+  transition:
+    translate 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.2s,
+    background 0.2s,
+    box-shadow 0.2s !important;
+}
+.curRip {
+  position: fixed;
+  z-index: 9998;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 58, 237, 0.6);
+  pointer-events: none;
+  animation: curRip 0.55s ease-out forwards;
+}
+@keyframes curRip {
+  to {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+html.dark .curRip {
+  border-color: rgba(196, 181, 253, 0.7);
+}
+/* garis progres scroll */
+#scrb {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  z-index: 9997;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #2d6fd6, #5aa3f0, #a78bfa);
+  box-shadow: 0 0 10px rgba(90, 163, 240, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.35s,
+    transform 0.12s linear;
+}
+#scrb.on {
+  opacity: 1;
+}
+/* isi muncul bertahap saat digulir */
+.rv {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+  transition:
+    opacity 0.5s ease,
+    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.rv.in {
+  opacity: 1;
+  transform: none;
+}
+html.nofx #scrb,
+html.lite #scrb,
+html.nofx .curRip,
+html.lite .curRip {
+  display: none !important;
+}
+html.nofx .rv,
+html.lite .rv {
+  opacity: 1 !important;
+  transform: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #scrb,
+  .curRip {
+    display: none !important;
+  }
+  .rv {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
