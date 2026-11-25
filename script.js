@@ -6502,7 +6502,7 @@ const VIBOK = 'vibrate' in navigator && matchMedia('(pointer: coarse)').matches;
    warna utama (tombol, aksen) tetap. "Ikuti perangkat" membaca prefers-color-scheme. Ilustrasi SVG tidak diubah. */
 const CRX = /#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*[\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*(?:[,/]\s*[\d.]+%?\s*)?\)/gi;
 const THSH = ['background', 'border', 'border-color', 'border-top', 'border-right', 'border-bottom', 'border-left', 'outline', 'text-decoration', 'mask'];
-const THTX = /^(color|fill|stroke|caret-color|-webkit-text-fill-color|text-decoration-color|text-emphasis-color|--ink|--mute|--pd)$/;
+const THTX = /^(color|caret-color|-webkit-text-fill-color|text-decoration-color|text-emphasis-color|--ink|--mute|--pd)$/;
 // dokumen (halaman Studio, buku contoh portofolio) tetap putih seperti kertas
 const THKEEP = /\.(stpg|stin|std[12]|pg[a-z0-9]*)\b/;
 const THFILE = location.protocol == 'file:'; // stylesheet dari file lokal tidak bisa dibaca CSSOM
@@ -6559,6 +6559,7 @@ function thFromLch(L, C, H) {
 // t = warna teks, b = latar/garis. Hasil null berarti warnanya dibiarkan.
 function thDark(r, g, b, kind) {
   let [L, C, H] = thLch(r, g, b);
+  if (kind == 'a') kind = L < 0.5 ? 't' : 'b';
   if (C < 0.02) {
     H = 262; // abu-abu netral diberi sedikit rona biru supaya serasi
     C = Math.max(C, 0.05);
@@ -6588,21 +6589,37 @@ function thCol(s, kind) {
   }
   return (THC[k] = o);
 }
-const thStr = (v, p) => v.replace(CRX, (m) => thCol(m, THTX.test(p) ? 't' : 'b'));
+// fill/stroke: garis gelap diperlakukan seperti teks, garis terang seperti latar
+// teks yang memakai warna utama (var(--p) dkk.) diganti versi terangnya
+const THVAR = /var\(--(p|p2|pd)\)/;
+const thStr = (v, p) => (THTX.test(p) ? v.replace(/var\(--(p|p2|pd)\)/g, 'var(--tx-$1)') : v).replace(CRX, (m) => thCol(m, THTX.test(p) ? 't' : /^(fill|stroke|stop-color)$/.test(p) ? 'a' : 'b'));
+// latar cerah (kuning, hijau, dsb.) di aturan yang sama: warna teksnya dibiarkan supaya tetap kontras
+function thVivid(st) {
+  const v = st.getPropertyValue('background-color') + ' ' + st.getPropertyValue('background-image') + ' ' + st.getPropertyValue('background');
+  return (v.match(CRX) || []).some((m) => {
+    const c = thRgb(m.toLowerCase());
+    if (c[3] != null && c[3] < 0.6) return false;
+    const [L, C] = thLch(c[0], c[1], c[2]);
+    return C > 0.1 && L > 0.55;
+  });
+}
 function thScan() {
   THO = [];
   const walk = (rs) => {
     for (const r of rs) {
       if (r.media && /print/.test(r.media.mediaText)) continue; // hasil cetak tetap terang
       if (r.cssRules) walk(r.cssRules);
-      if (!r.style || THKEEP.test(r.selectorText || '')) continue;
+      // aturan khusus tema gelap (html.dark) sudah ditulis untuk gelap, jadi tidak diubah lagi
+      if (!r.style || THKEEP.test(r.selectorText || '') || /html\.dark/.test(r.selectorText || '')) continue;
       CRX.lastIndex = 0;
-      if (!CRX.test(r.style.cssText)) continue; // aturan tanpa warna dilewati cepat
+      if (!CRX.test(r.style.cssText) && !THVAR.test(r.style.cssText)) continue; // aturan tanpa warna dilewati cepat
+      const keepTx = thVivid(r.style);
       for (let i = 0; i < r.style.length; i++) {
         const p = r.style[i],
           v = r.style.getPropertyValue(p);
         CRX.lastIndex = 0;
-        if (v && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
+        if (keepTx && THTX.test(p)) continue;
+        if (v && (CRX.test(v) || (THTX.test(p) && THVAR.test(v)))) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
       }
       // shorthand yang memakai var() tidak terurai ke longhand, jadi dibaca utuh
       for (const p of THSH) {
@@ -6624,12 +6641,14 @@ function thEl(el, on) {
   if (el.__th0 == null) el.__th0 = el.getAttribute('style') || '';
   el.setAttribute('style', el.__th0);
   if (on) {
-    const st = el.style;
+    const st = el.style,
+      keepTx = thVivid(st);
     for (let i = 0; i < st.length; i++) {
       const p = st[i],
         v = st.getPropertyValue(p);
       CRX.lastIndex = 0;
-      if (v && CRX.test(v)) st.setProperty(p, thStr(v, p), st.getPropertyPriority(p));
+      if (keepTx && THTX.test(p)) continue;
+      if (v && (CRX.test(v) || (THTX.test(p) && THVAR.test(v)))) st.setProperty(p, thStr(v, p), st.getPropertyPriority(p));
     }
   }
   el.__th = on;
