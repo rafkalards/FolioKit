@@ -6571,8 +6571,8 @@ function thDark(r, g, b, kind) {
   if (C > 0.1) return null; // warna cerah (ikon, tombol, aksen) dibiarkan
   // gelapnya sedang (biru-abu), bukan hitam: kartu putih 0.32, latar halaman 0.28, garis dan isian sedikit lebih terang
   // putih jadi lapisan kaca tipis (ikut warna kartu di bawahnya)
-  if (L >= 0.995) return [168, 190, 245, 0.11];
-  if (L >= 0.97) return [160, 184, 240, 0.07];
+  if (L >= 0.995) return [168, 190, 245, 0.13];
+  if (L >= 0.97) return [160, 184, 240, 0.08];
   if (L > 0.72) return thFromLch(0.33 + (0.97 - L) * 0.6, Math.max(C * 0.9, 0.045), H);
   if (L > 0.6) return thFromLch(L * 0.8, C * 0.9, H);
   return null;

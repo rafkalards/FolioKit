@@ -13179,3 +13179,51 @@ html.dark {
 .bk2n .bkh.bad + ol li span {
   background: #b91c1c !important;
 }
+
+/* ===== Efek kaca versi halus (menimpa versi sebelumnya) =====
+   Kartu dibuat hampir padat supaya isi dan teks jelas; kaca cuma terasa tipis di tepi dan bayangan. */
+html:not(.dark) body {
+  background:
+    radial-gradient(55vw 45vh at 90% 0%, rgba(167, 139, 250, 0.1), transparent 70%),
+    radial-gradient(60vw 55vh at 5% 100%, rgba(96, 165, 250, 0.12), transparent 70%),
+    linear-gradient(160deg, #f5f9ff, #edf4fd) fixed;
+}
+html:not(.dark) .card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(188, 214, 246, 0.9);
+  box-shadow:
+    0 10px 28px -18px rgba(30, 79, 176, 0.32),
+    inset 0 1px 0 #fff;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+html:not(.dark) .sh {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(188, 214, 246, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+html.dark body {
+  background:
+    radial-gradient(60vw 50vh at 88% 0%, rgba(124, 58, 237, 0.12), transparent 70%),
+    radial-gradient(70vw 60vh at 8% 100%, rgba(45, 111, 214, 0.16), transparent 70%),
+    linear-gradient(160deg, #24324f, #1f2b47) fixed !important;
+}
+html.dark .card,
+html.dark .sh {
+  background: rgba(47, 62, 99, 0.94) !important;
+  border-color: rgba(173, 200, 255, 0.16) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 10px 28px -18px rgba(5, 10, 30, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+html.dark #side {
+  background: linear-gradient(180deg, #2c3f6e, #24345c) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html.dark .top {
+  background: linear-gradient(90deg, rgba(44, 63, 110, 0.96), rgba(36, 52, 92, 0.96)) !important;
+}
