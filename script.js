@@ -3629,14 +3629,14 @@ SCR.pre = () => {
   }
   if (!t.st)
     return `<article class="card pane"><div class="ph"><span class="tag">${I('flag')} Sebelum mulai</span><h2>Tes awal dulu, yuk</h2><p>Jawab sebisanya, salah nggak apa-apa. Nilainya nanti dibandingin sama evaluasi di akhir.</p></div><div class="pb scroll"><div class="prei">${[
-      ['task', '8 soal'],
-      ['flag', '± 3 menit'],
-      ['eye', 'Tanpa pembahasan'],
+      ['task', '8 soal', 'Pilihan ganda, sekali jalan'],
+      ['flag', 'Sekitar 4 menit', 'Nggak ada batas waktu'],
+      ['eye', 'Tanpa pembahasan', 'Biar nilainya jujur'],
     ]
-      .map((x, k) => `<div style="--k:${k}"><span>${I(x[0])}</span><b>${x[1]}</b></div>`)
+      .map((x, k) => `<div style="--k:${k}"><span>${I(x[0])}</span><b>${x[1]}</b><small>${x[2]}</small></div>`)
       .join(
         '',
-      )}</div></div><div class="pf"><button class="btn g" onclick="S.pre.skip=1;save();go('materi',firstM())">Lewati</button><button class="btn shim" onclick="R.pre.st=1;go('pre',0,'f')">Mulai tes awal ${I('arr')}</button></div></article>`;
+      )}</div><div class="pre3d" aria-hidden="true"><div class="p3s"><div class="p3c c1"><i>A</i><i>B</i><i class="ok">C</i><i>D</i></div><div class="p3c c2"><i>A</i><i class="ok">B</i><i>C</i><i>D</i></div><div class="p3c c3"><b>?</b></div></div><span class="p3o o1"></span><span class="p3o o2"></span><span class="p3o o3"></span></div><p class="pretip">Soalnya sama persis kayak evaluasi di akhir. Dari situ kelihatan seberapa jauh kamu berkembang.</p></div><div class="pf"><button class="btn g" onclick="S.pre.skip=1;save();go('materi',firstM())">Lewati</button><button class="btn shim" onclick="R.pre.st=1;go('pre',0,'f')">Mulai tes awal ${I('arr')}</button></div></article>`;
   const q = QZ[t.i],
     a = t.a[t.i];
   return `<article class="card pane"><div class="ph"><div class="row" style="justify-content:space-between"><span class="tag">Tes awal · Soal ${t.i + 1} dari ${QZ.length}</span><button class="link" onclick="S.pre.skip=1;save();R.pre=null;go('materi',firstM())">Lewati tes</button></div><div class="qbar" style="margin-top:12px"><i style="width:${(t.i / QZ.length) * 100}%"></i></div></div><div class="pb scroll"><p class="q">${q[0]}</p><div class="opts">${q[1].map((o, j) => `<button class="op ${a === j ? 'on' : ''}" onclick="preA(${j})"><span class="l">${'ABCD'[j]}</span><span>${o}</span></button>`).join('')}</div></div><div class="pf"><span class="small prem"></span><button class="btn" ${a == null ? 'disabled' : ''} onclick="${t.i < QZ.length - 1 ? 'preN()' : "loadBtn(this,preN,'Menyimpan...')"}">${t.i < QZ.length - 1 ? 'Soal berikutnya' : 'Selesai'} ${I('arr')}</button></div></article>`;

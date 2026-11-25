@@ -11574,3 +11574,171 @@ canvas#cf.on {
     min-height: 64px;
   }
 }
+
+/* ===== Pembuka tes awal: latar gradasi + ilustrasi 3D kartu soal ===== */
+.scr[data-r='pre'] .pane > .pb:has(.pre3d) {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background:
+    radial-gradient(circle at 12% 88%, rgba(147, 197, 253, 0.35), transparent 42%),
+    radial-gradient(circle at 88% 20%, rgba(196, 181, 253, 0.32), transparent 40%),
+    linear-gradient(180deg, #ffffff 0%, #f4f9ff 100%);
+}
+.pre3d {
+  position: relative;
+  flex: 1;
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+  overflow: hidden;
+  border-radius: 20px;
+  background-image: radial-gradient(rgba(45, 111, 214, 0.12) 1.2px, transparent 1.4px);
+  background-size: 20px 20px;
+}
+.p3s {
+  position: relative;
+  width: 220px;
+  height: 150px;
+  transform-style: preserve-3d;
+  animation: p3spin 9s ease-in-out infinite alternate;
+}
+.p3c {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow:
+    0 1px 0 rgba(18, 58, 143, 0.06),
+    0 18px 34px -16px rgba(18, 58, 143, 0.45);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 18px;
+  backface-visibility: hidden;
+}
+.p3c i {
+  font: 600 14px Poppins;
+  font-style: normal;
+  color: #2d6fd6;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #e3effd;
+}
+.p3c i.ok {
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  color: #fff;
+}
+.p3c.c1 {
+  transform: translateZ(40px) rotate(-4deg);
+}
+.p3c.c2 {
+  transform: translateZ(0) translate(26px, -18px) rotate(5deg);
+  opacity: 0.9;
+}
+.p3c.c3 {
+  transform: translateZ(-40px) translate(52px, -36px) rotate(10deg);
+  opacity: 0.75;
+  place-items: center;
+  grid-template-columns: 1fr;
+}
+.p3c.c3 b {
+  font: 700 54px Poppins;
+  color: #93c5fd;
+}
+@keyframes p3spin {
+  0% {
+    transform: rotateX(18deg) rotateY(-26deg) translateY(4px);
+  }
+  100% {
+    transform: rotateX(8deg) rotateY(22deg) translateY(-8px);
+  }
+}
+.p3o {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0.7;
+  animation: p3float 6s ease-in-out infinite alternate;
+}
+.p3o.o1 {
+  width: 18px;
+  height: 18px;
+  left: 18%;
+  top: 22%;
+  background: #93c5fd;
+}
+.p3o.o2 {
+  width: 12px;
+  height: 12px;
+  right: 20%;
+  bottom: 22%;
+  background: #c4b5fd;
+  animation-delay: -2s;
+}
+.p3o.o3 {
+  width: 9px;
+  height: 9px;
+  right: 30%;
+  top: 18%;
+  background: #fbbf24;
+  animation-delay: -4s;
+}
+@keyframes p3float {
+  to {
+    transform: translateY(-16px) scale(1.15);
+  }
+}
+.pretip {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mute);
+  max-width: 34em;
+  margin: 0 auto;
+}
+@media (max-width: 760px) {
+  .prei {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .prei > div {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+  }
+  .prei > div small {
+    margin-left: auto;
+    text-align: right;
+  }
+  .pre3d {
+    min-height: 170px;
+  }
+  .p3s {
+    transform: scale(0.85);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p3s,
+  .p3o {
+    animation: none;
+  }
+  .p3s {
+    transform: rotateX(12deg) rotateY(-18deg);
+  }
+}
+.lite .p3s,
+.lite .p3o {
+  animation: none;
+}
+@media (max-width: 760px) {
+  .prei > div b {
+    white-space: nowrap;
+  }
+  .prei > div small {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+}
