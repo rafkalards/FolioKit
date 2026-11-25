@@ -12754,3 +12754,130 @@ canvas#cf.on {
 .stpg.t1 .stin {
   padding: 8cqw 7cqw 6cqw 15cqw;
 }
+
+/* ===== Pengaturan ===== */
+.setr {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 4px 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.setr:last-of-type {
+  border-bottom: 0;
+}
+.setr .ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--pl);
+  color: var(--p);
+  grid-row: span 2;
+  align-self: start;
+}
+.sett b {
+  display: block;
+  font: 600 14px Poppins;
+  color: var(--pd);
+}
+.sett small {
+  display: block;
+  font-size: 12.5px;
+  color: var(--mute);
+  line-height: 1.4;
+}
+.setr > .setseg,
+.setr > .btn {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 6px;
+}
+.setseg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--card2);
+}
+.setseg button {
+  padding: 6px 12px;
+  border-radius: 9px;
+  font: 600 13px Inter, sans-serif;
+  color: #36507f;
+}
+.setseg button.on {
+  background: #fff;
+  color: var(--p);
+  box-shadow: 0 1px 4px rgba(18, 58, 143, 0.15);
+}
+/* ukuran teks */
+html[data-fs='sm'] #app,
+html[data-fs='sm'] #sh {
+  zoom: 0.92;
+}
+html[data-fs='lg'] #app,
+html[data-fs='lg'] #sh {
+  zoom: 1.1;
+}
+html[data-fs='xl'] #app,
+html[data-fs='xl'] #sh {
+  zoom: 1.22;
+}
+/* animasi tenang */
+html.calm *,
+html.calm *::before,
+html.calm *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html.calm #w3d,
+html.calm #wcv,
+html.calm #cf {
+  display: none !important;
+}
+/* kontras lebih tegas */
+html.hc {
+  --mute: #2f3f5f;
+  --line: #8fb0dd;
+}
+html.hc .small,
+html.hc small {
+  color: #2f3f5f;
+}
+html.hc .card {
+  box-shadow: inset 0 0 0 1.5px #8fb0dd;
+}
+/* layar tetap pas satu layar walau teks diperbesar/diperkecil */
+html[data-fs='sm'] #app {
+  height: calc(100dvh / 0.92);
+}
+html[data-fs='lg'] #app {
+  height: calc(100dvh / 1.1);
+}
+html[data-fs='xl'] #app {
+  height: calc(100dvh / 1.22);
+}
+@media (min-width: 900px) {
+  html[data-fs='sm'] .side {
+    height: calc(100dvh / 0.92);
+    max-height: calc(100dvh / 0.92);
+  }
+  html[data-fs='lg'] .side {
+    height: calc(100dvh / 1.1);
+    max-height: calc(100dvh / 1.1);
+  }
+  html[data-fs='xl'] .side {
+    height: calc(100dvh / 1.22);
+    max-height: calc(100dvh / 1.22);
+  }
+  .hqk .qk {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}

@@ -724,6 +724,7 @@ function sideR() {
     it('tur', 'info', 'Ulangi tur', 0, "tourStart(cur.r=='materi'?'materi':'home',1)") +
     it('survey', 'star', 'Beri penilaian', 0, "sheet('survey')") +
     (ROLE.edit ? it('prev', 'eye', 'Mode pratinjau', 0, "sheet('prev')") : '') +
+    it('set', 'gear', 'Pengaturan', 0, "sheet('set')") +
     it('about', 'target', 'Tentang', 0, "sheet('about')") +
     it('reset', 'rst', 'Mulai dari awal', 0, "sheet('reset')");
   const rail = document.documentElement.classList.contains('srail');
@@ -1825,6 +1826,7 @@ function sheet(k) {
           ) +
           mi('star', 'Beri penilaian', "sheet('survey')", S.sv && S.sv.at ? 'Terkirim' : '1 menit') +
           (ROLE.edit ? mi('eye', 'Mode pratinjau', "sheet('prev')", S.prev ? 'Aktif' : 'Untuk penguji') : '') +
+          mi('gear', 'Pengaturan', "sheet('set')", 'Teks, animasi, suara') +
           mi('target', 'Tentang', "sheet('about')", '') +
           mi('rst', 'Mulai dari awal', "sheet('reset')", '');
         return (
@@ -1876,6 +1878,7 @@ function sheet(k) {
           .join('') + `<p class="small" style="margin-top:10px">Pakai menu di kanan atas buat pindah bagian.</p>`,
     ],
     src: ['Sumber materi', srcSheet],
+    set: ['Pengaturan', setSheet],
     about: [
       'Tentang',
       () =>
@@ -6470,3 +6473,75 @@ SCR.studio = () => {
 <article class="card stprv"><div class="stpvh"><b id="stpn"></b><div class="row"><button class="ib" onclick="stPg(stD().pg-1)" aria-label="Halaman sebelumnya">${I('bk')}</button><button class="ib" onclick="stPg(stD().pg+1)" aria-label="Halaman berikutnya">${I('arr')}</button><button class="btn g sm stbk" onclick="R.sv='form';go('studio')">${I('bk')} Balik isi</button></div></div><div class="stvw"><div id="stv"></div></div><div class="stthumbs" id="stth"></div></article></div>`;
 };
 AFT.studio = () => stU();
+
+/* ===== Pengaturan course ===== */
+/* Disimpan di S.set per pengguna. Ukuran teks lewat zoom, animasi tenang lewat kelas .calm (+ .lite supaya efek berat ikut mati),
+   kontras lewat kelas .hc, suara lewat pembungkus sfx(). */
+P.gear =
+  '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/>';
+const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0 };
+const setG = () => Object.assign({}, SETD, S.set || {});
+const LITE0 = document.documentElement.classList.contains('lite');
+function setApply() {
+  const s = setG(),
+    h = document.documentElement;
+  h.dataset.fs = s.fs;
+  h.classList.toggle('calm', !!s.calm);
+  h.classList.toggle('lite', LITE0 || !!s.calm);
+  h.classList.toggle('hc', !!s.hc);
+}
+function setOpt(k, v) {
+  S.set = Object.assign(setG(), { [k]: v });
+  save();
+  setApply();
+  if (k == 'sound' && v) sfx('ok');
+  sheet('set');
+}
+function setSide(v) {
+  try {
+    if (v) localStorage.setItem('pdc_side', v);
+    else localStorage.removeItem('pdc_side');
+  } catch (e) {}
+  sideMode();
+  sideR();
+  sheet('set');
+}
+function setTour() {
+  S.tour = {};
+  save();
+  closeSh();
+  toast('Tur panduan bakal muncul lagi di tiap halaman.', 'chk');
+  setTimeout(() => tourStart(cur.r == 'materi' ? 'materi' : 'home', 1), 350);
+}
+{
+  const sfx0 = sfx;
+  sfx = function (t) {
+    if (!setG().sound) return;
+    return sfx0(t);
+  };
+}
+function setSheet() {
+  const s = setG();
+  let side = '';
+  try {
+    side = localStorage.getItem('pdc_side') || '';
+  } catch (e) {}
+  const lit = (v) => (typeof v == 'number' ? String(v) : `'${v}'`);
+  const seg = (fn, opts, cur) =>
+    `<div class="setseg" role="group">${opts.map((o) => `<button class="${cur === o[0] ? 'on' : ''}" aria-pressed="${cur === o[0]}" onclick="${fn.replace('$V', lit(o[0]))}">${o[1]}</button>`).join('')}</div>`;
+  const row = (ic, t, d, ctl) => `<div class="setr"><span class="ic">${I(ic)}</span><div class="sett"><b>${t}</b><small>${d}</small></div>${ctl}</div>`;
+  return `<p class="mgh">Tampilan</p>
+${row('doc', 'Ukuran teks', 'Gedein kalau tulisannya kekecilan.', seg("setOpt('fs',$V)", [['sm', 'Kecil'], ['md', 'Normal'], ['lg', 'Besar'], ['xl', 'Paling besar']], s.fs))}
+${row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap, lebih gampang dibaca.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc))}
+${row('spark', 'Animasi', 'Matikan kalau bikin pusing atau HP terasa berat.', seg("setOpt('calm',$V)", [[0, 'Biasa'], [1, 'Tenang']], s.calm))}
+${row('grid', 'Sidebar di laptop', 'Mau lebar, cuma ikon, atau ikut ukuran layar.', seg("setSide($V)", [['', 'Otomatis'], ['max', 'Lebar'], ['min', 'Ikon saja']], side))}
+<p class="mgh">Belajar</p>
+${row('book', 'Cara baca materi', 'Cerita: slide satu per satu. Ringkasan: semua poin dalam satu halaman.', seg("S.mode=$V;save();sheet('set')", [['story', 'Cerita'], ['list', 'Ringkasan']], S.mode || 'story'))}
+${row('play', 'Suara efek', 'Bunyi kecil waktu klik dan jawab benar atau salah.', seg("setOpt('sound',$V)", [[1, 'Nyala'], [0, 'Mati']], s.sound))}
+${row('info', 'Tur panduan', 'Tampilkan lagi petunjuk singkat di tiap halaman.', `<button class="btn g sm" onclick="setTour()">Ulangi tur</button>`)}
+<p class="mgh">Data</p>
+${row('dl', 'Cadangan progres', 'Simpan progres ke file, lalu pulihkan di HP atau laptop lain.', `<button class="btn g sm" onclick="sheet('acc')">Buka</button>`)}
+${row('rst', 'Mulai dari awal', 'Hapus semua progres di browser ini.', `<button class="btn g sm" onclick="sheet('reset')">Hapus</button>`)}
+<p class="small" style="margin-top:12px">Pengaturan ini cuma berlaku di browser ini.</p>`;
+}
+setApply();
