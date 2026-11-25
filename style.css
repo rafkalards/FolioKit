@@ -13393,11 +13393,16 @@ html.lite .rv {
   transition:
     background 0.2s,
     color 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @media (hover: hover) {
+  /* yang geser cuma ikon dan tulisannya, barisnya tetap, jadi tidak ada yang kepotong di tepi sidebar */
+  .sit:not(.on):hover .sic,
+  .sit:not(.on):hover .stx {
+    transform: translateX(5px);
+  }
   .sit:not(.on):hover {
-    transform: translateX(6px);
     background: rgba(255, 255, 255, 0.16) !important;
     color: #fff;
   }
@@ -13409,12 +13414,12 @@ html.lite .rv {
   .sit.lk:not(.on):hover {
     color: rgba(255, 255, 255, 0.9) !important;
   }
-  :where(html.srail) .sit:not(.on):hover {
-    transform: translateX(3px);
+  :where(html.srail) .sit:not(.on):hover .sic {
+    transform: translateX(2px);
   }
   /* laci menu di HP/tablet ikut gaya yang sama */
-  .mi:not(.lk):hover {
-    transform: translateX(6px);
+  .mi:not(.lk):hover > * {
+    transform: translateX(5px);
   }
   .mi:not(.lk):hover .ic {
     background: linear-gradient(135deg, #5aa3f0, #a78bfa) !important;
@@ -13425,6 +13430,17 @@ html.lite .rv {
     background: rgba(156, 195, 255, 0.14) !important;
   }
 }
-.sit:active {
-  transform: translateX(6px) scale(0.97);
+.sit .stx,
+.mi > * {
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* ruang ekstra supaya kartu yang terangkat saat hover/magnet tidak kepotong */
+.agrid {
+  padding: 12px;
+  margin: -8px;
+}
+@media (min-width: 900px) {
+  :where(html.srail) .sit .sbg {
+    right: -1px;
+  }
 }

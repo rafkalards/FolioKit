@@ -7197,10 +7197,19 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
   // semua yang bisa diklik ikut; makin lebar elemennya makin kecil geserannya
   const MAG = 'button, a[href], [role="button"], [onclick], label, summary, .knote';
   let magEl = null;
+  // kotak terdekat yang memotong isinya (overflow selain visible)
+  const magClip = (el) => {
+    for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+      const s = getComputedStyle(a);
+      if (s.overflowX != 'visible' || s.overflowY != 'visible') return a.getBoundingClientRect();
+    }
+    return null;
+  };
   const magOff = () => {
     if (!magEl) return;
     const el = magEl;
     el.style.translate = '';
+    el.__mx = el.__my = 0;
     setTimeout(() => el !== magEl && el.classList.remove('mag'), 260); // balik pelan dulu baru lepas transisinya
     magEl = null;
   };
@@ -7218,8 +7227,19 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
         t.classList.add('mag');
         const big = Math.max(r.width, r.height * 2);
         const max = big > 400 ? 2 : big > 180 ? 4 : Math.min(10, Math.max(4, r.width / 12));
-        const dx = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width / 2)) * 0.3));
-        const dy = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height / 2)) * 0.3));
+        let dx = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width / 2)) * 0.3));
+        let dy = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height / 2)) * 0.3));
+        // jangan sampai tombol kepotong oleh pembungkus yang overflow-nya disembunyikan/digulir
+        const cl = magClip(t);
+        if (cl) {
+          const r0 = { l: r.left - (t.__mx || 0), r: r.right - (t.__mx || 0), t: r.top - (t.__my || 0), b: r.bottom - (t.__my || 0) };
+          dx = Math.max(Math.min(dx, cl.right - 2 - r0.r), cl.left + 2 - r0.l);
+          dy = Math.max(Math.min(dy, cl.bottom - 2 - r0.b), cl.top + 2 - r0.t);
+          if (r0.l < cl.left || r0.r > cl.right) dx = 0;
+          if (r0.t < cl.top || r0.b > cl.bottom) dy = 0;
+        }
+        t.__mx = dx;
+        t.__my = dy;
         t.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
       },
       { passive: true },
@@ -7270,11 +7290,19 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
           { threshold: 0.08 },
         )
       : null;
-  const SEL = '.card, .opt, .setr, .muop, li, .knote, .kv > *, .stitem, .tln > *, .refs a, .mi';
+  const SEL = '.card, .opt, .setr, .muop, li, .knote, .kv > *, .stitem, .tln > *, .refs a, .mi, .bdg, .chip, .stx2, .pchki, .ckl > *, .qk, .hst, .tag, .vcard, .src a, .srcv, .ahint, .pf, p, h2, h3, img, figure, details, blockquote, table, .row';
   const rvScan = (root) => {
     if (!io || !root || !fxOn()) return;
     const vh = innerHeight;
-    root.querySelectorAll(SEL).forEach((el) => {
+    const cand = new Set(root.querySelectorAll(SEL));
+    root.querySelectorAll('*').forEach((a) => {
+      if (a.scrollHeight <= a.clientHeight + 4) return;
+      const s = getComputedStyle(a).overflowY;
+      if (s != 'auto' && s != 'scroll') return;
+      for (const k of a.children) if (k.offsetHeight > 20) cand.add(k);
+    });
+    [...cand].sort((x, y) => (x.compareDocumentPosition(y) & 4 ? -1 : 1)).forEach((el) => {
+      if (el.parentElement && el.parentElement.closest('.rv')) return; // induknya sudah ikut muncul
       if (el.classList.contains('rv') || el.closest('.stpg,.pg,svg,.sld:not(.on)')) return;
       const r = el.getBoundingClientRect();
       let lim = vh;
