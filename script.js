@@ -2640,9 +2640,9 @@ const VCAP = [
 ];
 const VIS = [
   () => `<div class="vis" data-len="7.5">
- <div class="a vp" style="left:5%;top:7%;width:37%;height:64%"><b class="vt">CV</b>${[80, 62, 72, 50].map((w, k) => `<i class="vl grow" data-on="${0.4 + k * 0.3}" style="width:${w}%"></i>`).join('')}<span class="vtag" data-on="1.9">"Aku jago desain"</span></div>
+ <div class="a vp vdoc" style="left:5%;top:7%;width:37%;height:64%"><div class="vhd"><span class="vav"></span><div><b class="vt">Nadia Putri</b><small>CV · Desainer Grafis</small></div></div>${[80, 62, 72, 50].map((w, k) => `<i class="vl grow" data-on="${0.4 + k * 0.3}" style="width:${w}%"></i>`).join('')}<span class="vtag" data-on="1.9">"Aku jago desain"</span></div>
  <div class="a vvs pop" data-on="2.5" style="left:50%;top:44%">vs</div>
- <div class="a vp" style="left:58%;top:7%;width:37%;height:64%"><b class="vt">Portofolio</b><div class="vtiles">${['#93c5fd', '#c4b5fd', '#fcd34d'].map((c, k) => `<i class="pop" data-on="${3 + k * 0.3}" style="background:${c}"></i>`).join('')}</div><span class="vtag ok" data-on="4.1">✓ Ada buktinya</span></div>
+ <div class="a vp vdoc" style="left:58%;top:7%;width:37%;height:64%"><div class="vhd"><span class="vav"></span><div><b class="vt">Portofolio</b><small>3 karya pilihan</small></div></div><div class="vtiles">${[['linear-gradient(160deg,#1e4fb0,#7c3aed)', 'Poster'], ['linear-gradient(160deg,#fde68a,#f59e0b)', 'Logo'], ['linear-gradient(160deg,#a5f3fc,#38bdf8)', 'Feed']].map((c, k) => `<i class="pop vimg" data-on="${3 + k * 0.3}" style="background:${c[0]}"><em>${c[1]}</em></i>`).join('')}</div><span class="vtag ok" data-on="4.1">✓ Ada buktinya</span></div>
  <div class="a vban" data-on="4.9">Perekrut lebih yakin karena ada bukti</div></div>`,
   () => {
     const R = ['Profil', 'Pendidikan & pengalaman', 'Skill', 'Karya', 'Kontak'];
@@ -2686,7 +2686,7 @@ const VIS = [
     const cx = (k) => 14.5,
       cy = (k) => [33, 46, 59, 72][k];
     return `<div class="vis" data-len="9">
- <div class="a ved"><div class="bar">Canva</div><div class="side">${[0, 1, 2, 3].map((k) => `<i style="top:${10 + k * 20}%"></i>`).join('')}</div><div class="cv">
+ <div class="a ved"><div class="bar">Canva</div><div class="vsd">${[0, 1, 2, 3].map((k) => `<i style="top:${10 + k * 20}%"></i>`).join('')}</div><div class="cv">
   <div class="a" data-on="1.6" style="left:0;top:0;width:32%;height:100%;background:#1e4fb0;border-radius:4px 0 0 4px"></div>
   <div class="a vl grow" data-on="3.4" style="left:40%;top:16%;width:40%;height:12%;background:#123a8f"></div>
   <div class="a pop" data-on="5.2" style="left:40%;top:44%;width:16%;height:30%;border-radius:50%;background:#c4b5fd"></div>

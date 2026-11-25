@@ -5094,7 +5094,7 @@ html.tx .scr {
   font: 700 11px Poppins;
   padding: 3px 10px;
 }
-.ved .side {
+.ved .vsd {
   position: absolute;
   left: 0;
   top: 16%;
@@ -5102,7 +5102,7 @@ html.tx .scr {
   width: 13%;
   background: #18191b;
 }
-.ved .side i {
+.ved .vsd i {
   position: absolute;
   left: 22%;
   width: 56%;
@@ -11741,4 +11741,154 @@ canvas#cf.on {
     font-size: 12px;
     line-height: 1.3;
   }
+}
+
+/* ===== Gambaran singkat lebih realistis ===== */
+/* latar seperti meja kerja dengan pola titik halus */
+.vis {
+  background-color: #eef5ff;
+  background-image: radial-gradient(rgba(45, 111, 214, 0.1) 1.2px, transparent 1.4px);
+  background-size: 18px 18px;
+}
+/* kartu dan halaman seperti dokumen/jendela aplikasi */
+.vp,
+.vpage {
+  box-shadow:
+    0 1px 0 rgba(18, 58, 143, 0.05),
+    0 14px 30px -18px rgba(18, 58, 143, 0.55),
+    inset 0 0 0 1px #dbe6f7;
+}
+.vpage {
+  padding-top: 20px;
+  position: absolute;
+}
+.vpage::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 7px;
+  width: 26px;
+  height: 6px;
+  background:
+    radial-gradient(circle, #ff8787 2.6px, transparent 3px) 0 50% / 9px 6px no-repeat,
+    radial-gradient(circle, #ffd43b 2.6px, transparent 3px) 9px 50% / 9px 6px no-repeat,
+    radial-gradient(circle, #69db7c 2.6px, transparent 3px) 18px 50% / 9px 6px no-repeat;
+}
+/* kepala dokumen: foto, nama, keterangan */
+.vdoc {
+  gap: 6px;
+}
+.vhd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #edf2ff;
+}
+.vav {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 700 11px Poppins;
+  color: #fff;
+  background: linear-gradient(135deg, #ffa8a8, #b197fc);
+}
+.vhd .vt {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.15;
+}
+.vhd small {
+  display: block;
+  font-size: 10px;
+  color: #6b7a99;
+}
+/* baris teks: dua nada supaya mirip tulisan */
+.vl {
+  background: linear-gradient(90deg, #c9d8f0 0 30%, #e3ebf8 30% 100%);
+  height: 6px;
+}
+/* gambar karya: ada pemandangan kecil dan label */
+.vimg,
+.vtiles i,
+.vout {
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.vimg::after,
+.vtiles i::after,
+.vout::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 72% 30%, rgba(255, 255, 255, 0.85) 0 9%, transparent 10%),
+    linear-gradient(150deg, transparent 55%, rgba(255, 255, 255, 0.45) 56% 70%, transparent 71%),
+    linear-gradient(30deg, transparent 62%, rgba(255, 255, 255, 0.3) 63%);
+}
+.vimg em {
+  position: absolute;
+  left: 4px;
+  bottom: 3px;
+  z-index: 1;
+  font: 600 9px Inter, sans-serif;
+  font-style: normal;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+/* file karya: ada lipatan di pojok */
+.vfile {
+  border-radius: 4px 12px 4px 4px;
+  background: linear-gradient(225deg, #dbe6f7 0 14px, #fff 14px);
+  box-shadow:
+    0 6px 14px -8px rgba(18, 58, 143, 0.5),
+    inset 0 0 0 1px #bcd6f6;
+}
+/* editor Canva: bilah atas bergradasi seperti aslinya */
+.ved .bar {
+  background: linear-gradient(90deg, #00c4cc, #7d2ae8);
+}
+.ved {
+  box-shadow:
+    0 14px 30px -18px rgba(18, 58, 143, 0.55),
+    inset 0 0 0 1px #d6e4f7;
+}
+.vhd > div {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.vhd .vav {
+  position: static;
+  opacity: 1;
+  transform: none;
+}
+/* foto profil kecil: siluet orang, bukan huruf */
+.vhd .vav {
+  background:
+    radial-gradient(circle at 50% 38%, #fff4ec 0 22%, transparent 23%),
+    radial-gradient(ellipse 46% 34% at 50% 100%, #fff4ec 0 98%, transparent 100%),
+    linear-gradient(135deg, #ffa8a8, #b197fc);
+  box-shadow: 0 0 0 2px #fff, 0 2px 6px -2px rgba(18, 58, 143, 0.4);
+}
+/* halaman portofolio mini: bagian karya seperti kumpulan foto */
+.vpage i.hi {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(160deg, #93c5fd 0 33%, transparent 33%) 0 0 / 100% 100%,
+    linear-gradient(160deg, #c4b5fd, #7c3aed);
+}
+.vpage i.hi::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 78% 28%, rgba(255, 255, 255, 0.85) 0 7%, transparent 8%),
+    linear-gradient(150deg, transparent 58%, rgba(255, 255, 255, 0.45) 59% 72%, transparent 73%);
 }
