@@ -7187,7 +7187,7 @@ setApply();
 /* ===== Efek kursor dan scroll =====
    Kursor (hanya mouse/trackpad): tombol ketarik halus ke arah kursor (magnet) dan riak kecil saat klik.
    Kursor asli tetap dipakai.
-   Scroll: isi yang belum kelihatan muncul halus saat digulir, plus garis progres tipis di atas layar.
+   Scroll: isi yang belum kelihatan muncul dengan zoom lembut saat digulir, plus garis progres tipis di atas layar.
    Mati otomatis di mode Animasi Tenang, perangkat lemah (.lite), prefers-reduced-motion, atau lewat Pengaturan. */
 SETD.fx = 1;
 const fxOn = () => setG().fx && !document.documentElement.classList.contains('lite') && !RM.matches;

@@ -13345,12 +13345,13 @@ html.dark .curRip {
   opacity: 1;
 }
 /* isi muncul bertahap saat digulir */
+/* zoom lembut: membesar dari kecil sambil muncul */
 .rv {
   opacity: 0;
-  transform: translateY(18px) scale(0.985);
+  transform: scale(0.85);
   transition:
     opacity 0.5s ease,
-    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .rv.in {
   opacity: 1;
@@ -13376,4 +13377,54 @@ html.lite .rv {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ===== Sorotan menu saat diarahkan kursor: geser + warna ===== */
+.sit,
+.mi {
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    translate 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.2s,
+    color 0.2s;
+}
+.sit .sic,
+.mi .ic {
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
+}
+@media (hover: hover) {
+  .sit:not(.on):hover {
+    transform: translateX(6px);
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #fff;
+  }
+  .sit:not(.on):hover .sic {
+    background: linear-gradient(135deg, #5aa3f0, #a78bfa) !important;
+    color: #fff;
+    box-shadow: 0 6px 14px -6px rgba(124, 58, 237, 0.7);
+  }
+  .sit.lk:not(.on):hover {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  :where(html.srail) .sit:not(.on):hover {
+    transform: translateX(3px);
+  }
+  /* laci menu di HP/tablet ikut gaya yang sama */
+  .mi:not(.lk):hover {
+    transform: translateX(6px);
+  }
+  .mi:not(.lk):hover .ic {
+    background: linear-gradient(135deg, #5aa3f0, #a78bfa) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 14px -6px rgba(124, 58, 237, 0.7);
+  }
+  html.dark .sit:not(.on):hover {
+    background: rgba(156, 195, 255, 0.14) !important;
+  }
+}
+.sit:active {
+  transform: translateX(6px) scale(0.97);
 }
