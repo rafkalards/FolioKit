@@ -7194,7 +7194,8 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
 {
   const FINE = matchMedia('(pointer: fine)').matches;
   /* magnet: tombol ketarik halus ke arah kursor (pakai properti translate, jadi tidak bentrok dengan transform lain) */
-  const MAG = '.btn, .chip, .ib, .qk, .stog, .muop, .setseg button, .settabs button, .mnd button, .tmenu, .aib, .avb, .lwt';
+  // semua yang bisa diklik ikut; makin lebar elemennya makin kecil geserannya
+  const MAG = 'button, a[href], [role="button"], [onclick], label, summary, .knote';
   let magEl = null;
   const magOff = () => {
     if (!magEl) return;
@@ -7212,10 +7213,11 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
         if (t !== magEl) magOff();
         if (!t || t.disabled) return;
         const r = t.getBoundingClientRect();
-        if (r.width > 340 || r.height > 120) return; // tombol besar/kartu tidak ikut bergeser
+        if (r.width > 760 || r.height > 260) return; // area klik raksasa tidak digeser
         magEl = t;
         t.classList.add('mag');
-        const max = Math.min(10, Math.max(4, r.width / 14));
+        const big = Math.max(r.width, r.height * 2);
+        const max = big > 400 ? 2 : big > 180 ? 4 : Math.min(10, Math.max(4, r.width / 12));
         const dx = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width / 2)) * 0.3));
         const dy = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height / 2)) * 0.3));
         t.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
