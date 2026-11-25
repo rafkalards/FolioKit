@@ -88,7 +88,7 @@ Di tiap materi ada gambaran singkat, contoh, kartu bolak-balik, video, dan satu 
 - Beranda yang nunjukin langkah berikutnya, kira-kira berapa menit lagi, dan target kecil harian kalau mau.
 - Progres kesimpan otomatis di browser dan bisa dicadangkan ke file buat dipindah ke HP atau laptop lain.
 - Bisa dibuka tanpa internet setelah sekali dibuka online, dan bisa dipasang kayak aplikasi.
-- Video diputar langsung di dalam web.
+- Video diputar langsung di dalam course.
 - Bisa dipakai pakai keyboard (panah kiri dan kanan buat ganti slide, Esc buat nutup jendela).
 
 ## Tampilan

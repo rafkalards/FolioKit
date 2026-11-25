@@ -472,7 +472,7 @@ const VIDS = () => M.filter((m) => m.v).map((m, i) => [m.v[0], m.v[1], M.indexOf
 function srcSheet() {
   const li = (t, u, s) =>
     `<a class="srci" href="${u}" target="_blank" rel="noopener"><span>${t}</span>${s ? `<small>${s}</small>` : ''}</a>`;
-  return `<p class="small" style="margin-bottom:12px">Materi di web ini disusun dari rujukan berikut. Artikel kebuka di tab baru, videonya langsung diputar di sini.</p>
+  return `<p class="small" style="margin-bottom:12px">Materi di course ini disusun dari rujukan berikut. Artikel kebuka di tab baru, videonya langsung diputar di sini.</p>
 <p class="srch">Artikel dan jurnal</p>${REFS.map((r) => li(r[0], r[1], r[1].split('/')[2])).join('')}
 <p class="srch">Video materi</p>${VIDS()
     .map(
@@ -993,7 +993,7 @@ SCR.home = () => {
  <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ', ' : ''}${durN ? `sekitar ${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
  <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div></div><div class="hring" title="Progres belajar ${p}%"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bgc" cx="18" cy="18" r="15"/><circle class="fgc" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="${(94.25 * (1 - p / 100)).toFixed(2)}"/></svg><b>${p}%</b><small>progres</small></div></div>
  <div class="hgrid">
- <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? `, sekitar ${sisa} menit lagi` : ', semua udah beres'}</span></div><div class="tln">${st
+ <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji course ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? `, sekitar ${sisa} menit lagi` : ', semua udah beres'}</span></div><div class="tln">${st
    .map((s, k) => {
      const lk = lock(s[2]),
        dn = s[3] >= 1;
@@ -1849,7 +1849,7 @@ function sheet(k) {
     prev: [
       'Mode pratinjau',
       () =>
-        `<p>${S.prev ? 'Mode pratinjau sedang aktif. Semua bagian terbuka tanpa harus menyelesaikan materi dulu.' : 'Mode ini membuka semua bagian sekaligus, cocok untuk dosen atau penguji yang ingin melihat isi web dengan cepat.'}</p><p class="small" style="margin-top:8px">Progres belajar tidak berubah. Kunci akan kembali seperti biasa setelah mode ini dimatikan.</p><div class="row" style="margin-top:16px;justify-content:flex-end">${S.prev ? `<button class="btn g" onclick="closeSh()">Tutup</button><button class="btn" onclick="prevOff()">Matikan pratinjau</button>` : `<button class="btn g" onclick="closeSh()">Batal</button><button class="btn" onclick="prevOn(1)">${I('eye')} Buka semua bagian</button>`}</div>`,
+        `<p>${S.prev ? 'Mode pratinjau sedang aktif. Semua bagian terbuka tanpa harus menyelesaikan materi dulu.' : 'Mode ini membuka semua bagian sekaligus, cocok untuk dosen atau penguji yang ingin melihat isi course dengan cepat.'}</p><p class="small" style="margin-top:8px">Progres belajar tidak berubah. Kunci akan kembali seperti biasa setelah mode ini dimatikan.</p><div class="row" style="margin-top:16px;justify-content:flex-end">${S.prev ? `<button class="btn g" onclick="closeSh()">Tutup</button><button class="btn" onclick="prevOff()">Matikan pratinjau</button>` : `<button class="btn g" onclick="closeSh()">Batal</button><button class="btn" onclick="prevOn(1)">${I('eye')} Buka semua bagian</button>`}</div>`,
     ],
     badges: [
       'Lencana',
@@ -2182,7 +2182,7 @@ function prevOff() {
 }
 /* ===== kuesioner uji coba ===== */
 const SVQ = [
-  'Tampilan web ini menarik dan nyaman dilihat.',
+  'Tampilan course ini menarik dan nyaman dilihat.',
   'Materinya mudah dipahami.',
   'Navigasinya mudah, aku tidak bingung harus ke mana.',
   'Aktivitas dan contoh membantu aku paham.',
@@ -2428,10 +2428,12 @@ function ownCSV() {
 }
 
 /* ===== video intro ===== */
-const IVSRC = ['/_blob/f892dab1f05451024153491f107da5ee', 'intro.mp4'];
-let IVPOS = '/_blob/f586f24001aa1d7461c4a9d4baaec211';
-/* Di hosting sendiri (misalnya GitHub Pages) alamat /_blob tidak ada, jadi gambar sampul video pakai file lokal. */
+/* Alamat /_blob hanya ada di claude.ai. Di hosting sendiri (GitHub Pages) langsung pakai file lokal, jadi tidak ada permintaan yang gagal. */
+const ONCLAUDE = /claude|anthropic/i.test(location.hostname);
+const IVSRC = ONCLAUDE ? ['/_blob/f892dab1f05451024153491f107da5ee', 'intro.mp4'] : ['intro.mp4'];
+let IVPOS = ONCLAUDE ? '/_blob/f586f24001aa1d7461c4a9d4baaec211' : 'intro-poster.jpg';
 (function () {
+  if (!ONCLAUDE) return;
   const im = new Image();
   im.onerror = () => {
     IVPOS = 'intro-poster.jpg';
@@ -4207,8 +4209,8 @@ const FAQ = [
     'Materi dibuka berurutan biar belajarnya runtut. Selesaikan materi sebelumnya sampai slide terakhir, lalu klik **Sudah paham**. Aktivitas kebuka setelah 8 materi selesai, praktik setelah semua aktivitas, dan seterusnya.',
   ],
   [
-    'Cara pakai web ini gimana?',
-    ['cara pakai', 'cara menggunakan', 'panduan', 'bingung pakai', 'navigasi', 'pakai web', 'tur'],
+    'Cara pakai course ini gimana?',
+    ['cara pakai', 'cara menggunakan', 'panduan', 'bingung pakai', 'navigasi', 'pakai web', 'pakai course', 'tur'],
     'Ikuti tombol utama di Beranda, nanti kamu diarahkan berurutan: tes awal, 8 materi, peta konsep, 7 aktivitas, praktik di Canva, evaluasi, refleksi, lalu rapor. Mau lihat tur panduannya lagi? Buka menu kanan atas, pilih **Ulangi tur panduan**.',
   ],
   [
@@ -4239,7 +4241,7 @@ const FAQ = [
   [
     'Praktiknya dikerjakan di mana?',
     ['praktik', 'canva langsung', 'mengerjakan', 'simulasi'],
-    'Praktiknya langsung di Canva: buka Canva di tab lain, kerjakan 4 langkahnya, lalu centang di web ini. Ada juga mode **Coba simulasi** buat latihan dulu sebelum ke Canva.',
+    'Praktiknya langsung di Canva: buka Canva di tab lain, kerjakan 4 langkahnya, lalu centang di course ini. Ada juga mode **Coba simulasi** buat latihan dulu sebelum ke Canva.',
   ],
   [
     'Contoh portofolio jadi ada?',
@@ -5133,9 +5135,9 @@ function bakLoad(inp) {
       try {
         o = JSON.parse(txt);
       } catch (e) {
-        return bad('File tidak bisa dibaca. Pilih file cadangan .json dari web ini.');
+        return bad('File tidak bisa dibaca. Pilih file cadangan .json dari course ini.');
       }
-      if (!o || o.app != 'portofolio-canva' || !o.s || typeof o.s != 'object') return bad('Ini bukan file cadangan dari web ini.');
+      if (!o || o.app != 'portofolio-canva' || !o.s || typeof o.s != 'object') return bad('Ini bukan file cadangan dari course ini.');
       const d = def(),
         n = {};
       Object.keys(d).forEach((k) => {

@@ -13227,3 +13227,40 @@ html.dark #side {
 html.dark .top {
   background: linear-gradient(90deg, rgba(44, 63, 110, 0.96), rgba(36, 52, 92, 0.96)) !important;
 }
+
+/* ===== Perapian akhir: tidak ada teks yang kepotong ===== */
+/* catatan peta konsep: tampilkan poinnya utuh */
+.knote span {
+  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+/* petunjuk "Lupa materinya?" di HP: cukup judul + tombol, tidak ada teks terpotong */
+@media (max-width: 480px) {
+  .ahint small {
+    display: none;
+  }
+}
+/* HP kecil: header lebih rapat supaya judul halaman muat */
+@media (max-width: 380px) {
+  .top {
+    gap: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  /* progres tetap kelihatan di Beranda dan sidebar menu */
+  .top .ring {
+    display: none;
+  }
+  .pvtag span {
+    display: none;
+  }
+}
+/* tablet berdiri: pintasan mengisi satu baris penuh */
+@media (min-width: 600px) and (max-width: 899px) {
+  .hqk .qk {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
