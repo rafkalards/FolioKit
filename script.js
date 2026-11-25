@@ -472,12 +472,12 @@ const VIDS = () => M.filter((m) => m.v).map((m, i) => [m.v[0], m.v[1], M.indexOf
 function srcSheet() {
   const li = (t, u, s) =>
     `<a class="srci" href="${u}" target="_blank" rel="noopener"><span>${t}</span>${s ? `<small>${s}</small>` : ''}</a>`;
-  return `<p class="small" style="margin-bottom:12px">Materi di web ini disusun dari rujukan berikut. Artikel dibuka di tab baru, video diputar langsung di sini.</p>
+  return `<p class="small" style="margin-bottom:12px">Materi di web ini disusun dari rujukan berikut. Artikel kebuka di tab baru, videonya langsung diputar di sini.</p>
 <p class="srch">Artikel dan jurnal</p>${REFS.map((r) => li(r[0], r[1], r[1].split('/')[2])).join('')}
 <p class="srch">Video materi</p>${VIDS()
     .map(
       (v) =>
-        `<button class="srci" onclick="vPick('${v[0]}','${esc(v[1]).replace(/'/g, '&#39;')}')"><span>${I('play')} ${esc(v[1])}</span><small>Dipakai di Materi ${v[2]} · putar di sini</small></button>`,
+        `<button class="srci" onclick="vPick('${v[0]}','${esc(v[1]).replace(/'/g, '&#39;')}')"><span>${I('play')} ${esc(v[1])}</span><small>Dipakai di Materi ${v[2]}</small></button>`,
     )
     .join('')}
 <p class="srch">Model pengembangan</p><div class="srci"><span>Hannafin, M. J., &amp; Peck, K. L. (1988). <i>The Design, Development, and Evaluation of Instructional Software</i>. New York: Macmillan.</span></div>`;
@@ -954,10 +954,10 @@ function tgH() {
   if (t) {
     const ok = (t.k == 'm' ? mN() : aN()) > t.b;
     const lbl = t.k == 'm' ? 'Selesaikan 1 materi' : 'Selesaikan 1 aktivitas';
-    return `<div class="tgb ${ok ? 'ok' : ''}"><span class="tgi">${I(ok ? 'chk' : 'target')}</span><div class="tgt"><small>Target hari ini</small><b>${lbl}</b><span>${ok ? 'Tercapai. Sisanya santai aja.' : 'Belum tercapai. Pelan-pelan aja.'}</span></div><button class="link" onclick="tgSet(null)">${ok ? 'Tutup' : 'Batal'}</button></div>`;
+    return `<div class="tgb ${ok ? 'ok' : ''}"><span class="tgi">${I(ok ? 'chk' : 'target')}</span><div class="tgt"><small>Target hari ini</small><b>${lbl}</b><span>${ok ? 'Udah kelar. Santai dulu juga boleh.' : 'Belum kelar, pelan-pelan aja.'}</span></div><button class="link" onclick="tgSet(null)">${ok ? 'Tutup' : 'Batal'}</button></div>`;
   }
   if (!bisaM && !bisaA) return '';
-  return `<div class="tgb"><span class="tgi">${I('target')}</span><div class="tgt"><small>Target kecil hari ini</small><span>Opsional. Pilih satu kalau mau.</span></div><div class="tgc">${bisaM ? `<button class="chip" onclick="tgSet('m')">1 materi</button>` : ''}${bisaA ? `<button class="chip" onclick="tgSet('a')">1 aktivitas</button>` : ''}</div></div>`;
+  return `<div class="tgb"><span class="tgi">${I('target')}</span><div class="tgt"><small>Target kecil hari ini</small><span>Nggak wajib, pilih kalau mau.</span></div><div class="tgc">${bisaM ? `<button class="chip" onclick="tgSet('m')">1 materi</button>` : ''}${bisaA ? `<button class="chip" onclick="tgSet('a')">1 aktivitas</button>` : ''}</div></div>`;
 }
 SCR.home = () => {
   const n = nxt(),
@@ -986,10 +986,10 @@ SCR.home = () => {
   ];
   const ci = { materi: 0, praktik: 2, evaluasi: 3, refleksi: 4 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
   return `<div class="home home2"><div class="card hello"><div class="htop">${buildH()}${skyH()}</div><div class="hmid stagger"><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
- <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ' · ' : ''}${durN ? `±${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
+ <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ', ' : ''}${durN ? `sekitar ${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
  <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div></div><div class="hring" title="Progres belajar ${p}%"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bgc" cx="18" cy="18" r="15"/><circle class="fgc" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="${(94.25 * (1 - p / 100)).toFixed(2)}"/></svg><b>${p}%</b><small>progres</small></div></div>
  <div class="hgrid">
- <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? ` · sisa ±${sisa} menit` : ' · semua beres'}</span></div><div class="tln">${st
+ <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? `, sekitar ${sisa} menit lagi` : ', semua udah beres'}</span></div><div class="tln">${st
    .map((s, k) => {
      const lk = lock(s[2]),
        dn = s[3] >= 1;
@@ -997,10 +997,10 @@ SCR.home = () => {
      // supaya tidak ada teks yang terpotong. Alasan lengkap tetap muncul saat langkah terkunci diklik.
      const firstLock = lk && st.findIndex((x) => lock(x[2])) == k;
      const SINGKAT = {
-       akt: `Terbuka setelah ${8 - mN()} materi lagi`,
-       praktik: 'Terbuka setelah semua aktivitas',
-       evaluasi: 'Terbuka setelah praktik',
-       refleksi: 'Terbuka setelah evaluasi',
+       akt: `Kebuka setelah ${8 - mN()} materi lagi`,
+       praktik: 'Kebuka setelah semua aktivitas beres',
+       evaluasi: 'Kebuka setelah praktik beres',
+       refleksi: 'Kebuka setelah evaluasi',
      };
      const sub = lk ? (firstLock ? SINGKAT[s[2]] || '' : '') : s[4];
      return `<button class="stg ${dn ? 'done' : ''} ${lk ? 'lock' : ''} ${k == ci ? 'cur' : ''}" onclick="${s[2] == 'materi' ? "go('materi',firstM())" : `go('${s[2]}')`}"${lk ? ` title="${esc(lk)}"` : ''}><span class="n">${lk ? I('lock') : dn ? I('chk') : k + 1}</span><span class="t"><b>${s[0]}</b>${sub ? `<small>${sub}</small>` : ''}</span>${k == ci && !dn ? `<span class="mini"><i style="width:${Math.round(s[3] * 100)}%"></i></span>` : ''}</button>`;
@@ -1233,7 +1233,7 @@ function vChk(img) {
   if (img.naturalWidth > 120) return;
   const w = img.closest('.emb');
   if (!w) return;
-  w.innerHTML = `<div class="vph vgone"><span class="pl">${I('info')}</span><b>${esc(w.dataset.t || 'Video')}</b><small>Video ini sudah tidak tersedia.</small></div>`;
+  w.innerHTML = `<div class="vph vgone"><span class="pl">${I('info')}</span><b>${esc(w.dataset.t || 'Video')}</b><small>Videonya udah nggak ada di YouTube.</small></div>`;
 }
 function vLoad(u) {
   const w = document.getElementById(u);
@@ -1351,7 +1351,7 @@ function doneM(i) {
 SCR.akt = () => {
   const n = nxt(),
     pl = lock('praktik');
-  return `<div class="ah2"><div><h2>Aktivitas</h2><p>Boleh diulang sampai benar.</p></div><span class="tag">${aN()} dari 7 selesai${aN() < 7 ? ` · sisa ±${(7 - aN()) * estM('a1')} menit` : ''}</span></div>
+  return `<div class="ah2"><div><h2>Aktivitas</h2><p>Boleh diulang sampai benar.</p></div><span class="tag">${aN()} dari 7 selesai${aN() < 7 ? `, sekitar ${(7 - aN()) * estM('a1')} menit lagi` : ''}</span></div>
  <div class="agrid stagger">${AK.map((a, j) => `<button class="at ${S.a[a.k] ? 'ok' : ''} ${n.r == a.k ? 'nx glowb' : ''}" onclick="go('${a.k}')"><span class="num">${S.a[a.k] ? '✓ Selesai' : 'Aktivitas ' + (j + 1)}</span><b>${a.t}</b><span class="ad">${AD[j]}</span><small>${a.m}<span class="ago">${S.a[a.k] ? 'Ulangi' : 'Mulai'} ${I('arr')}</span></small></button>`).join('')}<button class="at prk ${pl ? 'lkd' : ''}" onclick="go('praktik')"><span class="num">${pl ? 'Terkunci' : 'Terbuka'}</span><b>Lanjut ke praktik</b><small>${pl ? 'Selesaikan semua aktivitas dulu' : 'Saatnya bikin di Canva'}</small></button></div>`;
 };
 function shell(k, q, body) {
@@ -5721,10 +5721,10 @@ document.querySelectorAll('[data-type]:not([data-typed])').forEach(typeIt);
       minDur = seen ? 500 : 1700,
       maxDur = 6000;
     const PESAN = [
-      [0, 'Menyiapkan materi…'],
-      [35, 'Memuat tampilan…'],
-      [65, 'Menata halaman…'],
-      [90, 'Hampir siap…'],
+      [0, 'Nyiapin materi…'],
+      [35, 'Ngerapihin tampilan…'],
+      [65, 'Dikit lagi…'],
+      [90, 'Hampir kelar…'],
     ];
     let shown = 0;
     const step = (now) => {
@@ -5736,7 +5736,7 @@ document.querySelectorAll('[data-type]:not([data-typed])').forEach(typeIt);
       const p = Math.max(0, Math.min(100, Math.round(shown)));
       if (fill) fill.style.width = p + '%';
       if (pct) pct.textContent = p + '%';
-      if (txt) txt.textContent = p >= 100 ? 'Siap!' : (PESAN.filter((m) => p >= m[0]).pop() || PESAN[0])[1];
+      if (txt) txt.textContent = p >= 100 ? 'Udah siap' : (PESAN.filter((m) => p >= m[0]).pop() || PESAN[0])[1];
       if (p >= 100) return setTimeout(hide, seen ? 120 : 320);
       requestAnimationFrame(step);
     };
@@ -6198,4 +6198,4 @@ document.addEventListener(
   true,
 );
 window.addEventListener('offline', () => toast('Kamu lagi offline. Materi tetap bisa dibuka.', 'info'));
-window.addEventListener('online', () => toast('Kembali online.', 'chk'));
+window.addEventListener('online', () => toast('Internet udah nyambung lagi.', 'chk'));

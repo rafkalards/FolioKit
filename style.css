@@ -11011,3 +11011,130 @@ canvas#cf.on {
     flex: none;
   }
 }
+
+/* ===== Peta konsep gaya papan catatan ===== */
+.kboard {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 16px 16px;
+  padding: 18px 14px;
+  border-radius: 18px;
+  background-color: #eef5ff;
+  background-image: radial-gradient(rgba(45, 111, 214, 0.14) 1.2px, transparent 1.4px);
+  background-size: 18px 18px;
+  box-shadow: inset 0 0 0 1.5px #d6e4f7;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+  overflow: auto;
+}
+.kboard .kstr {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.kboard .kstr path {
+  fill: none;
+  stroke: #e35d6a;
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.7;
+}
+.kboard .kstr.m {
+  display: none;
+}
+.knote {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 190px;
+  min-height: 112px;
+  padding: 18px 12px 12px;
+  border-radius: 6px 6px 14px 6px;
+  background: var(--nc, #fff);
+  color: #1e3a6e;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transform: rotate(var(--rot, 0deg));
+  box-shadow:
+    0 1px 0 rgba(18, 58, 143, 0.06),
+    0 10px 18px -12px rgba(18, 58, 143, 0.45);
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.22s;
+}
+.knote:hover,
+.knote:focus-visible {
+  transform: rotate(0deg) translateY(-3px) scale(1.03);
+  box-shadow: 0 16px 26px -14px rgba(18, 58, 143, 0.55);
+}
+.knote.on {
+  transform: rotate(0deg) scale(1.05);
+  box-shadow:
+    0 0 0 2.5px var(--p),
+    0 16px 26px -14px rgba(18, 58, 143, 0.55);
+}
+.knote .kpin {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9aa5, #d64555 70%);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+}
+.knote small {
+  font: 600 11px Inter, sans-serif;
+  color: #53638a;
+  letter-spacing: 0.02em;
+}
+.knote b {
+  font-family: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--pd);
+}
+.knote span {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #36507f;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .kboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    gap: 16px 12px;
+    margin: 4px 12px 12px;
+  }
+  .kboard .kstr.d {
+    display: none;
+  }
+  .kboard .kstr.m {
+    display: block;
+  }
+  .knote {
+    min-height: 104px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .knote {
+    transition: none;
+  }
+}

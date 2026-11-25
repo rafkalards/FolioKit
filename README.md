@@ -1,47 +1,22 @@
-<div align="center">
-
 # FolioKit
 
-### Pembelajaran Portofolio Digital Menggunakan Canva
+Media belajar bikin portofolio digital pakai Canva, buat teman-teman fresh graduate yang baru mau mulai cari kerja.
 
-**Multimedia pembelajaran interaktif berbasis web untuk fresh graduate yang mau bikin portofolio digital pertamanya di Canva.**
+Buka di sini: https://rafkalards.github.io/FolioKit/
 
-<a href="https://rafkalards.github.io/FolioKit/"><img src="https://img.shields.io/badge/Buka%20Web-Live%20Demo-2d6fd6?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Buka web"></a>
-&nbsp;
-<img src="https://img.shields.io/badge/Dibuat%20dengan-HTML%20%7C%20CSS%20%7C%20JS-7c3aed?style=for-the-badge" alt="HTML CSS JavaScript">
-&nbsp;
-<img src="https://img.shields.io/badge/Tanpa%20install-langsung%20pakai-22c55e?style=for-the-badge" alt="Tanpa install">
-
-🔗 **Akses langsung:** https://rafkalards.github.io/FolioKit/
-
-<img src="docs/preview/welcome.png" alt="Halaman awal" width="900">
-
-</div>
-
----
-
-## Daftar isi
-
-- [Tentang](#tentang)
-- [Tim pengembang](#tim-pengembang)
-- [Alur belajar](#alur-belajar)
-- [Isi pembelajaran](#isi-pembelajaran)
-- [Fitur pendukung](#fitur-pendukung)
-- [Galeri tampilan](#galeri-tampilan)
-- [Teknologi](#teknologi)
-- [Struktur folder](#struktur-folder)
-- [Cara menjalankan](#cara-menjalankan)
-- [Catatan](#catatan)
+<img src="docs/preview/welcome.png" alt="Halaman awal FolioKit" width="900">
 
 ## Tentang
 
-Web ini adalah media belajar mandiri yang membimbing pengguna dari **"portofolio itu apa?"** sampai **punya portofolio jadi di Canva** yang siap dipakai melamar kerja. Prinsipnya: *sedikit baca, banyak coba*. Materi disajikan dalam slide pendek bergaya cerita, diselingi animasi, contoh, dan kuis singkat, lalu ditutup dengan latihan, praktik langsung, evaluasi, dan sertifikat.
+Banyak fresh graduate punya karya, tapi bingung cara menyusunnya jadi portofolio yang enak dilihat perekrut. FolioKit kami bikin buat bantu itu, mulai dari kenalan sama portofolio sampai punya portofolio jadi di Canva.
 
-Dikembangkan untuk mata kuliah **Pengembangan Multimedia Pembelajaran**, Program Studi Teknologi Pendidikan, Universitas Negeri Jakarta, dengan model pengembangan **Hannafin & Peck**.
+Materinya dibagi jadi slide-slide pendek, ada contoh dan kuis kecil di tiap materi. Setelah itu ada latihan, praktik langsung di Canva, evaluasi, dan sertifikat buat yang lulus.
 
-## Tim pengembang
+FolioKit dibuat untuk tugas mata kuliah Pengembangan Multimedia Pembelajaran, Prodi Teknologi Pendidikan, Universitas Negeri Jakarta, pakai model pengembangan Hannafin dan Peck.
 
-**Kelompok 1, Teknologi Pendidikan A, Universitas Negeri Jakarta**
+## Tim
+
+Kelompok 1, Teknologi Pendidikan A, Universitas Negeri Jakarta
 
 | Nama | Peran |
 | --- | --- |
@@ -51,85 +26,78 @@ Dikembangkan untuk mata kuliah **Pengembangan Multimedia Pembelajaran**, Program
 
 ## Alur belajar
 
-Setiap tahap terbuka setelah tahap sebelumnya selesai, jadi pengguna belajar berurutan.
+Tiap tahap baru kebuka kalau tahap sebelumnya udah selesai, jadi belajarnya urut.
 
 ```
-Intro → Tes awal → 8 Materi → Peta konsep → 7 Aktivitas → Praktik di Canva → Evaluasi → Refleksi → Rapor & Sertifikat
+Intro → Tes awal → 8 Materi → Peta konsep → 7 Aktivitas → Praktik di Canva → Evaluasi → Refleksi → Rapor dan sertifikat
 ```
 
-| Tahap | Isi |
+| Tahap | Isinya |
 | --- | --- |
-| 🎬 **Intro** | Video pembuka 53 detik tentang pentingnya portofolio. |
-| 🏁 **Tes awal** | 8 soal untuk mengukur pemahaman awal. Nilainya dibandingkan dengan evaluasi akhir. |
-| 📖 **Materi** | 8 topik, masing-masing bisa dibaca dalam mode **Cerita** (slide) atau **Ringkasan**. |
-| 🗺️ **Peta konsep** | Rangkuman visual semua materi, tiap cabang bisa diklik. |
-| ✅ **Aktivitas** | 7 latihan interaktif, boleh diulang sampai benar. |
-| 💻 **Praktik** | 4 langkah membuat portofolio sungguhan di Canva, plus mode simulasi. |
-| 🚩 **Evaluasi** | 8 soal akhir. |
-| ✍️ **Refleksi** | Menilai diri sendiri setelah belajar. |
-| ⭐ **Rapor** | Ringkasan progres, kenaikan nilai, lencana, dan sertifikat. |
+| Intro | Video pembuka 53 detik. |
+| Tes awal | 8 soal buat lihat pemahaman awal. Nilainya nanti dibandingin sama evaluasi akhir. |
+| Materi | 8 topik. Bisa dibaca model slide (Cerita) atau model ringkasan. |
+| Peta konsep | Rangkuman semua materi dalam satu gambar. |
+| Aktivitas | 7 latihan, boleh diulang sampai benar. |
+| Praktik | 4 langkah bikin portofolio beneran di Canva, ada juga simulasinya. |
+| Evaluasi | 8 soal akhir. |
+| Refleksi | Menilai portofolio sendiri. |
+| Rapor | Ringkasan progres, kenaikan nilai, lencana, dan sertifikat. |
 
-## Isi pembelajaran
+## Materi
 
-### 8 Materi
-
-| No | Materi | Yang dipelajari |
+| No | Materi | Isinya |
 | --- | --- | --- |
-| 1 | Konsep Portofolio Digital | Apa itu portofolio digital, dan kenapa penting buat cari kerja pertama. |
+| 1 | Konsep Portofolio Digital | Apa itu portofolio digital dan kenapa penting buat cari kerja pertama. |
 | 2 | Struktur Portofolio Digital | Lima bagian yang hampir selalu ada di portofolio yang enak dibaca. |
-| 3 | Menentukan Isi Portofolio | Memilih karya yang paling nyambung dengan pekerjaan yang diincar. |
+| 3 | Menentukan Isi Portofolio | Milih karya yang paling nyambung sama kerjaan yang diincar. |
 | 4 | Mengenal Canva | Tampilan Canva dan fitur dasar yang bakal sering dipakai. |
-| 5 | Prinsip Dasar Desain | Empat hal yang bikin portofolio terlihat rapi tanpa harus jago desain. |
+| 5 | Prinsip Dasar Desain | Empat hal yang bikin portofolio kelihatan rapi tanpa harus jago desain. |
 | 6 | Membuat Portofolio dengan Canva | Urutan kerja dari template kosong sampai portofolio siap diperiksa. |
 | 7 | Publikasi Portofolio | Cek ulang, simpan, lalu bagikan ke orang yang tepat. |
-| 8 | Evaluasi dan Perbaikan | Cara menilai portofolio sendiri, lalu memperbaikinya satu per satu. |
+| 8 | Evaluasi dan Perbaikan | Cara menilai portofolio sendiri lalu memperbaikinya satu per satu. |
 
-Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**, **video**, dan **cek cepat**.
+Di tiap materi ada gambaran singkat, contoh, kartu bolak-balik, video, dan satu soal cek cepat.
 
-### 7 Aktivitas
+## Aktivitas
 
-| No | Aktivitas | Topik |
-| --- | --- | --- |
-| 1 | Fungsi Portofolio | Konsep |
-| 2 | Susun Strukturnya | Struktur |
-| 3 | Pilih Karya yang Pas | Studi kasus |
-| 4 | Mana yang Lebih Enak Dibaca? | Prinsip desain |
-| 5 | Cocokkan Istilah | Istilah kunci |
-| 6 | Benar atau Salah | Salah kaprah |
-| 7 | Urutkan Langkahnya | Alur kerja |
+1. Fungsi Portofolio
+2. Susun Strukturnya
+3. Pilih Karya yang Pas
+4. Mana yang Lebih Enak Dibaca?
+5. Cocokkan Istilah
+6. Benar atau Salah
+7. Urutkan Langkahnya
 
-### 4 Langkah praktik di Canva
+## Praktik di Canva
 
-1. **Pilih template**: mulai dari kerangka yang sudah rapi.
-2. **Isi data dirimu**: ganti teks contoh dengan datamu sendiri.
-3. **Masukkan karya**: bagian yang paling dilihat perekrut.
-4. **Rapikan tampilan**: maksimal dua jenis huruf, satu warna utama, jarak yang konsisten.
+1. Pilih template yang udah rapi.
+2. Ganti teks contoh dengan data diri sendiri.
+3. Masukkan karya, bagian yang paling dilihat perekrut.
+4. Rapikan tampilan: paling banyak dua jenis huruf, satu warna utama, jarak yang konsisten.
 
-## Fitur pendukung
+## Yang ada di dalamnya
 
-- 📘 **Contoh portofolio** berbentuk buku 8 halaman, ada **versi benar** dan **versi kurang tepat** lengkap dengan penjelasannya.
-- 💬 **Kak Folio**, asisten tanya jawab seputar portofolio dan Canva (51 jawaban bawaan, bisa dipakai offline).
-- 🏅 **Sertifikat** penyelesaian yang bisa diunduh sebagai PNG (nilai evaluasi minimal 70).
-- 🎖️ **8 lencana** sebagai penghargaan pencapaian.
-- 🎨 **Galeri gaya template** Canva.
-- 🧭 **Tur panduan** di setiap halaman untuk pengguna baru.
-- 🔍 **Pencarian menu** dan halaman **sumber materi**.
-- 📴 **Bisa dibuka tanpa internet** setelah sekali dibuka online, dan bisa di-install sebagai aplikasi di HP atau laptop.
-- 💾 **Progres tersimpan otomatis** di browser, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
-- 🧩 **Menu di kiri seperti LMS**: di laptop dan tablet ada sidebar kiri yang bisa dibuka tutup (lebar atau ikon saja), di HP menu geser dari kiri.
-- 📱 **Responsif**: satu layar tanpa scroll, menyesuaikan HP, tablet, dan laptop.
-- 🏠 **Beranda ringkas**: perkiraan durasi tiap langkah, sisa waktu belajar, dan target kecil hari ini yang opsional.
-- 🎬 **Video diputar langsung di dalam web**, tanpa pindah tab.
-- ✨ **Efek 3D ringan**: kartu portofolio 3D di halaman awal, logo intro berputar, kartu miring mengikuti kursor, dan garis loading antar halaman. Otomatis dimatikan di perangkat lemah atau kalau animasi dikurangi.
-- ⌨️ **Bisa dipakai dengan keyboard** (panah kiri/kanan untuk ganti slide, Esc untuk menutup panel).
+- Contoh portofolio berbentuk buku 8 halaman, ada versi yang benar dan versi yang kurang tepat, lengkap dengan penjelasannya.
+- Kak Folio, tempat tanya jawab soal portofolio dan Canva. Jawabannya udah disiapin, jadi tetap jalan tanpa internet.
+- Sertifikat yang bisa diunduh kalau nilai evaluasi minimal 70.
+- 8 lencana buat pencapaian tertentu.
+- Contoh gaya template Canva.
+- Tur singkat di tiap halaman buat pengguna baru.
+- Menu di kiri. Di laptop sidebarnya bisa dilebarin atau diciutin, di HP menunya geser dari kiri.
+- Beranda yang nunjukin langkah berikutnya, kira-kira berapa menit lagi, dan target kecil harian kalau mau.
+- Progres kesimpan otomatis di browser dan bisa dicadangkan ke file buat dipindah ke HP atau laptop lain.
+- Bisa dibuka tanpa internet setelah sekali dibuka online, dan bisa dipasang kayak aplikasi.
+- Video diputar langsung di dalam web.
+- Bisa dipakai pakai keyboard (panah kiri dan kanan buat ganti slide, Esc buat nutup jendela).
 
-## Galeri tampilan
+## Tampilan
 
-| Beranda | Materi (mode Cerita) |
+| Beranda | Materi |
 | --- | --- |
 | <img src="docs/preview/home.png" alt="Beranda"> | <img src="docs/preview/materi.png" alt="Materi"> |
 
-| Peta konsep | Daftar aktivitas |
+| Peta konsep | Aktivitas |
 | --- | --- |
 | <img src="docs/preview/konsep.png" alt="Peta konsep"> | <img src="docs/preview/aktivitas.png" alt="Aktivitas"> |
 
@@ -137,15 +105,15 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 | --- | --- |
 | <img src="docs/preview/aktivitas-contoh.png" alt="Contoh aktivitas"> | <img src="docs/preview/praktik.png" alt="Praktik"> |
 
-| Rapor belajar | Sertifikat |
+| Rapor | Sertifikat |
 | --- | --- |
 | <img src="docs/preview/rapor.png" alt="Rapor"> | <img src="docs/preview/sertifikat.png" alt="Sertifikat"> |
 
-| Contoh portofolio | Tanya Kak Folio |
+| Contoh portofolio | Kak Folio |
 | --- | --- |
 | <img src="docs/preview/contoh-portofolio.png" alt="Contoh portofolio"> | <img src="docs/preview/kak-folio.png" alt="Kak Folio"> |
 
-**Tampilan di HP**
+Di HP:
 
 <p>
   <img src="docs/preview/mobile-home.png" alt="Beranda di HP" width="260">
@@ -153,89 +121,66 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
   <img src="docs/preview/mobile-materi.png" alt="Materi di HP" width="260">
 </p>
 
-## Teknologi
-
-- **HTML, CSS, dan JavaScript murni**: tanpa framework, tanpa proses build.
-- **Poppins dan Inter** (Google Fonts, disimpan lokal di folder `fonts/`).
-- **Three.js** (MIT): ilustrasi 3D halaman awal, hanya bagian yang dipakai (folder `vendor/`).
-- **localStorage**: menyimpan progres belajar di browser.
-- **Service worker + Web App Manifest (PWA)**: bisa dibuka tanpa internet dan di-install seperti aplikasi.
-- **GitHub Pages**: hosting gratis.
-
-## Struktur folder
-
-```
-FolioKit/
-├── index.html          halaman utama
-├── style.css           semua tampilan
-├── script.js           semua logika dan isi materi
-├── intro.mp4           video intro (53 detik)
-├── intro-poster.jpg    gambar sampul video intro
-├── sw.js               mode offline (menyimpan file di browser)
-├── manifest.json       pengaturan install sebagai aplikasi
-├── fonts/              font Poppins dan Inter
-├── icons/              ikon aplikasi
-├── vendor/             Three.js versi ringkas untuk ilustrasi 3D
-├── tests/              tes otomatis (Playwright)
-├── package.json        dependensi untuk tes
-├── CLAUDE.md           catatan proyek untuk Claude Code
-└── docs/preview/       screenshot untuk README
-```
-
-## Cara menjalankan
+## Cara pakai
 
 ### Online
 
-Buka 👉 **https://rafkalards.github.io/FolioKit/**
+Buka https://rafkalards.github.io/FolioKit/ di browser HP atau laptop.
 
-### Offline (tanpa internet)
+### Tanpa internet
 
-1. Buka link di atas **sekali pakai internet**. Semua materi, gambar, dan video intro otomatis tersimpan di browser.
-2. Setelah itu, link yang sama tetap bisa dibuka walaupun tidak ada jaringan, di HP atau laptop dan browser yang sama.
-3. Biar lebih gampang, **install sebagai aplikasi**:
-   - **HP Android (Chrome):** menu ⋮ → **Tambahkan ke layar utama** / **Instal aplikasi**.
-   - **iPhone (Safari):** tombol Bagikan → **Tambahkan ke Layar Utama**.
-   - **Laptop (Chrome/Edge):** klik ikon install di ujung kanan kolom alamat.
+1. Buka link di atas sekali waktu ada internet. Materi, gambar, dan video intro otomatis kesimpan di browser.
+2. Habis itu link yang sama tetap bisa dibuka walaupun lagi nggak ada sinyal, asal di HP atau laptop dan browser yang sama.
+3. Biar lebih gampang, pasang sebagai aplikasi:
+   - Android (Chrome): menu ⋮, lalu Tambahkan ke layar utama atau Instal aplikasi.
+   - iPhone (Safari): tombol Bagikan, lalu Tambahkan ke Layar Utama.
+   - Laptop (Chrome atau Edge): klik ikon pasang di ujung kanan kolom alamat.
 
-Video YouTube di materi, tombol **Buka Canva**, dan rujukan jurnal tetap butuh internet. Saat offline, bagian itu memberi tahu dengan pesan singkat.
+Video YouTube, tombol Buka Canva, dan rujukan jurnal tetap butuh internet. Kalau lagi offline, bagian itu bakal ngasih tahu.
 
 ### Di komputer sendiri
 
-1. Download repo ini (**Code → Download ZIP**) atau clone:
+```bash
+git clone https://github.com/rafkalards/FolioKit.git
+cd FolioKit
+python -m http.server
+```
 
-   ```bash
-   git clone https://github.com/rafkalards/FolioKit.git
-   cd FolioKit
-   ```
+Lalu buka `http://localhost:8000`.
 
-2. Jalankan web server sederhana:
+## Buat yang mau ngedit
 
-   ```bash
-   python -m http.server
-   ```
+FolioKit dibuat pakai HTML, CSS, dan JavaScript biasa, tanpa framework dan tanpa proses build. Font Poppins dan Inter disimpan di folder `fonts/`. Ilustrasi 3D di halaman awal pakai Three.js (lisensi MIT) yang udah dipangkas, ada di folder `vendor/`.
 
-3. Buka `http://localhost:8000` di browser.
+```
+FolioKit/
+├── index.html          kerangka halaman
+├── style.css           semua tampilan
+├── script.js           semua logika dan isi materi
+├── intro.mp4           video intro
+├── intro-poster.jpg    sampul video intro
+├── sw.js               penyimpan file buat mode offline
+├── manifest.json       nama dan ikon aplikasi
+├── fonts/              font Poppins dan Inter
+├── icons/              ikon aplikasi
+├── vendor/             Three.js versi ringkas
+├── tests/              tes otomatis (Playwright)
+├── package.json        bahan buat tes
+├── CLAUDE.md           catatan proyek
+└── docs/preview/       gambar buat README
+```
 
-### Tes otomatis
-
-Butuh Node.js, Playwright (Chromium), dan Python dengan Pillow:
+Tes otomatis butuh Node.js dan Playwright:
 
 ```bash
 npm install
 npx playwright install chromium
-node tests/flow.js hp     # alur pengguna baru di HP sampai sertifikat
-node tests/sweep.js lap   # buka semua layar dan klik semua tombol
+node tests/flow.js hp
+node tests/sweep.js lap
 ```
 
-Daftar lengkap tes ada di [CLAUDE.md](CLAUDE.md).
-
-## Catatan
-
-- Kak Folio menjawab dari daftar jawaban bawaan, jadi tetap jalan tanpa internet.
-- Progres disimpan di browser masing-masing. Pakai menu **cadangkan progres** kalau mau pindah perangkat.
+Daftar lengkap tesnya ada di [CLAUDE.md](CLAUDE.md).
 
 ---
 
-<div align="center">
-Dibuat oleh Kelompok 1 · Teknologi Pendidikan A · Universitas Negeri Jakarta
-</div>
+Kelompok 1, Teknologi Pendidikan A, Universitas Negeri Jakarta
