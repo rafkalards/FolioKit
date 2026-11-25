@@ -10,7 +10,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 ## Aturan tampilan dan isi (wajib dijaga)
 
 - Terasa seperti aplikasi: satu layar tanpa scroll halaman. Isi panjang menggulir di dalam kartunya sendiri.
-- Laptop dan tablet lanskap (lebar 900px ke atas) memakai sidebar kiri `#side`. Di lebar 900–1199px sidebar jadi rel ikon. HP dan tablet berdiri memakai header atas `.top`. Halaman awal (`welcome`) tanpa sidebar.
+- Semua menu ada di kiri seperti LMS. Laptop dan tablet lanskap (lebar 900px ke atas) memakai sidebar kiri `#side` berisi semua menu (Cari, Belajar, Bantuan, Lainnya) dengan tombol buka/tutup `.stog`: lebar ↔ ramping (kelas `html.srail`, diatur `sideMode()`/`sideTog()`, pilihan disimpan di localStorage `pdc_side`). Default lebar di 1200px ke atas, ramping di 900–1199px. HP dan tablet berdiri memakai header atas `.top` dengan tombol ☰ di kiri yang membuka laci menu dari kiri (sheet `menu` dengan kelas `.drawer`). Halaman awal (`welcome`) tanpa sidebar.
 - Palet biru muda (v8). Tidak ada mode gelap.
 - Teks bahasa Indonesia santai dan manusiawi, tanpa kalimat yang tidak perlu.
 - Isi dibuka lewat klik. Aktivitas terkunci sampai semua materi selesai, lalu praktik, evaluasi, dan refleksi berurutan (`lock()`).
@@ -34,7 +34,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
   - Beranda: `estM()` (perkiraan menit), `sisaM()`, `doneN()`, dan target kecil hari ini `tgH()`/`tgSet()` yang disimpan di `S.tg`.
   - Video YouTube **selalu diputar di dalam halaman** (`ytB`, `vLoad`, `vPick` + sheet `vplay`). Jangan tambahkan tombol atau tulisan yang membuka YouTube di tab baru (permintaan pemilik).
   - Efek: `fx()` memberi `.tilt` + `.glow` (kartu miring mengikuti kursor), loading antar halaman (`#ldb` + kelas `.ldsk`) di akhir file, dan ilustrasi 3D halaman awal `w3d()`/`w3dRun()`.
-  - Mode offline ada di paling akhir file: pendaftaran `sw.js` dan pesan "butuh internet" untuk YouTube, Canva, dan tautan luar.
+  - Mode offline ada di paling akhir file: pendaftaran `sw.js` (ditunda sampai halaman tenang) dan pesan "butuh internet" untuk YouTube, Canva, dan tautan luar.
 - `vendor/three-folio.min.js`: Three.js (MIT) berisi bagian yang dipakai `w3dRun()` saja, dimuat hanya di halaman awal lewat http/https. Dibuat dari `vendor/three-folio.entry.js` dengan `npx esbuild vendor/three-folio.entry.js --bundle --minify --format=esm --legal-comments=inline --outfile=vendor/three-folio.min.js` (butuh `npm install three esbuild`). Kalau `w3dRun()` memakai kelas Three.js baru, tambahkan ke file entry lalu buat ulang.
 - `intro.mp4` dan `intro-poster.jpg`: video intro. Alamat `/_blob/...` hanya ada di claude.ai, di hosting lain otomatis memakai file lokal.
 - `sw.js` (service worker) dan `manifest.json`: mode offline dan install sebagai aplikasi (PWA). File disajikan dari simpanan dulu, lalu diperbarui diam-diam saat online.
@@ -44,7 +44,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 
 ## Tempat web ini berjalan
 
-**GitHub** `rafkalards/FolioKit` (branch `main`), dipasang di GitHub Pages: https://rafkalards.github.io/FolioKit/. Ini satu-satunya versi yang dipakai dan dibagikan (artifact claude.ai lama sudah dihapus). Di sini Kak Folio memakai jawaban offline, video YouTube bisa diputar langsung, dan web bisa dibuka tanpa internet setelah sekali dibuka online.
+**GitHub** `rafkalards/FolioKit` (branch `main`), dipasang di GitHub Pages: https://rafkalards.github.io/FolioKit/. Ini satu-satunya versi yang dipakai dan dibagikan (artifact claude.ai lama sudah dihapus). Di sini Kak Folio memakai jawaban offline, video YouTube bisa diputar langsung, dan web bisa dibuka tanpa internet setelah sekali dibuka online (PWA).
 
 Fitur yang memakai layanan Claude (`sample`, `db`, `user`, `downloads`, `assets`) tidak aktif di GitHub Pages dan kodenya otomatis memakai cadangan. Jangan dihapus kecuali diminta.
 

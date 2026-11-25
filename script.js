@@ -650,12 +650,12 @@ function hdr() {
   document.getElementById('rgt').textContent = p + '%';
   const C = {
     home: '<b>Beranda</b>',
-    materi: `Materi <b>${cur.i + 1} dari 8</b>`,
+    materi: `Materi <b>${cur.i + 1}/8</b>`,
     akt: '<b>Aktivitas</b>',
-    praktik: '<b>Praktik di Canva</b>',
+    praktik: '<b>Praktik</b>',
     evaluasi: '<b>Evaluasi</b>',
     refleksi: '<b>Refleksi</b>',
-    rapor: '<b>Rapor belajar</b>',
+    rapor: '<b>Rapor</b>',
     pre: '<b>Tes awal</b>',
     konsep: '<b>Peta konsep</b>',
   };
@@ -685,7 +685,7 @@ function hdr() {
     cb.title = clk ? (cur.r == 'materi' ? 'Buka peta materi' : 'Lihat semua aktivitas') : '';
   }
   document.getElementById('crumb').innerHTML = /^a\d$/.test(cur.r)
-    ? `Aktivitas <b>${cur.r[1]} dari 7</b>`
+    ? `Aktivitas <b>${cur.r[1]}/7</b>`
     : C[cur.r] || '';
   sideR();
 }
@@ -709,16 +709,65 @@ function sideR() {
     it('refleksi', 'ref', 'Refleksi', r == 'refleksi', "go('refleksi')", lock('refleksi'), S.rf.done ? I('chk') : ''),
     it('rapor', 'star', 'Rapor', r == 'rapor', "go('rapor')"),
   ].join('');
-  const more =
+  // semua menu ada di sidebar (permintaan pemilik: seperti LMS). Jendela "menu" tetap ada untuk pencarian dan laci di HP.
+  const ai = typeof SMP != 'undefined' && SMP,
+    aicek = ai && typeof SMPI != 'undefined' && SMPI;
+  const help =
     it('ai', 'ai', 'Tanya Kak Folio', 0, "sheet('ai')") +
     it('book', 'doc', 'Contoh portofolio', 0, "sheet('book')") +
-    it('menu', 'grid', 'Menu lainnya', 0, "sheet('menu')");
+    it('tpl', 'grid', 'Gaya template', 0, "sheet('tpl')") +
+    (aicek ? it('aicek', 'spark', 'Cek pakai AI', 0, "sheet('aicek')") : '') +
+    (S.ev.best >= 70 ? it('cert', 'award', 'Sertifikat', 0, "sheet('cert')") : '') +
+    it('src', 'doc', 'Sumber materi', 0, "sheet('src')");
+  const etc =
+    it('tur', 'info', 'Ulangi tur', 0, "tourStart(cur.r=='materi'?'materi':'home',1)") +
+    it('survey', 'star', 'Beri penilaian', 0, "sheet('survey')") +
+    (ROLE.edit ? it('prev', 'eye', 'Mode pratinjau', 0, "sheet('prev')") : '') +
+    it('about', 'target', 'Tentang', 0, "sheet('about')") +
+    it('reset', 'rst', 'Mulai dari awal', 0, "sheet('reset')");
+  const rail = document.documentElement.classList.contains('srail');
   const tags =
     (ROLE.owner ? `<button class="stag" onclick="sheet('owner')">Pemilik</button>` : '') +
     (S.prev && ROLE.edit ? `<button class="stag pv" onclick="sheet('prev')">Mode pratinjau</button>` : '');
-  sd.innerHTML = `<button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>FolioKit</b><small>Portofolio Digital Canva</small></span></button>
-<div class="snav"><p class="slab">Belajar</p>${learn}<p class="slab">Lainnya</p>${more}</div>
+  sd.innerHTML = `<div class="sbrow"><button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>FolioKit</b><small>Belajar portofolio</small></span></button><button class="stog" onclick="sideTog()" aria-label="${rail ? 'Lebarkan menu' : 'Ciutkan menu'}" title="${rail ? 'Lebarkan menu' : 'Ciutkan menu'}" aria-expanded="${!rail}">${I(rail ? 'arr' : 'bk')}</button></div>
+<div class="snav">${it('cari', 'search', 'Cari', 0, 'mCari()')}<p class="slab">Belajar</p>${learn}<p class="slab">Bantuan</p>${help}<p class="slab">Lainnya</p>${etc}</div>
 <div class="sfoot">${tags ? `<div class="stags">${tags}</div>` : ''}<div class="sprog" title="Progres belajar ${p}%"><div class="spt"><span>Progres</span><b>${p}%</b></div><div class="spb"><i style="width:${p}%"></i></div></div><button class="sacc" onclick="sheet('acc')" title="Profil"><span class="sav">${ac.pic ? `<img src="${esc(ac.pic)}" alt="" referrerpolicy="no-referrer">` : `<b>${esc((S.name || 'T')[0].toUpperCase())}</b>`}</span><span class="stx"><b>${esc(S.name || 'Tamu')}</b><small>Profil</small></span></button></div>`;
+}
+/* Sidebar lebar atau ramping (ikon saja). Default: lebar di layar 1200px ke atas, ramping di 900–1199px.
+   Tombol di sidebar mengganti mode, pilihannya disimpan di perangkat ini. */
+function sideMode() {
+  let pref = '';
+  try {
+    pref = localStorage.getItem('pdc_side') || '';
+  } catch (e) {}
+  const w = innerWidth,
+    rail = w >= 900 && (pref == 'min' || (pref != 'max' && w < 1200));
+  document.documentElement.classList.toggle('srail', rail);
+  return rail;
+}
+function sideTog() {
+  const rail = document.documentElement.classList.contains('srail');
+  try {
+    localStorage.setItem('pdc_side', rail ? 'max' : 'min');
+  } catch (e) {}
+  sideMode();
+  sideR();
+  sfx('tap');
+  const b = document.querySelector('.side .stog');
+  if (b) b.focus({ preventScroll: true });
+}
+sideMode();
+addEventListener('resize', () => {
+  const was = document.documentElement.classList.contains('srail');
+  if (sideMode() != was) sideR();
+});
+/* Tombol "Cari" di sidebar: buka laci menu dan langsung fokus ke kolom pencarian */
+function mCari() {
+  sheet('menu');
+  setTimeout(() => {
+    const q = document.getElementById('msq');
+    if (q) q.focus();
+  }, 320);
 }
 function conf() {
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -936,10 +985,28 @@ SCR.home = () => {
     ['Refleksi', 'ref', 'refleksi', S.rf.done ? 1 : 0, S.rf.done ? 'Sudah diisi' : '2 pertanyaan untuk dirimu'],
   ];
   const ci = { materi: 0, praktik: 2, evaluasi: 3, refleksi: 4 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
-  return `<div class="home"><div class="card hello stagger"><div class="htop">${buildH()}${skyH()}</div><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
+  return `<div class="home home2"><div class="card hello"><div class="htop">${buildH()}${skyH()}</div><div class="hmid stagger"><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
  <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ' · ' : ''}${durN ? `±${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
- <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div>
- <div class="qk" role="group" aria-label="Pintasan">${[
+ <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div></div><div class="hring" title="Progres belajar ${p}%"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bgc" cx="18" cy="18" r="15"/><circle class="fgc" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="${(94.25 * (1 - p / 100)).toFixed(2)}"/></svg><b>${p}%</b><small>progres</small></div></div>
+ <div class="hgrid">
+ <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? ` · sisa ±${sisa} menit` : ' · semua beres'}</span></div><div class="tln">${st
+   .map((s, k) => {
+     const lk = lock(s[2]),
+       dn = s[3] >= 1;
+     // garis waktu: teks kecil hanya untuk langkah yang sedang/sudah dikerjakan dan satu langkah terkunci berikutnya,
+     // supaya tidak ada teks yang terpotong. Alasan lengkap tetap muncul saat langkah terkunci diklik.
+     const firstLock = lk && st.findIndex((x) => lock(x[2])) == k;
+     const SINGKAT = {
+       akt: `Terbuka setelah ${8 - mN()} materi lagi`,
+       praktik: 'Terbuka setelah semua aktivitas',
+       evaluasi: 'Terbuka setelah praktik',
+       refleksi: 'Terbuka setelah evaluasi',
+     };
+     const sub = lk ? (firstLock ? SINGKAT[s[2]] || '' : '') : s[4];
+     return `<button class="stg ${dn ? 'done' : ''} ${lk ? 'lock' : ''} ${k == ci ? 'cur' : ''}" onclick="${s[2] == 'materi' ? "go('materi',firstM())" : `go('${s[2]}')`}"${lk ? ` title="${esc(lk)}"` : ''}><span class="n">${lk ? I('lock') : dn ? I('chk') : k + 1}</span><span class="t"><b>${s[0]}</b>${sub ? `<small>${sub}</small>` : ''}</span>${k == ci && !dn ? `<span class="mini"><i style="width:${Math.round(s[3] * 100)}%"></i></span>` : ''}</button>`;
+   })
+   .join('')}</div></div>
+ <div class="hside">${tgH() ? `<div class="card hsc">${tgH()}</div>` : ''}<div class="card hsc hqk"><h3>Pintasan</h3><div class="qk" role="group" aria-label="Pintasan">${[
    ['intro', 'play', 'Intro', '53 detik', '#2d6fd6,#60a5fa'],
    ['book', 'doc', 'Contoh', '7 halaman', '#7c3aed,#a78bfa'],
    ['goal', 'target', 'Tujuan', 'belajar', '#0891b2,#22d3ee'],
@@ -950,14 +1017,7 @@ SCR.home = () => {
      (q, k) =>
        `<button class="qki" style="--g:linear-gradient(135deg,${q[4]});--k:${k}" onclick="sheet('${q[0]}')"><span class="qic">${I(q[1])}</span><span class="qtx"><b>${q[2]}</b><small>${q[3]}</small></span></button>`,
    )
-   .join('')}</div></div>
- <div class="card path">${ROLE.edit && !S.prev && !S.phint ? `<div class="phint"><span class="ic">${I('eye')}</span><div><b>Lagi menguji web ini?</b><small>Nyalakan Mode pratinjau biar semua bagian kebuka tanpa ngerjain dari awal.</small></div><button class="btn sm" onclick="sheet('prev')">Buka</button><button class="x" aria-label="Tutup petunjuk" onclick="S.phint=1;save();this.closest('.phint').remove()">${I('x')}</button></div>` : ''}<div class="pathh"><h3>Alur belajarmu</h3><span class="pathm">${doneN()} dari 18 langkah${sisa ? ` · sisa ±${sisa} menit` : ' · semua beres'}</span></div>${st
-   .map((s, k) => {
-     const lk = lock(s[2]),
-       dn = s[3] >= 1;
-     return `<button class="stg ${dn ? 'done' : ''} ${lk ? 'lock' : ''} ${k == ci ? 'cur glowb' : ''}" onclick="${s[2] == 'materi' ? "go('materi',firstM())" : `go('${s[2]}')`}"><span class="n">${lk ? I('lock') : dn ? I('chk') : k + 1}</span><span class="t"><b>${s[0]}</b><small>${lk ? (s[2] == 'akt' && mN() < 8 ? `Terbuka setelah 8 materi. Tinggal ${8 - mN()} lagi.` : lk) : s[4]}</small></span><span class="mini"><i style="width:${Math.round(s[3] * 100)}%"></i></span></button>`;
-   })
-   .join('')}${tgH()}</div></div>`;
+   .join('')}</div></div></div></div></div>`;
 };
 
 /* animasi beranda: portofolio dirakit */
@@ -1710,6 +1770,9 @@ function sheet(k) {
     k == 'nama' || k == 'owner' || k == 'intro' || k == 'book' || k == 'cert' || k == 'tpl' || k == 'aicek',
   );
   sh.classList.toggle('aish', k == 'ai');
+  // jendela menu tampil sebagai laci yang geser dari kiri (menu utama di HP, pencarian di laptop)
+  // menu, profil, dan daftar materi tampil sebagai laci dari kiri supaya nyambung dengan sidebar kiri
+  sh.classList.toggle('drawer', k == 'menu' || k == 'acc' || k == 'mlist');
   if (k != 'owner' && OWU) {
     OWU();
     OWU = null;
@@ -1741,6 +1804,7 @@ function sheet(k) {
           (S.ev.best >= 70 ? mi('award', 'Sertifikat', "sheet('cert')", 'Siap diunduh') : '') +
           mi('doc', 'Sumber materi', "sheet('src')", REFS.length + VIDS().length + ' rujukan');
         const etc =
+          mi('out', 'Halaman awal', "go('welcome',0,'b')", '') +
           mi(
             'info',
             'Ulangi tur panduan',
@@ -3651,7 +3715,7 @@ const TOURS = {
     ['.side .snav', 'Navigasi', 'Semua tahap belajar ada di sini. Yang bergembok kebuka setelah tahap sebelumnya selesai.'],
     ['#aib:not([hidden]), .side [data-k="ai"]', 'Tanya Kak Folio', 'Bingung? Tanya aja ke asisten AI ini kapan pun.'],
     [
-      '.top .ib[aria-label="Buka menu"], .side [data-k="menu"]',
+      '.top .ib[aria-label="Buka menu"], .side [data-k="cari"]',
       'Menu',
       'Pindah ke bagian mana pun, buka peta konsep, sertifikat, atau ulangi tur ini.',
     ],
@@ -3722,8 +3786,13 @@ function tourShow() {
     if (TR.i >= TR.st.length) return tourEnd();
     return tourShow();
   }
-  const r = e.getBoundingClientRect(),
-    pd = 8,
+  // bagian yang ditunjuk bisa berada di bawah (misalnya beranda HP yang digulir): gulir dulu supaya terlihat
+  let r = e.getBoundingClientRect();
+  if (r.top < 60 || r.bottom > innerHeight - 20) {
+    e.scrollIntoView({ block: 'center', behavior: 'instant' });
+    r = e.getBoundingClientRect();
+  }
+  const pd = 8,
     sp = TR.o.querySelector('.tsp'),
     bx = TR.o.querySelector('.tbx');
   sp.style.cssText = `left:${r.left - pd}px;top:${r.top - pd}px;width:${r.width + pd * 2}px;height:${r.height + pd * 2}px`;
@@ -3740,7 +3809,8 @@ function tourShow() {
   let left = r.left + r.width / 2 - bw / 2;
   left = Math.max(12, Math.min(innerWidth - bw - 12, left));
   bx.style.left = left + 'px';
-  bx.style.top = Math.max(12, top) + 'px';
+  // kotak tur selalu di dalam layar
+  bx.style.top = Math.max(12, Math.min(innerHeight - bh - 12, top)) + 'px';
   bx.classList.remove('pop2');
   void bx.offsetWidth;
   bx.classList.add('pop2');
@@ -6098,8 +6168,8 @@ function w3dRun(T, c) {
 }
 /* ===== Mode offline (PWA) ===== */
 /* sw.js menyimpan semua file web di browser, jadi setelah sekali dibuka pakai internet,
-   web tetap bisa dibuka tanpa jaringan. Hanya dipasang di hosting sendiri (misalnya GitHub Pages),
-   tidak di dalam pratinjau Claude atau saat dibuka langsung dari file. */
+   web tetap bisa dibuka tanpa jaringan dan bisa di-install seperti aplikasi.
+   Hanya dipasang di hosting sendiri (misalnya GitHub Pages), tidak di dalam pratinjau Claude atau saat dibuka langsung dari file. */
 if (
   'serviceWorker' in navigator &&
   /^https?:$/.test(location.protocol) &&

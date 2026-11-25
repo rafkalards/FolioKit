@@ -6,11 +6,11 @@ await p.evaluate(()=>{window.txGo=f=>f();localStorage.clear();S.started=1;S.name
 const act=()=>p.evaluate(()=>{const e=document.activeElement;return e?(e.getAttribute('aria-label')||e.innerText||e.id||e.tagName).trim().slice(0,40):'-'});const log=[];const ok=(c,m)=>log.push((c?'OK   ':'GAGAL ')+m);
 await p.evaluate(()=>document.activeElement.blur());await p.keyboard.press('Tab');ok((await act())=='Lewati ke konten','Tab pertama ke "Lewati ke konten" -> '+await act());
 await p.keyboard.press('Enter');await p.waitForTimeout(200);ok(await p.evaluate(()=>document.activeElement.id=='view'),'Enter pindah fokus ke konten');
-await p.focus('.side [data-k="menu"]');await p.keyboard.press('Enter');await p.waitForTimeout(400);
+await p.focus('.side [data-k="cari"]');await p.keyboard.press('Enter');await p.waitForTimeout(400);
 ok(await p.evaluate(()=>document.getElementById('sh').contains(document.activeElement)),'buka menu -> fokus di dalam menu ('+await act()+')');
 let inside=true;for(let k=0;k<40;k++){await p.keyboard.press('Tab');const r=await p.evaluate(()=>document.getElementById('sh').contains(document.activeElement)||document.activeElement===document.body);if(!r){inside=false;break}}
 ok(inside,'Tab 40x tetap di dalam menu (latar belakang terkunci)');
-await p.keyboard.press('Escape');await p.waitForTimeout(400);ok((await act())=='Menu lainnya','Esc tutup menu -> fokus balik ke tombol menu ('+await act()+')');
+await p.keyboard.press('Escape');await p.waitForTimeout(400);ok((await act())=='Cari','Esc tutup menu -> fokus balik ke tombol menu ('+await act()+')');
 await p.evaluate(()=>go('materi',0));await p.waitForTimeout(500);
 const dots=await p.evaluate(()=>[...document.querySelectorAll('#sdots i')].map(d=>d.tabIndex+'|'+d.getAttribute('role')));ok(dots.every(x=>x=='0|button'),'titik slide bisa di-Tab ('+dots.length+' titik)');
 await p.evaluate(()=>slShow(2,0));await p.focus('#sdots i:nth-child(2)');await p.keyboard.press('Enter');await p.waitForTimeout(300);ok(await p.evaluate(()=>SL.k==1),'Enter di titik slide 2 -> pindah ke slide 2');

@@ -116,7 +116,7 @@ Setiap materi dilengkapi **gambaran animasi**, **contoh**, **kartu bolak-balik**
 - 🔍 **Pencarian menu** dan halaman **sumber materi**.
 - 📴 **Bisa dibuka tanpa internet** setelah sekali dibuka online, dan bisa di-install sebagai aplikasi di HP atau laptop.
 - 💾 **Progres tersimpan otomatis** di browser, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
-- 🧩 **Terasa seperti aplikasi**: di laptop dan tablet navigasi ada di sidebar kiri (jadi rel ikon di layar sedang), di HP pakai header ringkas.
+- 🧩 **Menu di kiri seperti LMS**: di laptop dan tablet ada sidebar kiri yang bisa dibuka tutup (lebar atau ikon saja), di HP menu geser dari kiri.
 - 📱 **Responsif**: satu layar tanpa scroll, menyesuaikan HP, tablet, dan laptop.
 - 🏠 **Beranda ringkas**: perkiraan durasi tiap langkah, sisa waktu belajar, dan target kecil hari ini yang opsional.
 - 🎬 **Video diputar langsung di dalam web**, tanpa pindah tab.

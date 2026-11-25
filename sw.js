@@ -2,7 +2,7 @@
    Cara kerja: file diambil dari simpanan dulu (cepat dan jalan offline), lalu diperbarui diam-diam
    dari internet kalau sedang online. Versi baru terpakai saat halaman dibuka berikutnya.
    Ganti VER kalau daftar FILES berubah. */
-const VER = 'foliokit-v2';
+const VER = 'foliokit-v3';
 const FILES = [
   'index.html',
   'style.css',
