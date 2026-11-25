@@ -653,6 +653,7 @@ function hdr() {
     home: '<b>Beranda</b>',
     materi: `Materi <b>${cur.i + 1}/8</b>`,
     akt: '<b>Aktivitas</b>',
+    latih: '<b>Latihan</b>',
     praktik: '<b>Praktik</b>',
     evaluasi: '<b>Evaluasi</b>',
     refleksi: '<b>Refleksi</b>',
@@ -705,6 +706,7 @@ function sideR() {
     it('materi', 'book', 'Materi', r == 'materi', 'go(\'materi\',firstM())', '', fr(mN(), 8)),
     it('konsep', 'map', 'Peta konsep', r == 'konsep', "go('konsep')", lock('konsep')),
     it('akt', 'task', 'Aktivitas', r == 'akt' || /^a\d$/.test(r), "go('akt')", lock('akt'), fr(aN(), 7)),
+    it('latih', 'spark', 'Latihan', r == 'latih', "go('latih')", lock('latih'), S.lt && S.lt.done ? I('chk') : ''),
     it('praktik', 'lap', 'Praktik', r == 'praktik', "go('praktik')", lock('praktik'), fr(prN(), 4)),
     it('evaluasi', 'flag', 'Evaluasi', r == 'evaluasi', "go('evaluasi')", lock('evaluasi'), S.ev.tries ? String(S.ev.best) : ''),
     it('refleksi', 'ref', 'Refleksi', r == 'refleksi', "go('refleksi')", lock('refleksi'), S.rf.done ? I('chk') : ''),
@@ -825,6 +827,7 @@ const ORD = [
   'a5',
   'a6',
   'a7',
+  'latih',
   'praktik',
   'evaluasi',
   'refleksi',
@@ -870,6 +873,7 @@ function go(r, i = 0, dir) {
       home: 'Beranda',
       materi: 'Materi ' + (i + 1),
       akt: 'Aktivitas',
+      latih: 'Latihan',
       praktik: 'Praktik',
       evaluasi: 'Evaluasi',
       refleksi: 'Refleksi',
@@ -928,7 +932,7 @@ const estM = (r, i = 0) =>
     ? Math.max(3, Math.round((M[i].p.length + 5) * 0.8))
     : /^a\d$/.test(r)
       ? 3
-      : ({ pre: 4, praktik: 20, evaluasi: 8, refleksi: 3 }[r] ?? 0);
+      : ({ pre: 4, latih: 10, praktik: 20, evaluasi: 8, refleksi: 3 }[r] ?? 0);
 const doneN = () => mN() + aN() + (prN() == 4 ? 1 : 0) + (S.ev.tries ? 1 : 0) + (S.rf.done ? 1 : 0);
 const sisaM = () =>
   [0, 1, 2, 3, 4, 5, 6, 7].reduce((t, i) => t + (S.md[i] ? 0 : estM('materi', i)), 0) +
@@ -980,11 +984,12 @@ SCR.home = () => {
   const st = [
     ['Materi', 'book', 'materi', mN() / 8, `${mN()} dari 8 materi`],
     ['Aktivitas', 'task', 'akt', aN() / 7, `${aN()} dari 7 latihan`],
+    ['Latihan', 'spark', 'latih', S.lt && S.lt.done ? 1 : ((S.lt && S.lt.st) || 0) / 6, S.lt && S.lt.done ? 'Udah dicoba' : 'Coba bikin dulu di sini'],
     ['Praktik', 'lap', 'praktik', prN() / 4, `${prN()} dari 4 langkah di Canva`],
     ['Evaluasi', 'flag', 'evaluasi', S.ev.tries ? 1 : 0, S.ev.tries ? `Nilai terbaik ${S.ev.best}` : '8 soal singkat'],
     ['Refleksi', 'ref', 'refleksi', S.rf.done ? 1 : 0, S.rf.done ? 'Sudah diisi' : '2 pertanyaan untuk dirimu'],
   ];
-  const ci = { materi: 0, praktik: 2, evaluasi: 3, refleksi: 4 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
+  const ci = { materi: 0, latih: 2, praktik: 3, evaluasi: 4, refleksi: 5 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
   return `<div class="home home2"><div class="card hello"><div class="htop">${buildH()}${skyH()}</div><div class="hmid stagger"><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
  <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ', ' : ''}${durN ? `sekitar ${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
  <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div></div><div class="hring" title="Progres belajar ${p}%"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bgc" cx="18" cy="18" r="15"/><circle class="fgc" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="${(94.25 * (1 - p / 100)).toFixed(2)}"/></svg><b>${p}%</b><small>progres</small></div></div>
@@ -998,6 +1003,7 @@ SCR.home = () => {
      const firstLock = lk && st.findIndex((x) => lock(x[2])) == k;
      const SINGKAT = {
        akt: `Kebuka setelah ${8 - mN()} materi lagi`,
+       latih: 'Kebuka setelah semua aktivitas beres',
        praktik: 'Kebuka setelah semua aktivitas beres',
        evaluasi: 'Kebuka setelah praktik beres',
        refleksi: 'Kebuka setelah evaluasi',
@@ -1654,7 +1660,7 @@ SCR.praktik = () => {
   return `<div class="prak ${R.pm == 'sim' ? 'one' : ''}"><article class="card pane"><div class="ph"><span class="tag">Praktik · ${prN()} dari 4 langkah</span><h2>Bikin portofoliomu di Canva</h2><p>${R.pm == 'sim' ? 'Atur di sini, hasilnya langsung kelihatan.' : 'Buka Canva di tab lain, kerjakan langkahnya, lalu centang di sini.'}</p></div><div class="pb scroll">${pmSeg()}${
     R.pm == 'sim'
       ? simH()
-      : `<div class="steps">${PR.map((s, j) => `<button class="${j == k ? 'on' : ''} ${S.pr[j] ? 'ok' : ''}" onclick="R.pk=${j};go('praktik')"><span>${S.pr[j] ? '✓' : j + 1}</span>${s.t}</button>`).join('')}</div>
+      : `${S.lt && S.lt.done ? `<div class="ltbr">${I('spark')}<span>Dari latihanmu: template <b>${LTPL[S.lt.tpl][0]}</b>, ${S.lt.w.length} karya, huruf ${LFONT[S.lt.f][0]}. Cari template "portfolio ${LTPL[S.lt.tpl][0].toLowerCase()}" di Canva biar mirip.</span><button class="link" onclick="go('latih')">Lihat lagi</button></div>` : ''}<div class="steps">${PR.map((s, j) => `<button class="${j == k ? 'on' : ''} ${S.pr[j] ? 'ok' : ''}" onclick="R.pk=${j};go('praktik')"><span>${S.pr[j] ? '✓' : j + 1}</span>${s.t}</button>`).join('')}</div>
  <h3 class="pp" style="font-size:19px">${k + 1}. ${p.t}</h3><p class="small">${p.d}</p><ul class="do">${p.l.map((x, j) => `<li><span>${j + 1}</span>${x}</li>`).join('')}</ul><button class="tick ${S.pr[k] ? 'on' : ''}" onclick="tick(${k})"><span class="bx">${I('chk')}</span>${S.pr[k] ? 'Langkah ini sudah selesai' : 'Tandai langkah ini selesai'}</button>
  ${all ? `<div class="fb ok">${I('chk')}<span>Keren, portofoliomu sudah jadi. Evaluasi sudah terbuka.</span></div>` : ''}`
   }</div>
@@ -1797,6 +1803,7 @@ function sheet(k) {
           ['home', 'Beranda', 'home', ''],
           ['book', 'Materi', 'materi', `${mN()}/8`],
           ['task', 'Aktivitas', 'akt', `${aN()}/7`],
+          ['spark', 'Latihan bikin portofolio', 'latih', S.lt && S.lt.done ? 'Selesai' : ''],
           ['lap', 'Praktik', 'praktik', `${prN()}/4`],
           ['flag', 'Evaluasi', 'evaluasi', S.ev.best != null ? 'Nilai ' + S.ev.best : ''],
           ['ref', 'Refleksi', 'refleksi', S.rf.done ? 'Selesai' : ''],
@@ -6099,3 +6106,198 @@ Object.keys(AKM).forEach((r) => {
     akHint(r);
   };
 });
+
+/* ===== Latihan bikin portofolio (tahap sendiri sebelum Praktik di Canva) ===== */
+/* Editor mini 6 langkah dengan pratinjau langsung. Data disimpan di S.lt. Jalan tanpa internet dan tanpa AI. */
+const LTPL = [
+  ['Minimalis', 'Bersih, banyak ruang kosong, fokus ke karya.'],
+  ['Kreatif', 'Warna berani dan bentuk dinamis, tapi tetap rapi.'],
+  ['Profesional', 'Formal dan terstruktur, gampang dipindai perekrut.'],
+];
+const LCOL = ['#1e4fb0', '#0f766e', '#7c3aed', '#be123c', '#c2410c'];
+const LFONT = [
+  ['Modern', 'Poppins, sans-serif', 'Inter, sans-serif'],
+  ['Klasik', 'Georgia, serif', 'Inter, sans-serif'],
+  ['Tegas', 'Poppins, sans-serif', 'Poppins, sans-serif'],
+];
+const LSEC = ['Profil', 'Pendidikan & pengalaman', 'Skill', 'Karya', 'Kontak'];
+const LWORK = [
+  ['Poster acara kampus', 1, 'linear-gradient(160deg,#1e4fb0,#7c3aed)'],
+  ['Logo UMKM kopi', 1, 'linear-gradient(160deg,#fde68a,#f59e0b)'],
+  ['Feed Instagram organisasi', 1, 'linear-gradient(160deg,#a5f3fc,#38bdf8)'],
+  ['Desain kemasan keripik', 1, 'linear-gradient(160deg,#bbf7d0,#16a34a)'],
+  ['Foto liburan ke Bali', 0, 'linear-gradient(160deg,#fecaca,#f87171)'],
+  ['Sertifikat ikut seminar', 0, 'linear-gradient(160deg,#e5e7eb,#9ca3af)'],
+];
+const LBIO = [
+  'Fresh graduate yang suka bikin desain sederhana tapi jelas pesannya.',
+  'Desainer grafis pemula, terbiasa bikin konten media sosial untuk organisasi kampus.',
+  'Suka merapikan informasi jadi visual yang gampang dipahami.',
+];
+const LSTEP = ['Kenalan', 'Template', 'Susunan', 'Karya', 'Rapikan', 'Cek hasil'];
+const ltD = () => {
+  if (!S.lt) S.lt = { st: 0, nm: S.name || '', pos: '', bio: '', tpl: 0, sec: [0, 1, 2, 3, 4], w: [], wt: {}, c: 0, f: 0, done: 0 };
+  return S.lt;
+};
+const ltWords = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+function ltChecks(d) {
+  const sel = d.w.map((j) => LWORK[j]);
+  return [
+    [d.nm.trim().length >= 2, 'Nama udah diisi'],
+    [d.pos.trim().length >= 3, 'Posisi yang dilamar udah jelas'],
+    [ltWords(d.bio) >= 5 && ltWords(d.bio) <= 25, 'Kalimat tentang diri pendek dan jelas (5 sampai 25 kata)'],
+    [d.sec[0] === 0, 'Profil ada di bagian paling awal'],
+    [d.sec.includes(3) && d.sec.includes(4), 'Ada bagian Karya dan Kontak'],
+    [d.w.length >= 3 && d.w.length <= 6, 'Jumlah karya 3 sampai 6'],
+    [d.w.length > 0 && sel.every((x) => x[1]), 'Semua karya nyambung sama posisi yang dilamar'],
+    [d.w.length > 0 && d.w.every((j) => d.wt[j] && d.wt[j].p && d.wt[j].p.trim()), 'Tiap karya ada keterangan peranmu'],
+  ];
+}
+function ltFb(d, st) {
+  const c = ltChecks(d);
+  const pick = { 0: [0, 1, 2], 1: [], 2: [3, 4], 3: [5, 6, 7], 4: [], 5: [0, 1, 2, 3, 4, 5, 6, 7] }[st];
+  if (st == 1) return [[true, `${LTPL[d.tpl][0]}: ${LTPL[d.tpl][1]}`]];
+  if (st == 4) return [[true, `Warna utama dipakai buat judul dan aksen aja, sisanya netral.`], [true, `Pasangan huruf ${LFONT[d.f][0]}: maksimal dua jenis, jadi tetap rapi.`]];
+  return pick.map((k) => c[k]);
+}
+function ltStepH(d) {
+  const st = d.st;
+  if (st == 0)
+    return `<label class="lf">Nama<input class="inp" maxlength="30" value="${esc(d.nm)}" placeholder="Nama lengkap atau panggilan" oninput="ltD().nm=this.value;save();ltU()"></label>
+<label class="lf">Posisi yang dilamar<input class="inp" maxlength="36" value="${esc(d.pos)}" placeholder="Contoh: Desainer Grafis" oninput="ltD().pos=this.value;save();ltU()"></label>
+<label class="lf">Satu kalimat tentang dirimu<textarea class="inp" rows="3" maxlength="200" placeholder="Tulis singkat, 5 sampai 25 kata" oninput="ltD().bio=this.value;save();ltU()">${esc(d.bio)}</textarea></label>
+<p class="lfh">Bingung? Klik salah satu contoh:</p><div class="chips">${LBIO.map((b, j) => `<button class="chip" onclick="ltBio(${j})">${b.split(' ').slice(0, 4).join(' ')}…</button>`).join('')}</div>`;
+  if (st == 1)
+    return `<div class="ltpl">${LTPL.map((t, j) => `<button class="${d.tpl == j ? 'on' : ''}" onclick="ltD().tpl=${j};save();go('latih')"><span class="ltth t${j}"><i></i><i></i><i></i></span><b>${t[0]}</b><small>${t[1]}</small></button>`).join('')}</div>`;
+  if (st == 2)
+    return `<p class="lfh">Centang bagian yang mau dipakai, lalu atur urutannya.</p><div class="lsec">${d.sec
+      .map(
+        (s, k) =>
+          `<div class="lsr"><span class="lsn">${k + 1}</span><b>${LSEC[s]}</b><button class="ib" ${k == 0 ? 'disabled' : ''} onclick="ltMove(${k},-1)" aria-label="Naikkan ${LSEC[s]}">${I('bk')}</button><button class="ib" ${k == d.sec.length - 1 ? 'disabled' : ''} onclick="ltMove(${k},1)" aria-label="Turunkan ${LSEC[s]}">${I('arr')}</button><button class="ib" onclick="ltSec(${s})" aria-label="Hapus ${LSEC[s]}">${I('x')}</button></div>`,
+      )
+      .join('')}</div>${
+      LSEC.some((_, s) => !d.sec.includes(s))
+        ? `<p class="lfh">Bagian yang belum dipakai:</p><div class="chips">${LSEC.map((x, s) => (d.sec.includes(s) ? '' : `<button class="chip" onclick="ltSec(${s})">+ ${x}</button>`)).join('')}</div>`
+        : ''
+    }`;
+  if (st == 3)
+    return `<p class="lfh">Pilih 3 sampai 6 karya yang paling nyambung sama posisi${d.pos ? ' <b>' + esc(d.pos) + '</b>' : ''}.</p><div class="lwk">${LWORK.map(
+      (w, j) =>
+        `<button class="${d.w.includes(j) ? 'on' : ''}" onclick="ltWork(${j})"><span class="lwi" style="background:${w[2]}"></span><b>${w[0]}</b></button>`,
+    ).join('')}</div>${d.w
+      .map(
+        (j) =>
+          `<div class="lwt"><b>${LWORK[j][0]}</b><input class="inp" maxlength="60" placeholder="Peranmu di karya ini, misalnya: desain dari nol" value="${esc((d.wt[j] && d.wt[j].p) || '')}" oninput="ltWT(${j},this.value)"></div>`,
+      )
+      .join('')}`;
+  if (st == 4)
+    return `<span class="lb">Warna utama</span><div class="sw">${LCOL.map((c, j) => `<button style="--c:${c}" class="${d.c == j ? 'on' : ''}" aria-label="Warna ${j + 1}" onclick="ltD().c=${j};save();only(this,'button');ltU()"></button>`).join('')}</div>
+<span class="lb">Pasangan huruf</span><div class="chips">${LFONT.map((f, j) => `<button class="chip ${d.f == j ? 'on' : ''}" style="font-family:${f[1]}" onclick="ltD().f=${j};save();only(this,'.chip');ltU()">${f[0]}</button>`).join('')}</div>`;
+  const c = ltChecks(d),
+    ok = c.filter((x) => x[0]).length;
+  return `<div class="lscore"><b>${ok}<small>/${c.length}</small></b><div><p>${ok == c.length ? 'Mantap, semuanya udah oke. Tinggal dibikin beneran di Canva.' : ok >= 6 ? 'Udah bagus. Benerin yang belum dicentang, terus lanjut ke Canva.' : 'Masih ada beberapa yang perlu dibenerin. Klik langkahnya di atas buat balik.'}</p></div></div>`;
+}
+function ltPrev(d) {
+  const col = LCOL[d.c],
+    fo = LFONT[d.f],
+    nm = esc(d.nm.trim() || 'Nama Kamu'),
+    pos = esc(d.pos.trim() || 'Posisi yang dilamar'),
+    slug = (d.nm.trim() || 'namakamu').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const SEC = {
+    0: `<div class="lpp"><span class="lpa"></span><div><h4>${nm}</h4><p class="lpr">${pos}</p><p>${esc(d.bio.trim() || 'Satu kalimat tentang dirimu muncul di sini.')}</p></div></div>`,
+    1: `<h5>Pendidikan &amp; pengalaman</h5><ul><li><b>S1 Teknologi Pendidikan</b>, Universitas Negeri Jakarta, 2021 sampai 2025</li><li><b>Magang desain</b>, studio kreatif lokal, 2024</li></ul>`,
+    2: `<h5>Skill</h5><div class="lps">${['Canva', 'Tipografi', 'Layout', 'Komunikasi'].map((x) => `<span>${x}</span>`).join('')}</div>`,
+    3: `<h5>Karya</h5><div class="lpk">${(d.w.length ? d.w : [])
+      .map((j) => `<div><span style="background:${LWORK[j][2]}"></span><b>${LWORK[j][0]}</b><small>${esc((d.wt[j] && d.wt[j].p) || 'Peranmu di karya ini')}</small></div>`)
+      .join('') || '<p class="lpe">Belum ada karya yang dipilih.</p>'}</div>`,
+    4: `<h5>Kontak</h5><p>${slug}@email.com · linkedin.com/in/${slug}</p>`,
+  };
+  const body = d.sec.map((s) => `<section class="lpsec">${SEC[s]}</section>`).join('');
+  return `<div class="lpv t${d.tpl}" style="--lc:${col};--lh:${fo[1]};--lb:${fo[2]}"><div class="lpband"></div>${body || '<p class="lpe">Belum ada bagian yang dipakai.</p>'}</div>`;
+}
+function ltU() {
+  const d = ltD(),
+    v = document.getElementById('ltv'),
+    f = document.getElementById('ltfb');
+  if (v) v.innerHTML = ltPrev(d);
+  if (f) f.innerHTML = ltFb(d, d.st).map((x) => `<li class="${x[0] ? 'ok' : ''}">${I(x[0] ? 'chk' : 'info')}<span>${x[1]}</span></li>`).join('');
+}
+function ltBio(j) {
+  ltD().bio = LBIO[j];
+  save();
+  go('latih');
+}
+function ltMove(k, dir) {
+  const s = ltD().sec,
+    j = k + dir;
+  if (j < 0 || j >= s.length) return;
+  [s[k], s[j]] = [s[j], s[k]];
+  save();
+  go('latih');
+}
+function ltSec(s) {
+  const d = ltD(),
+    i = d.sec.indexOf(s);
+  if (i < 0) d.sec.push(s);
+  else d.sec.splice(i, 1);
+  save();
+  go('latih');
+}
+function ltWork(j) {
+  const d = ltD(),
+    i = d.w.indexOf(j);
+  if (i < 0) {
+    if (d.w.length >= 6) return toast('Cukup 6 karya. Lepas satu dulu kalau mau ganti.');
+    d.w.push(j);
+  } else d.w.splice(i, 1);
+  save();
+  go('latih');
+}
+function ltWT(j, v) {
+  const d = ltD();
+  d.wt[j] = { p: v };
+  save();
+  ltU();
+}
+function ltGo(st) {
+  ltD().st = Math.max(0, Math.min(5, st));
+  save();
+  go('latih');
+}
+function ltDone() {
+  const d = ltD();
+  d.done = 1;
+  save();
+  sfx('ok');
+  toast('Latihan beres. Sekarang bikin yang beneran di Canva.', 'chk');
+  go('praktik');
+}
+SCR.latih = () => {
+  const d = ltD(),
+    st = d.st,
+    mv = R.lv || 'form';
+  return `<div class="lat ${mv == 'prev' ? 'showp' : ''}"><article class="card pane ltf"><div class="ph"><span class="tag">${I('spark')} Latihan · langkah ${st + 1} dari 6</span><h2>${LSTEP[st]}</h2><p>Latihan dulu di sini sebelum bikin beneran di Canva. Hasilnya langsung kelihatan di sebelah.</p><div class="lsteps">${LSTEP.map((x, j) => `<button class="${j == st ? 'on' : ''} ${j < st ? 'ok' : ''}" onclick="ltGo(${j})" aria-label="Langkah ${j + 1}: ${x}"><span>${j < st ? I('chk') : j + 1}</span><em>${x}</em></button>`).join('')}</div></div>
+<div class="pb scroll">${ltStepH(d)}<ul class="ltfb" id="ltfb"></ul></div>
+<div class="pf"><button class="btn g" ${st == 0 ? 'disabled' : ''} onclick="ltGo(${st - 1})">${I('bk')}<span class="lbl">Sebelumnya</span></button><button class="btn g ltpv" onclick="R.lv='prev';go('latih')">${I('eye')}<span class="lbl">Lihat hasil</span></button>${st < 5 ? `<button class="btn" onclick="ltGo(${st + 1})"><span class="lbl">Berikutnya</span>${I('arr')}</button>` : `<button class="btn shim" onclick="ltDone()">Bikin di Canva ${I('arr')}</button>`}</div></article>
+<article class="card ltp"><div class="ltph"><b>Pratinjau portofoliomu</b><button class="btn g sm ltbk" onclick="R.lv='form';go('latih')">${I('bk')} Balik isi</button></div><div class="ltpw scroll"><div id="ltv"></div></div></article></div>`;
+};
+AFT.latih = () => ltU();
+/* kunci: kebuka setelah semua aktivitas, sama seperti praktik (praktik tetap bisa dibuka tanpa latihan) */
+{
+  const lock0 = lock;
+  lock = function (r, i) {
+    if (r == 'latih') {
+      if (S.prev && ROLE.edit) return '';
+      if (mN() < 8) return `Latihan kebuka setelah semua materi beres. Tinggal ${8 - mN()} materi lagi.`;
+      if (aN() < 7) return `Latihan kebuka setelah semua aktivitas beres. Tinggal ${7 - aN()} lagi.`;
+      return '';
+    }
+    return lock0(r, i);
+  };
+  const nxt0 = nxt;
+  nxt = function () {
+    const n = nxt0();
+    if (n.r == 'praktik' && prN() == 0 && !(S.lt && S.lt.done)) return { r: 'latih', i: 0, l: 'Latihan bikin portofolio', ic: 'spark' };
+    return n;
+  };
+}
