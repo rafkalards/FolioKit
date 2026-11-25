@@ -737,6 +737,8 @@ function conf() {
       r: Math.random() * 6,
     }));
   let f = 0;
+  // kanvas confetti hanya ditampilkan saat confetti berjalan, supaya tidak jadi lapisan berat di atas halaman
+  c.classList.add('on');
   (function a() {
     x.clearRect(0, 0, W, H);
     ps.forEach((p) => {
@@ -752,7 +754,10 @@ function conf() {
       x.restore();
     });
     if (++f < 110) requestAnimationFrame(a);
-    else x.clearRect(0, 0, W, H);
+    else {
+      x.clearRect(0, 0, W, H);
+      c.classList.remove('on');
+    }
   })();
 }
 
@@ -5564,13 +5569,18 @@ document.addEventListener(
     pxF = requestAnimationFrame(() => {
       pxF = 0;
       const ev = pxE;
-      document.querySelectorAll('.at,.stg,.bd,.kc,.op,.flip .ff').forEach((el) => {
-        const r = el.getBoundingClientRect();
+      // baca semua posisi dulu, baru tulis semua gaya (kalau diselang-seling, browser menghitung ulang tata letak berkali-kali)
+      const els = [...document.querySelectorAll('.at,.stg,.bd,.kc,.op,.flip .ff')],
+        rs = els.map((el) => el.getBoundingClientRect());
+      els.forEach((el, k) => {
+        const r = rs[k];
         if (!r.width) return;
         const dx = Math.max(r.left - ev.clientX, 0, ev.clientX - r.right),
           dy = Math.max(r.top - ev.clientY, 0, ev.clientY - r.bottom),
-          d = Math.hypot(dx, dy),
-          po = Math.max(0, 1 - d / 160);
+          po = Math.max(0, 1 - Math.hypot(dx, dy) / 160);
+        // elemen yang jauh dari kursor dan memang sudah redup tidak perlu ditulis ulang
+        if (po == 0 && el._po === 0) return;
+        el._po = po;
         el.classList.add('prox');
         el.style.setProperty('--px', ev.clientX - r.left + 'px');
         el.style.setProperty('--py', ev.clientY - r.top + 'px');
@@ -5605,6 +5615,8 @@ fx();
 nums();
 document.querySelectorAll('[data-cine]:not([data-typed])').forEach(cineIt);
 document.querySelectorAll('[data-type]:not([data-typed])').forEach(typeIt);
+/* Loading screen pembuka: bar progres mengikuti proses muat yang sebenarnya (font, gambar, halaman siap).
+   Kunjungan kedua di sesi yang sama lebih cepat. Paling lama 6 detik, lalu tetap ditutup. */
 {
   const sp = document.getElementById('splash');
   let seen = false;
@@ -5619,12 +5631,48 @@ document.querySelectorAll('[data-type]:not([data-typed])').forEach(typeIt);
     sp.classList.add('out');
     setTimeout(() => sp.remove(), 500);
   };
-  sp.querySelector('.skip').onclick = hide;
+  const lw = sp.querySelector('.lwt');
+  if (lw) lw.onclick = hide;
   if (RM.matches) hide();
-  else if (seen) {
-    sp.classList.add('quick');
-    setTimeout(hide, 1000);
-  } else setTimeout(hide, 3900);
+  else {
+    if (seen) sp.classList.add('quick');
+    const fill = document.getElementById('ldgf'),
+      pct = document.getElementById('ldgp'),
+      txt = document.getElementById('ldgt');
+    // tugas yang ditunggu: halaman siap (sudah, karena kode ini jalan setelah layar pertama dirender), font, dan semua gambar
+    const tugas = [
+      Promise.resolve(),
+      document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(),
+      document.readyState == 'complete' ? Promise.resolve() : new Promise((r) => addEventListener('load', r, { once: true })),
+    ];
+    let selesai = 0;
+    tugas.forEach((t) => t.then(() => selesai++, () => selesai++));
+    const t0 = performance.now(),
+      minDur = seen ? 500 : 1700,
+      maxDur = 6000;
+    const PESAN = [
+      [0, 'Menyiapkan materi…'],
+      [35, 'Memuat tampilan…'],
+      [65, 'Menata halaman…'],
+      [90, 'Hampir siap…'],
+    ];
+    let shown = 0;
+    const step = (now) => {
+      if (done) return;
+      // waktu frame bisa sedikit lebih awal dari t0, jadi dijaga tidak negatif
+      const el = Math.max(0, now - t0);
+      const target = el > maxDur ? 100 : Math.min((selesai / tugas.length) * 100, (el / minDur) * 100);
+      if (target > shown) shown = Math.min(target, shown + (target - shown) * 0.18 + 0.4);
+      const p = Math.max(0, Math.min(100, Math.round(shown)));
+      if (fill) fill.style.width = p + '%';
+      if (pct) pct.textContent = p + '%';
+      if (txt) txt.textContent = p >= 100 ? 'Siap!' : (PESAN.filter((m) => p >= m[0]).pop() || PESAN[0])[1];
+      if (p >= 100) return setTimeout(hide, seen ? 120 : 320);
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    setTimeout(hide, maxDur + 1500);
+  }
 }
 
 /* ===== Aksesibilitas (keyboard dan pembaca layar) ===== */
@@ -5859,9 +5907,17 @@ function w3d() {
   } catch (e) {}
   if (!ok) return;
   W3D = 'muat';
-  import('./vendor/three-folio.min.js')
-    .then((T) => w3dRun(T, c))
-    .catch(() => (W3D = null));
+  // Three.js (±545 KB) dimuat setelah loading screen selesai dan browser sedang santai, supaya pembukaan tetap ringan.
+  const muat = () =>
+    import('./vendor/three-folio.min.js')
+      .then((T) => w3dRun(T, c))
+      .catch(() => (W3D = null));
+  const tunggu = () => {
+    if (!document.contains(c)) return (W3D = null);
+    if (document.getElementById('splash')) return setTimeout(tunggu, 200);
+    window.requestIdleCallback ? requestIdleCallback(muat, { timeout: 1500 }) : setTimeout(muat, 300);
+  };
+  tunggu();
 }
 function w3dRun(T, c) {
   if (!document.contains(c)) return (W3D = null);
@@ -6050,8 +6106,10 @@ if (
   window.top === window &&
   !/claude|anthropic/i.test(location.hostname)
 ) {
+  // Didaftarkan setelah halaman tenang, supaya unduhan file offline (±4 MB) tidak berebut dengan halaman yang sedang dibuka.
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    const daftar = () => navigator.serviceWorker.register('sw.js').catch(() => {});
+    setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(daftar, { timeout: 4000 }) : daftar()), 3000);
   });
 }
 // Video YouTube, Canva, dan rujukan luar butuh internet. Saat offline, beri tahu dengan halus.
