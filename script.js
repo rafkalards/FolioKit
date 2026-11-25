@@ -7019,6 +7019,10 @@ function setApply() {
   h.classList.toggle('hc', !!s.hc);
   h.classList.toggle('sp', !!s.sp);
   thApply(s.th);
+  h.classList.toggle('dark', !!THK); // rapikan kelas yang dipasang lebih awal dari <head>
+  try {
+    localStorage.setItem('pdc_th', s.th); // dibaca skrip kecil di <head> saat halaman berikutnya dibuka
+  } catch (e) {}
   if (MU.k || (s.mus && AC && AC.state == 'running')) muSync();
 }
 let SETTAB = 'tam';

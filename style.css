@@ -13264,3 +13264,32 @@ html.dark .top {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
+/* loading pembuka di tema gelap: latar padat, tidak tembus ke halaman di belakangnya */
+html.dark #splash {
+  background:
+    radial-gradient(circle at 0 100%, rgba(45, 111, 214, 0.28) 0, transparent 45%),
+    radial-gradient(circle at 100% 0, rgba(124, 58, 237, 0.22) 0, transparent 45%),
+    #1f2b47 !important;
+}
+html.dark .ldg-bg span {
+  opacity: 0.22 !important;
+}
+html.dark #splash b {
+  color: #dbe6ff !important;
+  -webkit-text-fill-color: #dbe6ff !important;
+}
+html.dark #splash small,
+html.dark #ldgt {
+  color: #a9bce6 !important;
+}
+html.dark #ldgp {
+  color: #9cc3ff !important;
+}
+html.dark .ldg-bar {
+  background: rgba(156, 195, 255, 0.16) !important;
+}
+html.dark #splash .lwt {
+  color: #cfe0ff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(173, 200, 255, 0.2) !important;
+}
