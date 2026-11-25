@@ -2607,7 +2607,7 @@ function wNet() {
         const b = P[j],
           d = Math.hypot(a.x - b.x, a.y - b.y);
         if (d < 130) {
-          x.strokeStyle = `rgba(${wcRGB()},${(1 - d / 130) * 0.22})`;
+          x.strokeStyle = `rgba(45,111,214,${(1 - d / 130) * 0.22})`;
           x.lineWidth = 1;
           x.beginPath();
           x.moveTo(a.x, a.y);
@@ -2623,7 +2623,7 @@ function wNet() {
         x.lineTo(m.x, m.y);
         x.stroke();
       }
-      x.fillStyle = i % 5 == 0 ? 'rgba(124,58,237,.55)' : `rgba(${wcRGB()},.5)`;
+      x.fillStyle = i % 5 == 0 ? 'rgba(124,58,237,.55)' : 'rgba(45,111,214,.5)';
       x.beginPath();
       x.arc(a.x, a.y, a.r, 0, 7);
       x.fill();
@@ -6476,7 +6476,7 @@ AFT.studio = () => stU();
 
 /* ===== Pengaturan course ===== */
 /* Disimpan di S.set per pengguna. Ukuran teks lewat zoom, animasi tenang lewat kelas .calm (+ .lite supaya efek berat ikut mati),
-   kontras lewat .hc, spasi baca lewat .sp, suara lewat pembungkus sfx(), tema warna lewat thApply(), musik latar lewat mu*(). */
+   kontras lewat .hc, spasi baca lewat .sp, suara lewat pembungkus sfx(), tema terang/gelap lewat thApply(), musik latar lewat mu*(). */
 P.gear =
   '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/>';
 P.pal =
@@ -6491,24 +6491,23 @@ P.drop = '<path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/>';
 P.wave = '<path d="M2.5 9c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2M2.5 15c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2"/>';
 P.piano =
   '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8 4.5v15M13 4.5v15M18 4.5v15M6.5 4.5v8h3v-8M11.5 4.5v8h3v-8M16.5 4.5v8h3v-8"/>';
-const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0, th: 'biru', sp: 0, mus: '', mv: 50, sv: 70, duck: 1, vib: 1 };
+const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0, th: 'light', sp: 0, mus: '', mv: 50, sv: 70, duck: 1, vib: 1 };
 const setG = () => Object.assign({}, SETD, S.set || {});
 const LITE0 = document.documentElement.classList.contains('lite');
 const VIBOK = 'vibrate' in navigator && matchMedia('(pointer: coarse)').matches;
 
-/* ---------- tema warna ----------
-   Palet bawaan tetap biru muda. Tema lain memutar warna kebiruan di style.css (dan atribut style/fill di halaman)
-   ke rona lain lewat OKLCH, jadi terang-gelapnya tetap sama. Hijau/merah untuk benar/salah tidak ikut berubah. */
-const THM = {
-  biru: ['Biru muda', 0],
-  toska: ['Toska', 195],
-  hijau: ['Hijau daun', 150],
-  ungu: ['Ungu lavender', 305],
-  rose: ['Merah muda', 352],
-  jingga: ['Jingga senja', 55],
-};
+/* ---------- tema terang / gelap ----------
+   Bawaan terang (palet biru muda). Tema gelap dibuat otomatis dari warna yang sudah ada: tiap warna di style.css (CSSOM)
+   dan atribut style di halaman diubah terang-gelapnya lewat OKLCH. Latar terang jadi biru tua, teks gelap jadi terang,
+   warna utama (tombol, aksen) tetap. "Ikuti perangkat" membaca prefers-color-scheme. Ilustrasi SVG tidak diubah. */
 const CRX = /#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*[\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*(?:[,/]\s*[\d.]+%?\s*)?\)/gi;
-let THK = 'biru',
+const THSH = ['background', 'border', 'border-color', 'border-top', 'border-right', 'border-bottom', 'border-left', 'outline', 'text-decoration', 'mask'];
+const THTX = /^(color|fill|stroke|caret-color|-webkit-text-fill-color|text-decoration-color|text-emphasis-color|--ink|--mute|--pd)$/;
+// dokumen (halaman Studio, buku contoh portofolio) tetap putih seperti kertas
+const THKEEP = /\.(stpg|stin|std[12]|pg[a-z0-9]*)\b/;
+const THFILE = location.protocol == 'file:'; // stylesheet dari file lokal tidak bisa dibaca CSSOM
+const MQD = matchMedia('(prefers-color-scheme: dark)');
+let THK = 0, // 0 terang, 1 gelap (yang sedang dipakai)
   THO = null,
   THMO = null;
 const THC = {};
@@ -6522,7 +6521,7 @@ function thRgb(s) {
   const a = n[3] == null ? null : /%$/.test(n[3]) ? parseFloat(n[3]) / 100 : +n[3];
   return [+n[0], +n[1], +n[2], a];
 }
-function thShift(r, g, b, dh) {
+function thLch(r, g, b) {
   const li = (c) => ((c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
   const R = li(r),
     G = li(g),
@@ -6533,11 +6532,10 @@ function thShift(r, g, b, dh) {
   const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
     A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
     Bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-  let C = Math.hypot(A, Bb),
-    H = (Math.atan2(Bb, A) * 180) / Math.PI;
-  if (H < 0) H += 360;
-  if (C < 0.012 || H < 212 || H > 290) return null; // bukan warna kebiruan
-  H = (((H + dh) % 360) + 360) % 360;
+  let H = (Math.atan2(Bb, A) * 180) / Math.PI;
+  return [L, Math.hypot(A, Bb), H < 0 ? H + 360 : H];
+}
+function thFromLch(L, C, H) {
   const hr = (H * Math.PI) / 180;
   const out = (c) => {
     const a = c * Math.cos(hr),
@@ -6558,39 +6556,60 @@ function thShift(r, g, b, dh) {
     return Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055));
   });
 }
-function thCol(s, dh) {
-  const k = dh + s;
+// t = warna teks, b = latar/garis. Hasil null berarti warnanya dibiarkan.
+function thDark(r, g, b, kind) {
+  let [L, C, H] = thLch(r, g, b);
+  if (C < 0.02) {
+    H = 262; // abu-abu netral diberi sedikit rona biru supaya serasi
+    C = Math.max(C, 0.05);
+  }
+  if (kind == 't') {
+    if (L >= 0.62) return null;
+    return thFromLch(0.97 - L * 0.36, C * 0.75, H);
+  }
+  if (C > 0.1) return null; // warna cerah (ikon, tombol, aksen) dibiarkan
+  // gelapnya sedang (biru-abu), bukan hitam: kartu putih 0.32, latar halaman 0.28, garis dan isian sedikit lebih terang
+  // putih jadi lapisan kaca tipis (ikut warna kartu di bawahnya)
+  if (L >= 0.995) return [168, 190, 245, 0.11];
+  if (L >= 0.97) return [160, 184, 240, 0.07];
+  if (L > 0.72) return thFromLch(0.33 + (0.97 - L) * 0.6, Math.max(C * 0.9, 0.045), H);
+  if (L > 0.6) return thFromLch(L * 0.8, C * 0.9, H);
+  return null;
+}
+function thCol(s, kind) {
+  const k = kind + s;
   if (k in THC) return THC[k];
   const c = thRgb(s.toLowerCase()),
-    n = thShift(c[0], c[1], c[2], dh);
+    n = thDark(c[0], c[1], c[2], kind);
   let o = s;
-  if (n) o = c[3] == null ? '#' + n.map((x) => x.toString(16).padStart(2, '0')).join('') : `rgba(${n[0]}, ${n[1]}, ${n[2]}, ${+c[3].toFixed(3)})`;
+  if (n) {
+    const a = n[3] == null ? c[3] : (c[3] == null ? 1 : c[3]) * n[3];
+    o = a == null ? '#' + n.slice(0, 3).map((x) => x.toString(16).padStart(2, '0')).join('') : `rgba(${n[0]}, ${n[1]}, ${n[2]}, ${+a.toFixed(3)})`;
+  }
   return (THC[k] = o);
 }
-const thStr = (v, dh) => (dh ? v.replace(CRX, (m) => thCol(m, dh)) : v);
-const thDh = (k) => (THM[k] && THM[k][1] ? THM[k][1] - 262 : 0);
-const THFILE = location.protocol == 'file:'; // stylesheet dari file lokal tidak bisa dibaca CSSOM
-const THSH = ['background', 'border', 'border-color', 'border-top', 'border-right', 'border-bottom', 'border-left', 'outline', 'text-decoration', 'mask'];
+const thStr = (v, p) => v.replace(CRX, (m) => thCol(m, THTX.test(p) ? 't' : 'b'));
 function thScan() {
   THO = [];
   const walk = (rs) => {
     for (const r of rs) {
+      if (r.media && /print/.test(r.media.mediaText)) continue; // hasil cetak tetap terang
       if (r.cssRules) walk(r.cssRules);
-      if (!r.style) continue;
+      if (!r.style || THKEEP.test(r.selectorText || '')) continue;
       CRX.lastIndex = 0;
       if (!CRX.test(r.style.cssText)) continue; // aturan tanpa warna dilewati cepat
       for (let i = 0; i < r.style.length; i++) {
-          const p = r.style[i],
-            v = r.style.getPropertyValue(p);
-          CRX.lastIndex = 0;
-          if (v && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
-        }
+        const p = r.style[i],
+          v = r.style.getPropertyValue(p);
+        CRX.lastIndex = 0;
+        if (v && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
+      }
       // shorthand yang memakai var() tidak terurai ke longhand, jadi dibaca utuh
       for (const p of THSH) {
-          const v = r.style.getPropertyValue(p);
-          CRX.lastIndex = 0;
-          if (v && v.includes('var(') && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
-        }
+        const v = r.style.getPropertyValue(p);
+        CRX.lastIndex = 0;
+        if (v && v.includes('var(') && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
+      }
     }
   };
   for (const sh of document.styleSheets) {
@@ -6599,52 +6618,53 @@ function thScan() {
     } catch (e) {}
   }
 }
-function thEl(el, dh) {
-  if (el.__th === dh) return;
-  if (el.__th0 == null) {
-    el.__th0 = {};
-    for (const a of ['style', 'fill', 'stroke', 'stop-color']) if (el.hasAttribute(a)) el.__th0[a] = el.getAttribute(a);
+// atribut style di elemen halaman (bukan di dalam ilustrasi SVG)
+function thEl(el, on) {
+  if (el.__th === on) return;
+  if (el.__th0 == null) el.__th0 = el.getAttribute('style') || '';
+  el.setAttribute('style', el.__th0);
+  if (on) {
+    const st = el.style;
+    for (let i = 0; i < st.length; i++) {
+      const p = st[i],
+        v = st.getPropertyValue(p);
+      CRX.lastIndex = 0;
+      if (v && CRX.test(v)) st.setProperty(p, thStr(v, p), st.getPropertyPriority(p));
+    }
   }
-  for (const a in el.__th0) {
-    const v = thStr(el.__th0[a], dh);
-    if (el.getAttribute(a) != v) el.setAttribute(a, v);
-  }
-  el.__th = dh;
+  el.__th = on;
 }
-function thTree(root, dh) {
+function thTree(root, on) {
   if (root.nodeType != 1) return;
-  if (root.matches('[style],[fill],[stroke],[stop-color]') && !root.hasAttribute('data-thx')) thEl(root, dh);
-  root.querySelectorAll('[style],[fill],[stroke],[stop-color]').forEach((e) => e.hasAttribute('data-thx') || thEl(e, dh));
+  const ok = (e) => !(e instanceof SVGElement) && !e.closest('.stpg,.pg');
+  if (root.hasAttribute('style') && ok(root)) thEl(root, on);
+  root.querySelectorAll('[style]').forEach((e) => ok(e) && thEl(e, on));
 }
-// warna garis/titik kanvas halaman awal ikut tema
-var WCR; // var: kanvas bisa jalan sebelum bagian ini dibaca
-function wcRGB() {
-  try {
-    if (!WCR || WCR[0] !== THK) WCR = [THK, (thShift(45, 111, 214, thDh(THK)) || [45, 111, 214]).join(',')];
-    return WCR[1];
-  } catch (e) {
-    return '45,111,214';
-  }
-}
+const thMode = (k) => (k == 'dark' || (k == 'auto' && MQD.matches) ? 1 : 0);
 function thApply(k) {
-  if (!THM[k]) k = 'biru';
-  if (k == THK) return;
-  const dh = thDh(k);
+  const on = THFILE ? 0 : thMode(k);
+  if (on == THK) return;
   if (!THO) thScan();
-  for (const [st, p, v, pr] of THO) st.setProperty(p, thStr(v, dh), pr);
-  thTree(document.body, dh);
-  if (dh && !THMO) {
+  for (const [st, p, v, pr] of THO) st.setProperty(p, on ? thStr(v, p) : v, pr);
+  thTree(document.body, on);
+  if (on && !THMO) {
     THMO = new MutationObserver((ms) => {
-      const d = thDh(THK);
-      if (!d) return;
-      for (const m of ms) for (const n of m.addedNodes) thTree(n, d);
+      if (!THK) return;
+      for (const m of ms) for (const n of m.addedNodes) thTree(n, 1);
     });
     THMO.observe(document.body, { childList: true, subtree: true });
   }
+  const h = document.documentElement;
+  h.classList.toggle('dark', !!on);
+  h.style.colorScheme = on ? 'dark' : '';
   const mt = document.querySelector('meta[name="theme-color"]');
-  if (mt) mt.content = thCol('#2d6fd6', dh);
-  THK = k;
+  if (mt) mt.content = on ? '#0f1a33' : '#2d6fd6';
+  THK = on;
 }
+MQD.addEventListener && MQD.addEventListener('change', () => setG().th == 'auto' && thApply('auto'));
+// cetak (PDF portofolio, rapor) selalu pakai tampilan terang
+window.addEventListener('beforeprint', () => THK && thApply('light'));
+window.addEventListener('afterprint', () => thApply(setG().th));
 
 /* ---------- musik latar ----------
    Dibuat langsung di browser lewat Web Audio (tanpa file lagu), jadi ringan, bebas hak cipta, dan tetap jalan offline.
@@ -7097,14 +7117,8 @@ function setSheet() {
   const tabs = `<div class="settabs" role="tablist">${TABS.map((t) => `<button role="tab" aria-selected="${SETTAB == t[0]}" class="${SETTAB == t[0] ? 'on' : ''}" onclick="setTabGo('${t[0]}')">${I(t[1])}<span>${t[2]}</span></button>`).join('')}</div>`;
   let body = '';
   if (SETTAB == 'tam') {
-    const sw = Object.keys(THM)
-      .map((k) => {
-        const dh = thDh(k);
-        return `<button class="thsw ${s.th == k ? 'on' : ''}" aria-pressed="${s.th == k}" ${THFILE ? 'disabled' : ''} onclick="setOpt('th','${k}')"><i data-thx style="--a:${thCol('#2d6fd6', dh)};--b:${thCol('#93c5fd', dh)};--c:${thCol('#e3effd', dh)}"></i><span>${THM[k][0]}</span>${s.th == k ? I('chk') : ''}</button>`;
-      })
-      .join('');
     body =
-      row('pal', 'Tema warna', THFILE ? 'Tema warna cuma bisa dipakai kalau FolioKit dibuka lewat link.' : 'Semua tetap terang. Warna hijau dan merah untuk benar/salah nggak ikut berubah.', `<div class="thgrid">${sw}</div>`, 'full') +
+      row('pal', 'Tema', THFILE ? 'Tema gelap cuma bisa dipakai kalau FolioKit dibuka lewat link.' : 'Ikuti perangkat: ikut mode terang/gelap HP atau laptopmu.', seg("setOpt('th',$V)", [['light', 'Terang'], ['dark', 'Gelap'], ['auto', 'Ikuti perangkat']], s.th)) +
       row('doc', 'Ukuran teks', 'Gedein kalau tulisannya kekecilan.', seg("setOpt('fs',$V)", [['sm', 'Kecil'], ['md', 'Normal'], ['lg', 'Besar'], ['xl', 'Paling besar']], s.fs)) +
       row('lines', 'Spasi baca', 'Jarak antarbaris dan antarkata lebih lega, enak buat bacaan panjang.', seg("setOpt('sp',$V)", [[0, 'Normal'], [1, 'Lega']], s.sp)) +
       row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc)) +

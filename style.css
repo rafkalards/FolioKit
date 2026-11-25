@@ -12919,44 +12919,6 @@ html[data-fs='xl'] #app {
   grid-column: 1 / -1;
   margin-top: 8px;
 }
-.thgrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-  gap: 8px;
-}
-.thsw {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1.5px solid var(--line);
-  background: #fff;
-  font: 600 13px Inter, sans-serif;
-  color: var(--ink);
-  text-align: left;
-}
-.thsw i {
-  flex: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--a) 0 48%, var(--b) 48% 72%, var(--c) 72%);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-}
-.thsw span {
-  flex: 1;
-  min-width: 0;
-}
-.thsw .i {
-  width: 16px;
-  height: 16px;
-  color: var(--p);
-}
-.thsw.on {
-  border-color: var(--p);
-  box-shadow: 0 0 0 3px var(--pl);
-}
 .mugrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -13070,9 +13032,6 @@ html[data-fs='xl'] #app {
     gap: 2px;
     font-size: 11.5px;
   }
-  .thgrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .mugrid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -13085,4 +13044,58 @@ html.sp #sh li {
   line-height: 1.85;
   letter-spacing: 0.01em;
   word-spacing: 0.08em;
+}
+/* ===== Tema gelap: penyesuaian yang tidak bisa dibuat otomatis ===== */
+html.dark #side {
+  background: linear-gradient(180deg, #1b2c55, #111c39) !important;
+  box-shadow: 0 0 0 1px rgba(147, 197, 253, 0.08) !important;
+}
+html.dark .wv svg path {
+  fill-opacity: 0.1;
+}
+html.dark img,
+html.dark video {
+  filter: brightness(0.92);
+}
+/* tema gelap: latar bercahaya lembut + kartu kaca bening */
+html.dark body {
+  background:
+    radial-gradient(60vw 50vh at 85% 0%, rgba(124, 58, 237, 0.22), transparent 70%),
+    radial-gradient(70vw 60vh at 10% 100%, rgba(45, 111, 214, 0.28), transparent 70%),
+    linear-gradient(160deg, #26355a, #1e2a4a 55%, #222c4f) fixed !important;
+}
+html.dark #app,
+html.dark main#view {
+  background: transparent !important;
+}
+html.dark .card,
+html.dark .sh {
+  background: rgba(52, 68, 110, 0.62) !important;
+  border-color: rgba(173, 200, 255, 0.14) !important;
+  box-shadow: 0 12px 34px -18px rgba(5, 10, 30, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+html.dark #side {
+  background: linear-gradient(180deg, rgba(42, 60, 108, 0.82), rgba(32, 46, 86, 0.82)) !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+html.dark.lite .card,
+html.dark.lite .sh,
+html.dark.lite #side {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html.dark.lite .card,
+html.dark.lite .sh {
+  background: rgb(50, 65, 105) !important;
+}
+/* warna utama sedikit lebih terang di tema gelap supaya teks biru tetap kebaca */
+html.dark {
+  --p: #5a9af3;
+  --p2: #6aa6f6;
+}
+html.dark .tag {
+  color: color-mix(in srgb, var(--c, #2d6fd6) 35%, #fff) !important;
 }
