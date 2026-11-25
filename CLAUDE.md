@@ -46,7 +46,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 
 **GitHub** `rafkalards/FolioKit` (branch `main`), dipasang di GitHub Pages: https://rafkalards.github.io/FolioKit/. Ini satu-satunya versi yang dipakai dan dibagikan (artifact claude.ai lama sudah dihapus). Di sini Kak Folio memakai jawaban offline, video YouTube bisa diputar langsung, dan web bisa dibuka tanpa internet setelah sekali dibuka online (PWA).
 
-Fitur yang memakai layanan Claude (`sample`, `db`, `user`, `downloads`, `assets`) tidak aktif di GitHub Pages dan kodenya otomatis memakai cadangan. Jangan dihapus kecuali diminta.
+Fitur AI (`sample`: jawaban AI Kak Folio dan cek portofolio pakai AI) sudah dihapus atas permintaan pemilik. Kak Folio menjawab dari `FAQ` saja. Sisa kapabilitas claude.ai lain (`db`, `user`, `downloads`, `assets`) tidak aktif di GitHub Pages dan kodenya otomatis memakai cadangan.
 
 Setiap perubahan harus di-commit dan di-push ke `main` (permintaan tetap dari pemilik).
 

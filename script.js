@@ -206,7 +206,7 @@ const M = [
       'Tidak memberi nama file desain',
     ],
     tip: 'Salah klik? Tekan Ctrl+Z (atau Cmd+Z di Mac) untuk membatalkan.',
-    v: ['PtLXI_AG1E4', 'Untuk Pemula! Begini Cara Menggunakan Canva'],
+    v: ['ynwUuEELPYw', 'Belajar Canva untuk Pemula dari Nol'],
   },
   {
     t: 'Prinsip Dasar Desain',
@@ -529,6 +529,7 @@ const def = () => ({
   sim: null,
   simOk: 0,
   tg: null,
+  pc: {},
 });
 let UID = null,
   S = def();
@@ -716,7 +717,6 @@ function sideR() {
     it('ai', 'ai', 'Tanya Kak Folio', 0, "sheet('ai')") +
     it('book', 'doc', 'Contoh portofolio', 0, "sheet('book')") +
     it('tpl', 'grid', 'Gaya template', 0, "sheet('tpl')") +
-    (aicek ? it('aicek', 'spark', 'Cek pakai AI', 0, "sheet('aicek')") : '') +
     (S.ev.best >= 70 ? it('cert', 'award', 'Sertifikat', 0, "sheet('cert')") : '') +
     it('src', 'doc', 'Sumber materi', 0, "sheet('src')");
   const etc =
@@ -1335,7 +1335,7 @@ function doneM(i) {
     sfx('ok');
     if (mN() == 8) {
       conf();
-      toast('Semua materi selesai. Aktivitas sudah terbuka!', 'chk');
+      toast('Semua materi beres. Aktivitas udah kebuka.', 'chk');
     } else toast(`Materi ${i + 1} selesai.`, 'chk');
   }
   if (i < 7) go('materi', i + 1, 'f');
@@ -1380,7 +1380,7 @@ function win(k, msg) {
     }, 0);
     if (aN() == 7) {
       conf();
-      toast('Semua aktivitas selesai. Praktik sudah terbuka!', 'chk');
+      toast('Semua aktivitas beres. Praktik udah kebuka.', 'chk');
     }
   }
   return `<div class="fb ok">${I('chk')}<span>${msg}</span></div>`;
@@ -1638,6 +1638,15 @@ function a7(i, b) {
 }
 
 /* ---------- praktik ---------- */
+/* checklist pribadi di samping praktik, disimpan di S.pc */
+const PCHK = [
+  'Nama dan posisi yang dilamar kebaca jelas di sampul',
+  'Ada kontak yang bisa dihubungi (email atau LinkedIn)',
+  'Karya terkuat ada di urutan pertama',
+  'Tiap karya ada judul, peranmu, dan hasilnya',
+  'Udah dicek typo-nya, minimal sekali',
+  'Tautan Canva udah diset bisa dilihat semua orang',
+];
 SCR.praktik = () => {
   const k = R.pk == null ? Math.min(prN(), 3) : R.pk,
     p = PR[k],
@@ -1650,7 +1659,7 @@ SCR.praktik = () => {
  ${all ? `<div class="fb ok">${I('chk')}<span>Keren, portofoliomu sudah jadi. Evaluasi sudah terbuka.</span></div>` : ''}`
   }</div>
  <div class="pf">${R.pm == 'sim' ? `<span></span><button class="btn" onclick="R.pm='steps';go('praktik',0,'b')">${I('task')} Lanjut ke langkah di Canva</button>` : `<button class="btn g" ${k == 0 ? 'disabled' : ''} onclick="R.pk=${k - 1};go('praktik')">${I('bk')}<span class="lbl">Sebelumnya</span></button>${all ? `<button class="btn" onclick="go('evaluasi')">Ke evaluasi ${I('arr')}</button>` : `<button class="btn g" ${k == 3 ? 'disabled' : ''} onclick="R.pk=${k + 1};go('praktik')"><span class="lbl">Berikutnya</span>${I('arr')}</button>`}`}</div></article>
- <aside class="card side"><a class="btn" href="https://www.canva.com" target="_blank" rel="noopener">${I('ext')} Buka Canva</a><button class="btn g" onclick="sheet('vid')">${I('play')} Lihat tutorial</button><button class="btn g" onclick="sheet('book')">${I('doc')} Contoh jadi</button><button class="btn g" onclick="sheet('tpl')">${I('grid')} Gaya template</button><button class="btn g" onclick="sheet('aicek')">${I('spark')} Cek pakai AI</button><div class="hide-m" style="width:100%"><p class="small" style="margin:8px 0 6px">Tautan portofoliomu (opsional)</p><input class="inp" placeholder="https://www.canva.com/design/..." value="${esc(S.link)}" oninput="S.link=this.value.trim();save()" aria-label="Tautan portofolio"></div></aside></div>`;
+ <aside class="card pside"><a class="btn" href="https://www.canva.com" target="_blank" rel="noopener">${I('ext')} Buka Canva</a><button class="btn g" onclick="sheet('vid')">${I('play')} Lihat tutorial</button><button class="btn g" onclick="sheet('book')">${I('doc')} Contoh jadi</button><button class="btn g" onclick="sheet('tpl')">${I('grid')} Gaya template</button><button class="btn g" onclick="sheet('ai')">${I('chat')} Tanya Kak Folio</button><div class="hide-m" style="width:100%"><p class="small" style="margin:8px 0 6px">Tautan portofoliomu (opsional)</p><input class="inp" placeholder="https://www.canva.com/design/..." value="${esc(S.link)}" oninput="S.link=this.value.trim();save()" aria-label="Tautan portofolio"></div><div class="pchk hide-m"><p class="pchkh">Cek dulu sebelum dikirim</p>${PCHK.map((x, j) => `<label class="pchki"><input type="checkbox" ${S.pc && S.pc[j] ? 'checked' : ''} onchange="S.pc=S.pc||{};S.pc[${j}]=this.checked;save()"><span>${x}</span></label>`).join('')}</div></aside></div>`;
 };
 function tick(k) {
   S.pr[k] = !S.pr[k];
@@ -1659,7 +1668,7 @@ function tick(k) {
     sfx('ok');
     if (prN() == 4) {
       conf();
-      toast('Praktik selesai. Evaluasi sudah terbuka!', 'chk');
+      toast('Praktik beres. Evaluasi udah kebuka.', 'chk');
     } else {
       const nx = PR.findIndex((_, j) => !S.pr[j]);
       R.pk = nx < 0 ? k : nx;
@@ -1747,12 +1756,12 @@ SCR.rapor = () => {
    .map((x) => `<div class="st ${x[2] ? 'ok' : ''}"><b>${x[1]}</b><small>${x[0]}</small></div>`)
    .join('')}</div>
  ${/^https?:\/\//.test(S.link) ? `<p style="margin-top:14px" class="small">Tautan portofoliomu: <a href="${esc(S.link)}" target="_blank" rel="noopener">${esc(S.link)}</a></p>` : ''}
- ${S.rf.t1 ? `<div class="say" style="margin-top:14px"><b>Rencana perbaikanmu:</b> ${esc(S.rf.t1)}</div>` : ''}${S.pre.sc != null && S.ev.best != null ? cmpH(S.ev.best) : ''}<div class="rpx"><button class="rpb" onclick="sheet('cert')">${I('award')}<b>Sertifikat</b><small>${S.ev.best >= 70 ? 'Siap diunduh' : 'Nilai evaluasi min. 70'}</small></button><button class="rpb" onclick="go('konsep')">${I('net')}<b>Peta konsep</b><small>Rangkuman 8 materi</small></button><button class="rpb" onclick="sheet('aicek')">${I('spark')}<b>Cek portofolio</b><small>Dinilai AI</small></button></div><p style="font-weight:600;margin:16px 0 8px">Lencana (${bdN()} dari ${BD.length})</p>${bdGrid()}</div>
+ ${S.rf.t1 ? `<div class="say" style="margin-top:14px"><b>Rencana perbaikanmu:</b> ${esc(S.rf.t1)}</div>` : ''}${S.pre.sc != null && S.ev.best != null ? cmpH(S.ev.best) : ''}<div class="rpx"><button class="rpb" onclick="sheet('cert')">${I('award')}<b>Sertifikat</b><small>${S.ev.best >= 70 ? 'Siap diunduh' : 'Nilai evaluasi min. 70'}</small></button><button class="rpb" onclick="go('konsep')">${I('net')}<b>Peta konsep</b><small>Rangkuman 8 materi</small></button><button class="rpb" onclick="sheet('book')">${I('doc')}<b>Contoh portofolio</b><small>Bandingkan sama punyamu</small></button></div><p style="font-weight:600;margin:16px 0 8px">Lencana (${bdN()} dari ${BD.length})</p>${bdGrid()}</div>
  <div class="pf"><button class="btn g" onclick="sheet('reset')">${I('rst')}<span class="lbl">Mulai dari awal</span></button><div class="row"><button class="btn g" onclick="sheet('survey')">${I('star')}<span class="lbl">Beri penilaian</span></button><button class="btn g" onclick="loadBtn(this,copyR,'Menyalin...',1)">${I('copy')}<span class="lbl">Salin ringkasan</span></button><button class="btn" onclick="go('home',0,'b')">${I('home')} Beranda</button></div></div></article>`;
 };
 function copyR() {
   const t = `Rapor belajar FolioKit${S.name ? ' - ' + S.name : ''}\nMateri ${mN()}/8, Aktivitas ${aN()}/7, Praktik ${prN()}/4, Evaluasi ${S.ev.best ?? '-'}\nProgres ${pct()}%${S.link ? '\nPortofolio: ' + S.link : ''}`;
-  const f = () => toast('Tidak bisa menyalin otomatis di browser ini.', 'x');
+  const f = () => toast('Browser ini nggak bisa nyalin otomatis. Salin manual aja ya.', 'x');
   try {
     navigator.clipboard.writeText(t).then(() => toast('Ringkasan disalin.', 'chk'), f);
   } catch (e) {
@@ -1796,11 +1805,10 @@ function sheet(k) {
           .map((x) => mi(x[0], x[1], x[2] == 'materi' ? "go('materi',firstM())" : `go('${x[2]}')`, x[3], lock(x[2])))
           .join('');
         const help =
-          mi('chat', 'Tanya Kak Folio', "sheet('ai')", SMP ? 'AI' : 'Tanya jawab') +
+          mi('chat', 'Tanya Kak Folio', "sheet('ai')", 'Tanya jawab') +
           mi('doc', 'Contoh portofolio jadi', "sheet('book')", '7 halaman') +
           mi('grid', 'Gaya template Canva', "sheet('tpl')", '3 gaya') +
           (lock('konsep') ? '' : mi('net', 'Peta konsep', "go('konsep')", 'Rangkuman')) +
-          (SMP && SMPI ? mi('spark', 'Cek portofolio pakai AI', "sheet('aicek')", '') : '') +
           (S.ev.best >= 70 ? mi('award', 'Sertifikat', "sheet('cert')", 'Siap diunduh') : '') +
           mi('doc', 'Sumber materi', "sheet('src')", REFS.length + VIDS().length + ' rujukan');
         const etc =
@@ -1827,7 +1835,6 @@ function sheet(k) {
     acc: ['Profil', accSheet],
     nama: ['Sebelum mulai', nameSheet],
     ai: ['Tanya Kak Folio', aiSheet],
-    aicek: ['Cek portofolio pakai AI', aicSheet],
     cert: ['Sertifikat', certSheet],
     tpl: ['Gaya template Canva', tplSheet],
     intro: ['Video intro', introSheet],
@@ -1886,6 +1893,8 @@ function sheet(k) {
         `<p>Semua progres, jawaban, dan refleksi akun ini di browser ini akan dihapus. Ini tidak bisa dibatalkan.</p><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn g" onclick="closeSh()">Batal</button><button class="btn" style="background:var(--no)" onclick="doReset()">Ya, hapus</button></div>`,
     ],
   };
+  // jendela yang sudah dihapus (misalnya cek portofolio AI) diarahkan ke Kak Folio
+  if (!SH[k]) k = 'ai';
   document.getElementById('sht').textContent = SH[k][0];
   b.innerHTML = SH[k][1]();
   b.scrollTop = 0;
@@ -1917,7 +1926,7 @@ function doReset() {
   loadUser('guest');
   Object.keys(R).forEach((k) => delete R[k]);
   closeSh();
-  toast('Progres sudah dihapus.', 'rst');
+  toast('Progres udah dihapus.', 'rst');
   go('welcome', 0, 'b');
 }
 
@@ -2137,7 +2146,7 @@ function loadBtn(b, cb, txt, restore) {
 /* ===== mode pratinjau ===== */
 function prevOn(direct) {
   if (!ROLE.edit) {
-    toast('Mode pratinjau hanya untuk pemilik.', 'lock');
+    toast('Mode pratinjau cuma buat pemilik.', 'lock');
     return;
   }
   if (!direct && !S.prev) {
@@ -2205,7 +2214,7 @@ function svCopy() {
       `Penilaian media FolioKit${S.name ? ' - ' + S.name : ''}\n` +
       SVQ.map((q, i) => `${i + 1}. ${q} ${v.r[i] || '-'}/5`).join('\n') +
       (v.t ? `\nSaran: ${v.t}` : '');
-  const f = () => toast('Tidak bisa menyalin otomatis di browser ini.', 'x');
+  const f = () => toast('Browser ini nggak bisa nyalin otomatis. Salin manual aja ya.', 'x');
   try {
     navigator.clipboard.writeText(t).then(() => toast('Jawaban disalin.', 'chk'), f);
   } catch (e) {
@@ -2403,7 +2412,7 @@ function ownCSV() {
     x.t ? new Date(x.t).toLocaleString('id-ID') : '',
   ]);
   const t = [h, ...rows].map((r) => r.map(q).join(',')).join('\n'),
-    f = () => toast('Tidak bisa menyalin otomatis di browser ini.', 'x');
+    f = () => toast('Browser ini nggak bisa nyalin otomatis. Salin manual aja ya.', 'x');
   try {
     navigator.clipboard.writeText(t).then(() => toast('Data disalin. Tempel di Excel atau Google Sheets.', 'chk'), f);
   } catch (e) {
@@ -3593,22 +3602,8 @@ function goNext() {
 var SMP = window.SMP || null,
   SMPI = null,
   DLS = null;
-(async () => {
-  try {
-    if (!(window.claude && claude.use)) return;
-    const sm = await claude.use('sample');
-    if (sm) {
-      SMP = sm;
-      try {
-        const lim = await sm.limits();
-        SMPI = lim && lim.images ? lim.images : null;
-      } catch (e) {
-        SMPI = null;
-      }
-      hdr();
-    }
-  } catch (e) {}
-})();
+/* Fitur AI (jawaban AI langsung dan cek portofolio pakai AI) sudah dihapus: hanya jalan di claude.ai, tidak di GitHub Pages.
+   Kak Folio tetap jalan dengan kumpulan jawaban bawaan (FAQ). */
 (async () => {
   try {
     if (window.claude && claude.use) DLS = await claude.use('downloads');
@@ -3630,7 +3625,7 @@ SCR.pre = () => {
   const t = R.pre || (R.pre = { st: 0, i: 0, a: [] });
   if (S.pre.done && !t.st) {
     const sc = S.pre.sc;
-    return `<article class="card pane"><div class="pb scroll"><div class="res" style="padding:10px 0"><div class="bring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" stroke="var(--pl)"/><circle cx="60" cy="60" r="52" stroke="var(--p)" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="${326.7 * (1 - sc / 100)}"/></svg><div class="v"><div>${sc}<small>dari 100</small></div></div></div><div><span class="tag">${I('flag')} Tes awal selesai</span><h2 class="pp" style="color:var(--pd);font-size:clamp(20px,2.6vw,26px);margin-top:8px">Ini titik awalmu${S.name ? ', ' + esc(S.name) : ''}.</h2><p style="color:var(--mute);margin-top:6px">Nanti dibandingin sama nilai evaluasi di akhir.</p></div></div></div><div class="pf"><span></span><button class="btn shim" onclick="go('materi',firstM())">Mulai Materi 1 ${I('arr')}</button></div></article>`;
+    return `<article class="card pane"><div class="pb scroll"><div class="res" style="padding:10px 0"><div class="bring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" stroke="var(--pl)"/><circle cx="60" cy="60" r="52" stroke="var(--p)" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="${326.7 * (1 - sc / 100)}"/></svg><div class="v"><div>${sc}<small>dari 100</small></div></div></div><div><span class="tag">${I('flag')} Tes awal selesai</span><h2 class="pp" style="color:var(--pd);font-size:clamp(20px,2.6vw,26px);margin-top:8px">Ini titik awalmu${S.name ? ', ' + esc(S.name) : ''}.</h2><p style="color:var(--mute);margin-top:6px">Nanti dibandingin sama nilai evaluasi di akhir.</p></div></div><p class="kh" style="margin-top:18px">Yang bakal kamu pelajari</p><div class="prel">${M.map((m, k) => `<button onclick="go('materi',${k})"><span>${S.md[k] ? I('chk') : k + 1}</span><b>${m.t}</b><small>sekitar ${estM('materi', k)} menit</small></button>`).join('')}</div></div><div class="pf"><span></span><button class="btn shim" onclick="go('materi',firstM())">Mulai Materi 1 ${I('arr')}</button></div></article>`;
   }
   if (!t.st)
     return `<article class="card pane"><div class="ph"><span class="tag">${I('flag')} Sebelum mulai</span><h2>Tes awal dulu, yuk</h2><p>Jawab sebisanya, salah nggak apa-apa. Nilainya nanti dibandingin sama evaluasi di akhir.</p></div><div class="pb scroll"><div class="prei">${[
@@ -3736,7 +3731,7 @@ const TOURS = {
       'Lima tahap ini kebuka berurutan. Yang kekunci bakal kebuka setelah tahap sebelumnya selesai.',
     ],
     ['.side .snav', 'Navigasi', 'Semua tahap belajar ada di sini. Yang bergembok kebuka setelah tahap sebelumnya selesai.'],
-    ['#aib:not([hidden]), .side [data-k="ai"]', 'Tanya Kak Folio', 'Bingung? Tanya aja ke asisten AI ini kapan pun.'],
+    ['#aib:not([hidden]), .side [data-k="ai"]', 'Tanya Kak Folio', 'Bingung soal portofolio atau Canva? Tanya Kak Folio aja.'],
     [
       '.top .ib[aria-label="Buka menu"], .side [data-k="cari"]',
       'Menu',
@@ -4759,7 +4754,7 @@ function aiMd(t) {
 function aiSheet() {
   const T = R.ai || (R.ai = { t: [], busy: 0 });
   setTimeout(aiScroll, 30);
-  return `<div class="aiw"><div class="aim" id="aim">${T.t.length ? T.t.map(aiBub).join('') : `<div class="aihi"><span class="aiav">${I('spark')}</span><div><b>Halo${S.name ? ', ' + esc(S.name) : ''}! Aku Kak Folio.</b><p class="small">Tanya apa aja soal portofolio dan Canva.</p><span class="aimode">${SMP ? I('spark') + ' Mode AI' : I('book') + ' Mode tanya jawab bawaan'}</span></div></div>`}</div>${T.t.length ? '' : `<div class="aiq">${AIQ.map((q) => `<button class="chip" onclick="aiSend(this.textContent)">${q}</button>`).join('')}</div>`}<form class="aif" onsubmit="event.preventDefault();aiSend(this.q.value)"><input name="q" class="inp" maxlength="400" placeholder="Tulis pertanyaanmu..." autocomplete="off" aria-label="Pertanyaan" ${T.busy ? 'disabled' : ''}><button class="btn aibt" type="${T.busy ? 'button' : 'submit'}" onclick="${T.busy ? 'aiStop()' : ''}" aria-label="${T.busy ? 'Berhenti' : 'Kirim'}">${I(T.busy ? 'stop' : 'send')}</button></form><p class="small aint">${SMP ? 'Jawaban AI bisa keliru.' : ''}</p></div>`;
+  return `<div class="aiw"><div class="aim" id="aim">${T.t.length ? T.t.map(aiBub).join('') : `<div class="aihi"><span class="aiav">${I('spark')}</span><div><b>Halo${S.name ? ', ' + esc(S.name) : ''}! Aku Kak Folio.</b><p class="small">Tanya apa aja soal portofolio dan Canva.</p><span class="aimode">${I('book')} Jawaban dari materi FolioKit</span></div></div>`}</div>${T.t.length ? '' : `<div class="aiq">${AIQ.map((q) => `<button class="chip" onclick="aiSend(this.textContent)">${q}</button>`).join('')}</div>`}<form class="aif" onsubmit="event.preventDefault();aiSend(this.q.value)"><input name="q" class="inp" maxlength="400" placeholder="Tulis pertanyaanmu..." autocomplete="off" aria-label="Pertanyaan" ${T.busy ? 'disabled' : ''}><button class="btn aibt" type="${T.busy ? 'button' : 'submit'}" onclick="${T.busy ? 'aiStop()' : ''}" aria-label="${T.busy ? 'Berhenti' : 'Kirim'}">${I(T.busy ? 'stop' : 'send')}</button></form><p class="small aint"></p></div>`;
 }
 function aiBub(m) {
   return m.role == 'user'
@@ -4784,26 +4779,6 @@ function aiScroll() {
   if (m) m.scrollTop = m.scrollHeight;
 }
 var AICTL = null;
-function aiErr(c) {
-  return (
-    {
-      not_granted: 'Kamu belum mengizinkan web ini memakai Claude. Fitur AI dimatikan untuk sesi ini.',
-      sampling_disabled: 'Fitur AI tidak tersedia untuk akunmu.',
-      rate_limited: 'Lagi terlalu banyak permintaan, atau batas pemakaianmu sudah habis. Coba lagi nanti ya.',
-      session_expired: 'Sesi login kamu habis. Masuk lagi ke claude.ai, lalu coba lagi.',
-      refused: 'Pertanyaan itu nggak bisa aku jawab. Coba tanya hal lain seputar portofolio.',
-      image_rejected: 'Gambarnya nggak bisa dibaca. Coba pakai file JPG atau PNG lain.',
-      invalid_json: 'Hasilnya belum bisa dibaca. Coba klik nilai lagi.',
-      empty_completion: 'Belum ada jawaban. Coba ulangi dengan pertanyaan yang lebih singkat.',
-    }[c] || 'Koneksi ke AI lagi bermasalah. Coba kirim lagi.'
-  );
-}
-function aiOff(c) {
-  if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(c)) {
-    SMP = null;
-    hdr();
-  }
-}
 async function aiSend(q) {
   q = String(q || '').trim();
   const T = R.ai || (R.ai = { t: [], busy: 0 });
@@ -4838,134 +4813,13 @@ async function aiSend(q) {
       ans.content = full;
     }
   };
-  if (!SMP) {
-    await local();
-    T.busy = 0;
-    if (document.getElementById('aim')) sheet('ai');
-    return;
-  }
-  AICTL = new AbortController();
-  const hist = T.t.filter((m) => !m.err && m !== ans && m.content && !m.note).slice(-8);
-  let turns = [{ role: 'user', content: AIR() }, ...hist];
-  while (turns.length > 1 && turns[1].role !== 'user') turns.splice(1, 1);
-  try {
-    await SMP(turns, {
-      modelTier: 'quick',
-      cache: false,
-      signal: AICTL.signal,
-      onText: ({ text }) => {
-        ans.content = text;
-        upd();
-      },
-    });
-  } catch (e) {
-    const c = e && e.code;
-    if (c == 'cancelled') {
-      ans.content = (e.text || '') + (e.text ? '' : 'Dihentikan.');
-    } else if (e && e.text) {
-      ans.content = e.text;
-      ans.note = 'Jawaban terputus. Coba kirim lagi kalau perlu.';
-    } else {
-      aiOff(c);
-      await local(
-        c == 'refused' ? '' : 'AI lagi nggak bisa dipakai, jadi ini jawaban dari kumpulan tanya jawab materi.',
-      );
-    }
-  }
+  // Kak Folio selalu menjawab dari kumpulan tanya jawab bawaan (fitur AI sudah dihapus)
+  await local();
   T.busy = 0;
-  AICTL = null;
   if (document.getElementById('aim')) sheet('ai');
 }
 function aiStop() {
   if (AICTL) AICTL.abort();
-}
-
-/* ---------- Cek portofolio pakai AI ---------- */
-function aicSheet() {
-  const C = R.aic || (R.aic = { f: [], busy: 0, res: null, err: '' });
-  if (!SMP || !SMPI)
-    return `<div class="aino">${I('img')}<b>Cek portofolio pakai AI belum bisa dipakai di sini</b><p class="small">${SMP ? 'Tampilan ini belum bisa mengirim gambar ke AI.' : 'Fitur ini cuma jalan di claude.ai.'} Kamu bisa nilai sendiri pakai Materi 8.</p><button class="btn g sm" onclick="go('materi',7)">Buka Materi 8</button></div>`;
-  const mx = Math.min(3, SMPI.maxCount || 3);
-  if (C.res) return aicRes(C.res);
-  return `<div class="aic"><p class="small">Upload screenshot portofoliomu (maks. ${mx}), nanti AI kasih nilai dan saran.</p><label class="small" style="font-weight:600;display:block;margin-top:12px">Posisi yang kamu lamar<input class="inp" id="acp" style="margin-top:6px" maxlength="60" value="${esc(S.cpos || (S.sim && S.sim.pos) || '')}" placeholder="Misalnya: Desainer Grafis" oninput="S.cpos=this.value;save()"></label><label class="aidz ${C.f.length ? 'has' : ''}"><input type="file" id="acf" accept="${(SMPI.mediaTypes || ['image/png', 'image/jpeg']).join(',')}" multiple onchange="aicPick(this.files)" ${C.busy ? 'disabled' : ''}>${C.f.length ? `<div class="aith">${C.f.map((f, k) => `<span><img src="${URL.createObjectURL(f)}" alt="Screenshot ${k + 1}"><button type="button" onclick="event.preventDefault();aicDel(${k})" aria-label="Hapus gambar ${k + 1}">${I('x')}</button></span>`).join('')}</div><small>Klik buat ganti atau tambah gambar</small>` : `<span class="aidi">${I('img')}</span><b>Pilih screenshot portofoliomu</b><small>PNG atau JPG, maksimal ${mx} gambar</small>`}</label>${C.err ? `<div class="fb no">${I('x')}<span>${esc(C.err)}</span></div>` : ''}<div class="row" style="justify-content:space-between;margin-top:14px"><p class="small" style="max-width:26em">Gambar tidak disimpan di web ini.</p>${C.busy ? `<button class="btn g" onclick="aiStop()">${I('stop')} Berhenti</button>` : `<button class="btn" ${C.f.length ? '' : 'disabled'} onclick="aicRun()">${I('spark')} Nilai portofolioku</button>`}</div>${C.busy ? `<div class="aibusy"><span class="dots3"><i></i><i></i><i></i></span><span>AI lagi ngecek portofoliomu. Biasanya 20 sampai 60 detik.</span></div>` : ''}</div>`;
-}
-function aicPick(fl) {
-  const C = R.aic,
-    mx = Math.min(3, (SMPI && SMPI.maxCount) || 3),
-    lim = (SMPI && SMPI.maxInputBytes) || 2e7;
-  const ok = [...fl].filter((f) => /^image\//.test(f.type) && f.size <= lim);
-  if (ok.length < fl.length) toast('Ada file yang dilewati: harus gambar dan tidak terlalu besar.', 'info');
-  C.f = C.f.concat(ok).slice(0, mx);
-  C.err = '';
-  sheet('aicek');
-}
-function aicDel(k) {
-  R.aic.f.splice(k, 1);
-  sheet('aicek');
-}
-async function aicRun() {
-  const C = R.aic;
-  if (!C.f.length || C.busy) return;
-  C.busy = 1;
-  C.err = '';
-  sheet('aicek');
-  AICTL = new AbortController();
-  const pos = (S.cpos || '').trim() || 'posisi yang belum disebutkan';
-  const prompt = `Kamu penilai portofolio digital untuk fresh graduate di Indonesia. Gambar yang dilampirkan adalah screenshot halaman portofolio buatan pengguna di Canva. Posisi yang dilamar: ${pos}.
-Nilai dengan skala 1 sampai 4 (1 = belum ada, 2 = kurang, 3 = cukup baik, 4 = sangat baik) untuk tiga aspek:
-- kelengkapan: ada profil, pendidikan/pengalaman, skill, karya dengan keterangan (peran, alat, hasil), dan kontak; karyanya relevan dengan posisi.
-- desain: layout rapi, ruang kosong cukup, maksimal dua jenis huruf, warna senada dan kontras cukup, gaya konsisten.
-- kesan: dalam 10 detik pembaca langsung tahu siapa dia, posisi apa, dan karya terbaiknya.
-Kalau gambar bukan portofolio, beri semua nilai 1 dan jelaskan di ringkasan.
-Tulis dalam bahasa Indonesia santai (pakai "kamu"), spesifik ke apa yang terlihat di gambar.
-Balas HANYA JSON dengan bentuk ini:
-{"skor":{"kelengkapan":3,"desain":2,"kesan":3},"ringkasan":"satu sampai dua kalimat","bagus":["poin 1","poin 2"],"perbaiki":[{"apa":"yang perlu diperbaiki","cara":"cara memperbaikinya","materi":5}]}
-"materi" adalah nomor materi (1-8) yang paling relevan untuk dibaca ulang: 1 konsep, 2 struktur, 3 isi/kurasi, 4 Canva, 5 prinsip desain, 6 membuat, 7 publikasi, 8 evaluasi. Maksimal 3 poin "bagus" dan 3 poin "perbaiki".`;
-  try {
-    const r = await SMP.json(prompt, { images: C.f, signal: AICTL.signal });
-    if (!r || !r.skor) throw { code: 'invalid_json' };
-    C.res = r;
-    sfx('ok');
-    try {
-      S.aic = { k: +r.skor.kelengkapan || 0, d: +r.skor.desain || 0, s: +r.skor.kesan || 0, t: Date.now() };
-      save();
-    } catch (e) {}
-  } catch (e) {
-    const c = e && e.code;
-    if (c != 'cancelled') C.err = aiErr(c);
-    aiOff(c);
-  }
-  C.busy = 0;
-  AICTL = null;
-  if (document.getElementById('sh').classList.contains('on')) sheet('aicek');
-}
-function aicRes(r) {
-  const sk = r.skor || {},
-    A = [
-      ['kelengkapan', 'Kelengkapan isi'],
-      ['desain', 'Kerapian desain'],
-      ['kesan', 'Kesan pertama'],
-    ],
-    v = A.map((a) => Math.max(0, Math.min(4, Math.round(+sk[a[0]] || 0)))),
-    avg = (v.reduce((a, b) => a + b, 0) / 3).toFixed(1),
-    ok = v.every((x) => x >= 3);
-  const li = (a) => (Array.isArray(a) ? a : []).slice(0, 3);
-  return `<div class="aicr"><div class="aisc"><div class="aiav2 ${ok ? 'ok' : ''}"><b>${avg}</b><small>dari 4</small></div><div><b class="pp" style="color:#123a8f;font-size:17px">${ok ? 'Portofoliomu udah lolos target, mantap!' : 'Udah ada dasarnya, tinggal dirapihin sedikit lagi.'}</b><p class="small" style="margin-top:4px">${esc(r.ringkasan || '')}</p></div></div><div class="aibar">${A.map((a, k) => `<div><span>${a[1]}</span><span class="owb"><i style="width:${(v[k] / 4) * 100}%;${v[k] >= 3 ? 'background:var(--ok)' : ''}"></i></span><b>${v[k]}</b></div>`).join('')}</div>${
-    li(r.bagus).length
-      ? `<p class="kh">Yang sudah bagus</p><ul class="aiok">${li(r.bagus)
-          .map((x) => `<li>${I('chk')}<span>${esc(x)}</span></li>`)
-          .join('')}</ul>`
-      : ''
-  }${
-    li(r.perbaiki).length
-      ? `<p class="kh">Yang perlu diperbaiki</p><div class="aifix">${li(r.perbaiki)
-          .map((x) => {
-            const m = Math.max(1, Math.min(8, parseInt(x && x.materi) || 0));
-            return `<div><b>${esc((x && x.apa) || '')}</b><p class="small">${esc((x && x.cara) || '')}</p>${m ? `<button class="chip" onclick="go('materi',${m - 1})">${I('book')} Baca Materi ${m}</button>` : ''}</div>`;
-          })
-          .join('')}</div>`
-      : ''
-  }<div class="row" style="justify-content:space-between;margin-top:14px"><p class="small">Penilaian AI bisa keliru.</p><button class="btn g" onclick="R.aic.res=null;R.aic.f=[];sheet('aicek')">${I('rst')} Cek lagi</button></div></div>`;
 }
 
 /* ---------- Sertifikat ---------- */
@@ -5128,7 +4982,7 @@ function certSave() {
     '.png';
   CERT.toBlob(async (bl) => {
     if (!bl) {
-      toast('Gagal menyiapkan gambar.', 'x');
+      toast('Gambarnya belum jadi, coba sekali lagi ya.', 'x');
       return;
     }
     if (DLS) {
@@ -5161,7 +5015,7 @@ function certFallback(bl, fn) {
       h.innerHTML =
         '<b>Kalau unduhan tidak muncul</b>, tekan lama atau klik kanan gambar sertifikatnya, lalu pilih simpan gambar.';
   } catch (e) {
-    toast('Unduh otomatis tidak didukung. Simpan gambarnya secara manual ya.', 'info');
+    toast('Browser ini nggak bisa unduh otomatis. Simpan gambarnya manual aja ya.', 'info');
   }
 }
 
@@ -5244,7 +5098,7 @@ function bakSave() {
       setTimeout(() => URL.revokeObjectURL(u), 4000);
       ok();
     } catch (e) {
-      toast('Unduhan tidak didukung di sini.', 'info');
+      toast('Di sini belum bisa unduh langsung.', 'info');
     }
   };
   if (DLS)
@@ -6222,3 +6076,26 @@ document.addEventListener(
 );
 window.addEventListener('offline', () => toast('Kamu lagi offline. Materi tetap bisa dibuka.', 'info'));
 window.addEventListener('online', () => toast('Internet udah nyambung lagi.', 'chk'));
+
+/* ===== Aktivitas: pengingat materi di bawah soal (mengisi ruang kosong dan bantu yang lupa) ===== */
+const AKM = { a1: 0, a2: 1, a3: 2, a4: 4, a5: 3, a6: 0, a7: 5 };
+function akHint(r) {
+  const pane = document.querySelector('#view .scr[data-r="' + r + '"] .pane');
+  if (!pane || pane.querySelector('.ahint')) return;
+  const k = AKM[r],
+    m = M[k],
+    pf = pane.querySelector('.pf');
+  const el = document.createElement('div');
+  el.className = 'ahint';
+  el.innerHTML =
+    '<span class="ic">' + I('bulb') + '</span><div><b>Lupa materinya?</b><small>Materi ' + (k + 1) + ', ' + m.t + '. ' + m.s +
+    '</small></div><button class="link" onclick="go(\'materi\',' + k + ')">Buka lagi</button>';
+  pane.insertBefore(el, pf || null);
+}
+Object.keys(AKM).forEach((r) => {
+  const prev = AFT[r];
+  AFT[r] = (i) => {
+    if (prev) prev(i);
+    akHint(r);
+  };
+});

@@ -18,7 +18,7 @@ const ONLY=(process.argv[3]||'').split(',').filter(Boolean);for(const [vn,vp] of
   await p.evaluate(()=>setMode('list'));await snap(`m${i}_list`);await p.evaluate(()=>{document.querySelectorAll('#pb .ah')[1].click()});await snap(`m${i}_list_open`);await p.evaluate(()=>setMode('story'))}
  await p.evaluate(()=>{R.pm='sim';go('praktik')});await snap('sim');await p.evaluate(()=>{R.pm=null});
  await p.evaluate(()=>{R.ev={i:8,a:QZ.map(q=>q[2])};go('evaluasi')});await snap('ev_res');await p.evaluate(()=>{R.ev={i:2,a:[1,0]};go('evaluasi')});await snap('ev_q');
- for(const k of ['menu','mlist','goal','how','about','badges','acc','nama','prev','survey','ai','aicek','tpl','reset']){await p.evaluate(k=>sheet(k),k);await snap('sh_'+k);await p.evaluate(()=>closeSh())}
+ for(const k of ['menu','mlist','goal','how','about','badges','acc','nama','prev','survey','ai','tpl','reset']){await p.evaluate(k=>sheet(k),k);await snap('sh_'+k);await p.evaluate(()=>closeSh())}
  await p.evaluate(()=>sheet('book'));for(const [k,v] of [[0,'g'],[0,'b'],[4,'g'],[6,'b']]){await p.evaluate(([k,v])=>{BK=k;BKV=v;BKS=0;bkUpd()},[k,v]);await snap(`book${k}${v}`)}await p.evaluate(()=>closeSh());
  await p.evaluate(()=>{sheet('menu')});await p.fill('#msq','huruf');await snap('search');await p.evaluate(()=>closeSh());
  if(errs.length)console.log(vn,'errors',errs);await ctx.close()}

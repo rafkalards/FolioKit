@@ -49,7 +49,7 @@ for(const [vn,o] of Object.entries(VPS)){if(only&&!only.split(',').includes(vn))
  await p.evaluate(()=>{R.pm='sim';go('praktik')});await snap('praktik_sim',800);await clickAll('sim','#view button');await snap('praktik_sim_clicked',400);await p.evaluate(()=>{R.pm=null});
  // sheets
  await p.evaluate(()=>{S.pre={done:0,sc:null,skip:0};R.pre=null;go('pre')});await snap('pre_intro',700);await p.evaluate(()=>{R.pre.st=1;go('pre')});await snap('pre_q',600);await p.evaluate(()=>{for(let i=0;i<8;i++){preA(i%4);preN()}});await snap('pre_done',700);
- for(const k of ['ai','aicek','cert','tpl','menu','mlist','goal','how','about','intro','book','badges','acc','nama','owner','prev','survey']){const ok=await p.evaluate(k=>{try{sheet(k);return true}catch(e){return 'ERR '+e.message}},k);if(ok!==true){out.push('sheet '+k+': '+ok);continue}await snap('sheet_'+k,700);
+ for(const k of ['ai','cert','tpl','menu','mlist','goal','how','about','intro','book','badges','acc','nama','owner','prev','survey']){const ok=await p.evaluate(k=>{try{sheet(k);return true}catch(e){return 'ERR '+e.message}},k);if(ok!==true){out.push('sheet '+k+': '+ok);continue}await snap('sheet_'+k,700);
   if(k=='book'){for(let j=0;j<8;j++){for(const v of ['g','b']){await p.evaluate(v=>bkVer(v),v);await p.evaluate(()=>document.querySelectorAll('.bk2c .hsp').forEach(h=>h.click()));await snap('book_p'+j+v,350)}await p.evaluate(()=>bkGo(1));await p.waitForTimeout(600)}await p.evaluate(()=>bkFull());await snap('book_full',500);await p.evaluate(()=>bkFsClose())}
   await p.evaluate(()=>closeSh());await p.waitForTimeout(300)}
  // kamus istilah

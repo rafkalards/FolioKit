@@ -11355,3 +11355,222 @@ canvas#cf.on {
     flex: none;
   }
 }
+
+/* ===== Praktik: kartu samping (dulu ikut gaya sidebar karena nama kelasnya sama) ===== */
+.pside {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.pside .btn {
+  width: 100%;
+}
+.pchk {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--card2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.pchkh {
+  font: 600 14px Poppins;
+  color: var(--pd);
+}
+.pchki {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: #1e3a6e;
+  cursor: pointer;
+}
+.pchki input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--p);
+}
+.pchki input:checked + span {
+  color: var(--mute);
+  text-decoration: line-through;
+}
+@media (max-width: 760px) {
+  .pside {
+    padding: 10px;
+    flex-direction: row;
+    overflow: visible;
+  }
+  .pside .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+  }
+  .pside .btn:nth-of-type(n + 3) {
+    display: none;
+  }
+  .pside .hide-m {
+    display: none;
+  }
+}
+
+/* ===== Mengisi bagian kosong ===== */
+/* hasil tes awal: daftar materi */
+.prel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.prel button {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  transition: border-color 0.2s, background 0.2s;
+}
+.prel button:hover {
+  border-color: var(--p2);
+  background: var(--card2);
+}
+.prel span {
+  grid-row: 1 / 3;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--pl);
+  color: var(--p);
+  font: 600 14px Poppins;
+}
+.prel b {
+  font: 600 14px Poppins;
+  color: var(--pd);
+  line-height: 1.3;
+}
+.prel small {
+  font-size: 12px;
+  color: var(--mute);
+}
+@media (max-width: 760px) {
+  .prel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* aktivitas: pengingat materi */
+.ahint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 18px 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--card2);
+  border: 1px dashed color-mix(in srgb, var(--p) 35%, transparent);
+  flex: none;
+}
+.ahint .ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #d97706;
+  flex: none;
+}
+.ahint div {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
+}
+.ahint b {
+  display: block;
+  font: 600 14px Poppins;
+  color: var(--pd);
+}
+.ahint small {
+  display: block;
+  font-size: 13px;
+  color: var(--mute);
+}
+.ahint .link {
+  flex: none;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .ahint {
+    margin: 0 12px 10px;
+    padding: 10px 12px;
+  }
+  .ahint small {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+/* soal tes awal dan evaluasi: isi di tengah kartu, pilihan lebih besar di laptop */
+@media (min-width: 761px) {
+  .scr:is([data-r='pre'], [data-r='evaluasi']) .pane > .pb {
+    display: flex;
+    flex-direction: column;
+  }
+  .scr:is([data-r='pre'], [data-r='evaluasi']) .pane > .pb > :first-child {
+    margin-top: auto;
+  }
+  .scr:is([data-r='pre'], [data-r='evaluasi']) .pane > .pb > :last-child {
+    margin-bottom: auto;
+  }
+  .scr:is([data-r='pre'], [data-r='evaluasi']) .q {
+    font-size: 21px;
+  }
+  .scr:is([data-r='pre'], [data-r='evaluasi']) .op {
+    padding: 16px 18px;
+    font-size: 16px;
+  }
+}
+/* aktivitas di HP: isi di tengah juga */
+@media (max-width: 760px) {
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb {
+    display: flex;
+    flex-direction: column;
+  }
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb > :first-child {
+    margin-top: auto;
+  }
+  .scr:is([data-r='a1'], [data-r='a2'], [data-r='a3'], [data-r='a4'], [data-r='a5'], [data-r='a6'], [data-r='a7']) .pane > .pb > :last-child {
+    margin-bottom: auto;
+  }
+}
+/* kartu jawaban aktivitas lebih besar di laptop supaya kartunya terisi */
+@media (min-width: 761px) {
+  .scr:is([data-r='a2'], [data-r='a3']) .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .scr:is([data-r='a2'], [data-r='a3']) .kc {
+    min-height: 120px;
+    font-size: 16px;
+    width: auto;
+  }
+  .scr[data-r='a2'] .slot {
+    min-height: 64px;
+  }
+}
