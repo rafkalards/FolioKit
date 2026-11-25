@@ -12881,3 +12881,208 @@ html[data-fs='xl'] #app {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
+
+/* ===== Pengaturan: tab, tema, musik, spasi ===== */
+.settabs {
+  position: sticky;
+  top: -2px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  background: var(--card2);
+}
+.settabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 4px;
+  border-radius: 10px;
+  font: 600 13px Inter, sans-serif;
+  color: #36507f;
+}
+.settabs button .i {
+  width: 17px;
+  height: 17px;
+}
+.settabs button.on {
+  background: #fff;
+  color: var(--p);
+  box-shadow: 0 1px 4px rgba(18, 58, 143, 0.15);
+}
+.setr.full > :last-child {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+.thgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 8px;
+}
+.thsw {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  font: 600 13px Inter, sans-serif;
+  color: var(--ink);
+  text-align: left;
+}
+.thsw i {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--a) 0 48%, var(--b) 48% 72%, var(--c) 72%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.thsw span {
+  flex: 1;
+  min-width: 0;
+}
+.thsw .i {
+  width: 16px;
+  height: 16px;
+  color: var(--p);
+}
+.thsw.on {
+  border-color: var(--p);
+  box-shadow: 0 0 0 3px var(--pl);
+}
+.mugrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+.muop {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 0 9px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  text-align: left;
+}
+.muop .ic {
+  grid-row: span 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--pl);
+  color: var(--p);
+}
+.muop b {
+  font: 600 13px Poppins;
+  color: var(--pd);
+}
+.muop small {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--mute);
+}
+.muop.on {
+  border-color: var(--p);
+  box-shadow: 0 0 0 3px var(--pl);
+}
+.muop.on .ic {
+  background: var(--p);
+  color: #fff;
+}
+.eq {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.eq u {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--p);
+  transform-origin: bottom;
+  animation: eqb 0.9s ease-in-out infinite alternate;
+}
+.eq u:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.eq u:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes eqb {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq u {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+}
+.setrg {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(320px, 100%);
+  margin-top: 6px;
+}
+.setrg input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--p);
+  height: 24px;
+}
+.setrg input:disabled {
+  opacity: 0.45;
+}
+.setrg output {
+  min-width: 40px;
+  font: 600 12.5px Inter, sans-serif;
+  color: var(--mute);
+  text-align: right;
+}
+.setft {
+  margin-top: 12px;
+}
+@media (max-width: 420px) {
+  .settabs button {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 11.5px;
+  }
+  .thgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mugrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* spasi baca lega */
+html.sp #view p,
+html.sp #view li,
+html.sp #sh p,
+html.sp #sh li {
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+}

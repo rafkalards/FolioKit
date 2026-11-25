@@ -620,7 +620,7 @@ function sfx(t) {
       g.gain.setValueAtTime(0, n + dl);
       g.gain.linearRampToValueAtTime(f[2], n + dl + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, n + dl + d);
-      o.connect(g).connect(AC.destination);
+      o.connect(g).connect(sfxOut());
       o.start(n + dl);
       o.stop(n + dl + d + 0.02);
     };
@@ -2607,7 +2607,7 @@ function wNet() {
         const b = P[j],
           d = Math.hypot(a.x - b.x, a.y - b.y);
         if (d < 130) {
-          x.strokeStyle = `rgba(45,111,214,${(1 - d / 130) * 0.22})`;
+          x.strokeStyle = `rgba(${wcRGB()},${(1 - d / 130) * 0.22})`;
           x.lineWidth = 1;
           x.beginPath();
           x.moveTo(a.x, a.y);
@@ -2623,7 +2623,7 @@ function wNet() {
         x.lineTo(m.x, m.y);
         x.stroke();
       }
-      x.fillStyle = i % 5 == 0 ? 'rgba(124,58,237,.55)' : 'rgba(45,111,214,.5)';
+      x.fillStyle = i % 5 == 0 ? 'rgba(124,58,237,.55)' : `rgba(${wcRGB()},.5)`;
       x.beginPath();
       x.arc(a.x, a.y, a.r, 0, 7);
       x.fill();
@@ -6476,12 +6476,499 @@ AFT.studio = () => stU();
 
 /* ===== Pengaturan course ===== */
 /* Disimpan di S.set per pengguna. Ukuran teks lewat zoom, animasi tenang lewat kelas .calm (+ .lite supaya efek berat ikut mati),
-   kontras lewat kelas .hc, suara lewat pembungkus sfx(). */
+   kontras lewat .hc, spasi baca lewat .sp, suara lewat pembungkus sfx(), tema warna lewat thApply(), musik latar lewat mu*(). */
 P.gear =
   '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/>';
-const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0 };
+P.pal =
+  '<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10" cy="7.2" r="1.2"/><circle cx="14.5" cy="7.2" r="1.2"/>';
+P.music = '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>';
+P.vol = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>';
+P.mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>';
+P.lines = '<path d="M4 6h16M4 12h16M4 18h10"/>';
+P.phone = '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2M3.5 9v6M20.5 9v6"/>';
+P.cloud = '<path d="M7 18.5a4.5 4.5 0 0 1-.5-9 6 6 0 0 1 11.6 1.6A3.8 3.8 0 0 1 17.5 18.5z"/><path d="M9.5 14l2 2 3.5-3.5"/>';
+P.drop = '<path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/>';
+P.wave = '<path d="M2.5 9c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2M2.5 15c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2"/>';
+P.piano =
+  '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8 4.5v15M13 4.5v15M18 4.5v15M6.5 4.5v8h3v-8M11.5 4.5v8h3v-8M16.5 4.5v8h3v-8"/>';
+const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0, th: 'biru', sp: 0, mus: '', mv: 50, sv: 70, duck: 1, vib: 1 };
 const setG = () => Object.assign({}, SETD, S.set || {});
 const LITE0 = document.documentElement.classList.contains('lite');
+const VIBOK = 'vibrate' in navigator && matchMedia('(pointer: coarse)').matches;
+
+/* ---------- tema warna ----------
+   Palet bawaan tetap biru muda. Tema lain memutar warna kebiruan di style.css (dan atribut style/fill di halaman)
+   ke rona lain lewat OKLCH, jadi terang-gelapnya tetap sama. Hijau/merah untuk benar/salah tidak ikut berubah. */
+const THM = {
+  biru: ['Biru muda', 0],
+  toska: ['Toska', 195],
+  hijau: ['Hijau daun', 150],
+  ungu: ['Ungu lavender', 305],
+  rose: ['Merah muda', 352],
+  jingga: ['Jingga senja', 55],
+};
+const CRX = /#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*[\d.]+[\s,]+[\d.]+[\s,]+[\d.]+\s*(?:[,/]\s*[\d.]+%?\s*)?\)/gi;
+let THK = 'biru',
+  THO = null,
+  THMO = null;
+const THC = {};
+function thRgb(s) {
+  if (s[0] == '#') {
+    let h = s.slice(1);
+    if (h.length < 5) h = h.replace(/./g, '$&$&');
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), h.length == 8 ? parseInt(h.slice(6, 8), 16) / 255 : null];
+  }
+  const n = s.match(/[\d.]+%?/g);
+  const a = n[3] == null ? null : /%$/.test(n[3]) ? parseFloat(n[3]) / 100 : +n[3];
+  return [+n[0], +n[1], +n[2], a];
+}
+function thShift(r, g, b, dh) {
+  const li = (c) => ((c /= 255) <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  const R = li(r),
+    G = li(g),
+    B = li(b);
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B),
+    m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B),
+    s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    Bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  let C = Math.hypot(A, Bb),
+    H = (Math.atan2(Bb, A) * 180) / Math.PI;
+  if (H < 0) H += 360;
+  if (C < 0.012 || H < 212 || H > 290) return null; // bukan warna kebiruan
+  H = (((H + dh) % 360) + 360) % 360;
+  const hr = (H * Math.PI) / 180;
+  const out = (c) => {
+    const a = c * Math.cos(hr),
+      bb = c * Math.sin(hr);
+    const l2 = (L + 0.3963377774 * a + 0.2158037573 * bb) ** 3,
+      m2 = (L - 0.1055613458 * a - 0.0638541728 * bb) ** 3,
+      s2 = (L - 0.0894841775 * a - 1.291485548 * bb) ** 3;
+    return [
+      4.0767416621 * l2 - 3.3077115913 * m2 + 0.2309699292 * s2,
+      -1.2684380046 * l2 + 2.6097574011 * m2 - 0.3413193965 * s2,
+      -0.0041960863 * l2 - 0.7034186147 * m2 + 1.707614701 * s2,
+    ];
+  };
+  let v = out(C);
+  for (let i = 0; i < 40 && v.some((x) => x < -0.0005 || x > 1.0005); i++) v = out((C *= 0.94)); // jaga tetap di gamut layar
+  return v.map((c) => {
+    c = Math.min(1, Math.max(0, c));
+    return Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055));
+  });
+}
+function thCol(s, dh) {
+  const k = dh + s;
+  if (k in THC) return THC[k];
+  const c = thRgb(s.toLowerCase()),
+    n = thShift(c[0], c[1], c[2], dh);
+  let o = s;
+  if (n) o = c[3] == null ? '#' + n.map((x) => x.toString(16).padStart(2, '0')).join('') : `rgba(${n[0]}, ${n[1]}, ${n[2]}, ${+c[3].toFixed(3)})`;
+  return (THC[k] = o);
+}
+const thStr = (v, dh) => (dh ? v.replace(CRX, (m) => thCol(m, dh)) : v);
+const thDh = (k) => (THM[k] && THM[k][1] ? THM[k][1] - 262 : 0);
+const THFILE = location.protocol == 'file:'; // stylesheet dari file lokal tidak bisa dibaca CSSOM
+const THSH = ['background', 'border', 'border-color', 'border-top', 'border-right', 'border-bottom', 'border-left', 'outline', 'text-decoration', 'mask'];
+function thScan() {
+  THO = [];
+  const walk = (rs) => {
+    for (const r of rs) {
+      if (r.cssRules) walk(r.cssRules);
+      if (!r.style) continue;
+      CRX.lastIndex = 0;
+      if (!CRX.test(r.style.cssText)) continue; // aturan tanpa warna dilewati cepat
+      for (let i = 0; i < r.style.length; i++) {
+          const p = r.style[i],
+            v = r.style.getPropertyValue(p);
+          CRX.lastIndex = 0;
+          if (v && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
+        }
+      // shorthand yang memakai var() tidak terurai ke longhand, jadi dibaca utuh
+      for (const p of THSH) {
+          const v = r.style.getPropertyValue(p);
+          CRX.lastIndex = 0;
+          if (v && v.includes('var(') && CRX.test(v)) THO.push([r.style, p, v, r.style.getPropertyPriority(p)]);
+        }
+    }
+  };
+  for (const sh of document.styleSheets) {
+    try {
+      walk(sh.cssRules);
+    } catch (e) {}
+  }
+}
+function thEl(el, dh) {
+  if (el.__th === dh) return;
+  if (el.__th0 == null) {
+    el.__th0 = {};
+    for (const a of ['style', 'fill', 'stroke', 'stop-color']) if (el.hasAttribute(a)) el.__th0[a] = el.getAttribute(a);
+  }
+  for (const a in el.__th0) {
+    const v = thStr(el.__th0[a], dh);
+    if (el.getAttribute(a) != v) el.setAttribute(a, v);
+  }
+  el.__th = dh;
+}
+function thTree(root, dh) {
+  if (root.nodeType != 1) return;
+  if (root.matches('[style],[fill],[stroke],[stop-color]') && !root.hasAttribute('data-thx')) thEl(root, dh);
+  root.querySelectorAll('[style],[fill],[stroke],[stop-color]').forEach((e) => e.hasAttribute('data-thx') || thEl(e, dh));
+}
+// warna garis/titik kanvas halaman awal ikut tema
+var WCR; // var: kanvas bisa jalan sebelum bagian ini dibaca
+function wcRGB() {
+  try {
+    if (!WCR || WCR[0] !== THK) WCR = [THK, (thShift(45, 111, 214, thDh(THK)) || [45, 111, 214]).join(',')];
+    return WCR[1];
+  } catch (e) {
+    return '45,111,214';
+  }
+}
+function thApply(k) {
+  if (!THM[k]) k = 'biru';
+  if (k == THK) return;
+  const dh = thDh(k);
+  if (!THO) thScan();
+  for (const [st, p, v, pr] of THO) st.setProperty(p, thStr(v, dh), pr);
+  thTree(document.body, dh);
+  if (dh && !THMO) {
+    THMO = new MutationObserver((ms) => {
+      const d = thDh(THK);
+      if (!d) return;
+      for (const m of ms) for (const n of m.addedNodes) thTree(n, d);
+    });
+    THMO.observe(document.body, { childList: true, subtree: true });
+  }
+  const mt = document.querySelector('meta[name="theme-color"]');
+  if (mt) mt.content = thCol('#2d6fd6', dh);
+  THK = k;
+}
+
+/* ---------- musik latar ----------
+   Dibuat langsung di browser lewat Web Audio (tanpa file lagu), jadi ringan, bebas hak cipta, dan tetap jalan offline.
+   Berhenti sendiri saat tab disembunyikan, dan dipelankan saat video YouTube sedang terbuka. */
+const MUSK = {
+  lofi: ['Lo-fi santai', 'music', 'Ketukan pelan buat nemenin belajar'],
+  piano: ['Piano tenang', 'piano', 'Denting lembut, nggak ganggu fokus'],
+  hujan: ['Suara hujan', 'drop', 'Rintik hujan di luar jendela'],
+  ombak: ['Ombak pantai', 'wave', 'Deburan ombak yang pelan'],
+};
+const MU = { k: '', out: null, bus: null, rv: null, src: [], nx: 0, st: 0, iv: 0, dk: 1, nz: {} };
+const mtof = (n) => 440 * Math.pow(2, (n - 69) / 12);
+function muCtx() {
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+  if (AC.state == 'suspended') AC.resume();
+  return AC;
+}
+function muNoise(kind) {
+  if (MU.nz[kind]) return MU.nz[kind];
+  const sr = AC.sampleRate,
+    n = sr * (kind == 'crk' ? 4 : 3),
+    b = AC.createBuffer(1, n, sr),
+    d = b.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < n; i++) {
+    const w = Math.random() * 2 - 1;
+    if (kind == 'white') d[i] = w;
+    else if (kind == 'brown') {
+      last = (last + 0.02 * w) / 1.02;
+      d[i] = last * 3.5;
+    } else d[i] = Math.random() < 0.00035 ? (Math.random() * 2 - 1) * 0.7 : w * 0.012; // derak piringan hitam
+  }
+  return (MU.nz[kind] = b);
+}
+function muLoop(kind, chain, vol) {
+  const s = AC.createBufferSource(),
+    g = AC.createGain();
+  s.buffer = muNoise(kind);
+  s.loop = true;
+  g.gain.value = vol;
+  let x = s;
+  for (const f of chain) {
+    const bq = AC.createBiquadFilter();
+    bq.type = f[0];
+    bq.frequency.value = f[1];
+    if (f[2]) bq.Q.value = f[2];
+    x.connect(bq);
+    x = bq;
+  }
+  x.connect(g).connect(MU.out);
+  s.start();
+  MU.src.push(s);
+  return { s, g, last: x };
+}
+function muLfo(param, hz, amt) {
+  const o = AC.createOscillator(),
+    g = AC.createGain();
+  o.frequency.value = hz;
+  g.gain.value = amt;
+  o.connect(g).connect(param);
+  o.start();
+  MU.src.push(o);
+}
+function muTone(f, t, d, v, typ, cut, atk, wet) {
+  const o = AC.createOscillator(),
+    g = AC.createGain(),
+    lp = AC.createBiquadFilter();
+  o.type = typ || 'sine';
+  o.frequency.value = f;
+  lp.type = 'lowpass';
+  lp.frequency.setValueAtTime(cut || 2400, t);
+  lp.frequency.exponentialRampToValueAtTime(Math.max(300, (cut || 2400) * 0.35), t + d);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(v, t + (atk || 0.01));
+  g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(lp).connect(g);
+  g.connect(MU.bus);
+  if (wet !== 0) g.connect(MU.rv);
+  o.start(t);
+  o.stop(t + d + 0.05);
+}
+function muPad(ns, t, d, v) {
+  for (const n of ns)
+    for (const dt of [-7, 7]) {
+      const o = AC.createOscillator(),
+        g = AC.createGain(),
+        lp = AC.createBiquadFilter();
+      o.type = 'triangle';
+      o.frequency.value = mtof(n);
+      o.detune.value = dt;
+      lp.type = 'lowpass';
+      lp.frequency.value = 900;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(v, t + 0.9);
+      g.gain.setValueAtTime(v, t + d - 0.5);
+      g.gain.linearRampToValueAtTime(0, t + d + 0.4);
+      o.connect(lp).connect(g);
+      g.connect(MU.bus);
+      g.connect(MU.rv);
+      o.start(t);
+      o.stop(t + d + 0.5);
+    }
+}
+function muHit(t, kind) {
+  if (kind == 'kick') {
+    const o = AC.createOscillator(),
+      g = AC.createGain();
+    o.frequency.setValueAtTime(115, t);
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.22);
+    g.gain.setValueAtTime(0.26, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+    o.connect(g).connect(MU.bus);
+    o.start(t);
+    o.stop(t + 0.35);
+    return;
+  }
+  const s = AC.createBufferSource(),
+    f = AC.createBiquadFilter(),
+    g = AC.createGain(),
+    d = kind == 'hat' ? 0.05 : 0.2;
+  s.buffer = muNoise('white');
+  f.type = kind == 'hat' ? 'highpass' : 'bandpass';
+  f.frequency.value = kind == 'hat' ? 7000 : 1700;
+  g.gain.setValueAtTime(kind == 'hat' ? 0.03 : 0.07, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  s.connect(f).connect(g).connect(MU.bus);
+  s.start(t, Math.random() * 2, d + 0.05);
+}
+function muDrop(t) {
+  const o = AC.createOscillator(),
+    g = AC.createGain(),
+    f = 1500 + Math.random() * 2600;
+  o.frequency.setValueAtTime(f, t);
+  o.frequency.exponentialRampToValueAtTime(f * 0.55, t + 0.04);
+  g.gain.setValueAtTime(0.012 + Math.random() * 0.02, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+  o.connect(g).connect(MU.bus);
+  o.start(t);
+  o.stop(t + 0.07);
+}
+const LOFI = [
+  [53, 57, 60, 64],
+  [52, 55, 59, 62],
+  [50, 53, 57, 60],
+  [48, 52, 55, 59],
+];
+const PIANO = [
+  [48, 60, 64, 67, 72],
+  [45, 57, 60, 64, 69],
+  [41, 53, 57, 60, 65],
+  [43, 55, 59, 62, 67],
+];
+const PENT = [72, 74, 76, 79, 81, 84];
+function muStep(t) {
+  const k = MU.k,
+    s = MU.st;
+  if (k == 'lofi') {
+    const sp = 60 / 72 / 2,
+      pos = s % 8,
+      ch = LOFI[Math.floor(s / 8) % 4],
+      sw = pos % 2 ? sp * 0.14 : 0;
+    if (pos == 0) {
+      muPad(ch, t, sp * 8, 0.022);
+      muTone(mtof(ch[0] - 12), t, 1.5, 0.15, 'sine', 500, 0.02, 0);
+    }
+    if (pos == 5) muTone(mtof(ch[0] - 12), t + sw, 0.9, 0.11, 'sine', 500, 0.02, 0);
+    if (pos == 0 || pos == 4) muHit(t, 'kick');
+    if (pos == 2 || pos == 6) muHit(t, 'snr');
+    if (pos % 2) muHit(t + sw, 'hat');
+    if (Math.random() < (pos % 2 ? 0.18 : 0.34)) {
+      const n = Math.random() < 0.6 ? ch[1 + Math.floor(Math.random() * 3)] + 12 : PENT[Math.floor(Math.random() * PENT.length)];
+      muTone(mtof(n), t + sw, 1.1, 0.05, 'triangle', 1900, 0.008);
+      muTone(mtof(n + 12), t + sw, 0.5, 0.012, 'sine', 3000, 0.008);
+    }
+    return sp;
+  }
+  if (k == 'piano') {
+    const sp = 60 / 64 / 2,
+      pos = s % 8,
+      ch = PIANO[Math.floor(s / 8) % 4];
+    const pno = (n, tt, v) => {
+      muTone(mtof(n), tt, 2.8, v, 'triangle', 2600, 0.006);
+      muTone(mtof(n) * 2, tt, 1.2, v * 0.18, 'sine', 4000, 0.006);
+    };
+    if (pos == 0) pno(ch[0], t, 0.11);
+    if (pos % 2 == 0 && Math.random() < 0.9) pno(ch[1 + pos / 2], t, 0.055);
+    if (pos % 2 && Math.random() < 0.22) pno(PENT[Math.floor(Math.random() * PENT.length)], t, 0.045);
+    return sp;
+  }
+  if (k == 'hujan') {
+    if (Math.random() < 0.7) muDrop(t + Math.random() * 0.1);
+    return 0.1;
+  }
+  return 0.5;
+}
+function muTick() {
+  if (!MU.k || !AC || AC.state != 'running') return;
+  const ahead = AC.currentTime + 0.7;
+  if (MU.nx < AC.currentTime) MU.nx = AC.currentTime + 0.05;
+  while (MU.nx < ahead) {
+    MU.nx += muStep(MU.nx);
+    MU.st++;
+  }
+  const want = setG().duck && document.querySelector('iframe[src*="youtube"]') ? 0.08 : 1;
+  if (want != MU.dk) {
+    MU.dk = want;
+    muVol();
+  }
+}
+const MULV = { lofi: 1, piano: 1.5, hujan: 0.45, ombak: 0.5 }; // samakan keras-pelan antarmusik
+const muLvl = () => Math.pow(setG().mv / 100, 1.5) * 2 * (MULV[MU.k] || 1) * MU.dk;
+function muVol() {
+  if (MU.out) MU.out.gain.setTargetAtTime(muLvl(), AC.currentTime, 0.3);
+}
+function muStop() {
+  if (!MU.k) return;
+  const out = MU.out,
+    src = MU.src;
+  MU.k = '';
+  MU.src = [];
+  MU.out = null;
+  clearInterval(MU.iv);
+  out.gain.setTargetAtTime(0, AC.currentTime, 0.15);
+  setTimeout(() => {
+    src.forEach((x) => {
+      try {
+        x.stop();
+      } catch (e) {}
+    });
+    out.disconnect();
+  }, 700);
+}
+function muStart(k) {
+  muCtx();
+  MU.k = k;
+  MU.st = 0;
+  MU.dk = 1;
+  MU.out = AC.createGain();
+  MU.out.gain.value = 0;
+  {
+    const lim = AC.createDynamicsCompressor(); // jaga supaya tidak pecah
+    lim.threshold.value = -8;
+    lim.ratio.value = 12;
+    MU.out.connect(lim).connect(AC.destination);
+  }
+  MU.bus = AC.createGain();
+  MU.bus.connect(MU.out);
+  MU.rv = AC.createConvolver();
+  {
+    const sr = AC.sampleRate,
+      n = sr * 2.4,
+      ir = AC.createBuffer(2, n, sr);
+    for (let c = 0; c < 2; c++) {
+      const d = ir.getChannelData(c);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+    }
+    MU.rv.buffer = ir;
+  }
+  const wet = AC.createGain();
+  wet.gain.value = k == 'piano' ? 0.5 : 0.28;
+  MU.rv.connect(wet).connect(MU.out);
+  if (k == 'lofi') muLoop('crk', [['lowpass', 5000]], 0.5);
+  if (k == 'hujan') {
+    const a = muLoop('white', [['highpass', 450], ['lowpass', 2600]], 0.32);
+    muLoop('brown', [['lowpass', 480]], 0.5);
+    muLfo(a.last.frequency, 0.06, 500);
+  }
+  if (k == 'ombak') {
+    const a = muLoop('brown', [['lowpass', 650]], 0.34),
+      b = muLoop('white', [['highpass', 1800], ['lowpass', 5200]], 0.05);
+    muLfo(a.g.gain, 0.085, 0.3);
+    muLfo(b.g.gain, 0.085, 0.045);
+  }
+  MU.nx = AC.currentTime + 0.15;
+  MU.out.gain.setTargetAtTime(muLvl(), AC.currentTime, 0.8);
+  MU.iv = setInterval(muTick, 200);
+  muTick();
+}
+function muSync() {
+  const k = MUSK[setG().mus] ? setG().mus : '';
+  if (k == MU.k) return muVol();
+  muStop();
+  if (k) muStart(k);
+}
+// Browser baru mengizinkan suara setelah ada sentuhan/klik pertama.
+['pointerdown', 'keydown'].forEach((ev) =>
+  document.addEventListener(
+    ev,
+    () => {
+      if (setG().mus && !MU.k) muSync();
+    },
+    { passive: true },
+  ),
+);
+document.addEventListener('visibilitychange', () => {
+  if (!AC || !MU.k) return;
+  if (document.hidden) AC.suspend();
+  else AC.resume();
+});
+
+/* ---------- suara efek dan getar ---------- */
+let SFXG = null;
+function sfxOut() {
+  if (!SFXG) {
+    SFXG = AC.createGain();
+    SFXG.connect(AC.destination);
+  }
+  SFXG.gain.value = (setG().sv / 70) * 1.0;
+  return SFXG;
+}
+{
+  const sfx0 = sfx;
+  sfx = function (t) {
+    const s = setG();
+    if (VIBOK && s.vib && (t == 'ok' || t == 'no'))
+      try {
+        navigator.vibrate(t == 'ok' ? 14 : [24, 40, 24]);
+      } catch (e) {}
+    if (!s.sound || !s.sv) return;
+    return sfx0(t);
+  };
+}
+
+/* ---------- terapkan ---------- */
 function setApply() {
   const s = setG(),
     h = document.documentElement;
@@ -6489,13 +6976,42 @@ function setApply() {
   h.classList.toggle('calm', !!s.calm);
   h.classList.toggle('lite', LITE0 || !!s.calm);
   h.classList.toggle('hc', !!s.hc);
+  h.classList.toggle('sp', !!s.sp);
+  thApply(s.th);
+  if (MU.k || (s.mus && AC && AC.state == 'running')) muSync();
+}
+let SETTAB = 'tam';
+function setRe(top) {
+  const b = document.getElementById('shb'),
+    sh = document.getElementById('sh');
+  if (!b || !sh.classList.contains('on') || document.getElementById('sht').textContent != 'Pengaturan') return sheet('set');
+  const y = b.scrollTop;
+  b.innerHTML = setSheet();
+  b.scrollTop = top ? 0 : y;
 }
 function setOpt(k, v) {
   S.set = Object.assign(setG(), { [k]: v });
   save();
   setApply();
   if (k == 'sound' && v) sfx('ok');
-  sheet('set');
+  if (k == 'mus') muSync();
+  setRe();
+}
+function setVol(k, v, done) {
+  S.set = Object.assign(setG(), { [k]: +v });
+  if (k == 'mv') muVol();
+  const o = document.getElementById('sv-' + k);
+  if (o) o.textContent = v + '%';
+  if (done) {
+    save();
+    if (k == 'sv') sfx('ok');
+  }
+}
+function setTabGo(k) {
+  SETTAB = k;
+  setRe(1);
+  const t = document.querySelector('.settabs .on');
+  if (t) t.focus({ preventScroll: true });
 }
 function setSide(v) {
   try {
@@ -6504,7 +7020,7 @@ function setSide(v) {
   } catch (e) {}
   sideMode();
   sideR();
-  sheet('set');
+  setRe();
 }
 function setTour() {
   S.tour = {};
@@ -6513,12 +7029,52 @@ function setTour() {
   toast('Tur panduan bakal muncul lagi di tiap halaman.', 'chk');
   setTimeout(() => tourStart(cur.r == 'materi' ? 'materi' : 'home', 1), 350);
 }
-{
-  const sfx0 = sfx;
-  sfx = function (t) {
-    if (!setG().sound) return;
-    return sfx0(t);
-  };
+function setDef() {
+  if (!confirm('Kembalikan semua pengaturan ke bawaan? Progres belajar tidak ikut terhapus.')) return;
+  S.set = {};
+  save();
+  setSide('');
+  setApply();
+  muSync();
+  setRe();
+  toast('Pengaturan balik ke bawaan.', 'chk');
+}
+async function setUpd() {
+  if (!navigator.onLine) return toast('Lagi offline. Sambungkan internet dulu ya.', 'warn');
+  toast('Ngambil versi terbaru...', 'dl');
+  try {
+    const reg = navigator.serviceWorker && (await navigator.serviceWorker.getRegistration());
+    if (reg) await reg.update();
+    if (window.caches)
+      for (const k of await caches.keys()) {
+        if (!/^foliokit-/.test(k)) continue;
+        const c = await caches.open(k);
+        await Promise.all(
+          (await c.keys()).map((q) =>
+            fetch(q.url, { cache: 'reload' })
+              .then((r) => r.ok && c.put(q, r))
+              .catch(() => {}),
+          ),
+        );
+      }
+  } catch (e) {}
+  setTimeout(() => location.reload(), 400);
+}
+async function setInfo() {
+  const of = document.getElementById('set-of'),
+    st = document.getElementById('set-st');
+  if (of) {
+    let ok = false;
+    try {
+      ok = !!(navigator.serviceWorker && navigator.serviceWorker.controller) || (window.caches && (await caches.keys()).some((k) => /^foliokit-/.test(k)));
+    } catch (e) {}
+    of.textContent = ok ? 'Siap. FolioKit bisa dibuka tanpa internet di browser ini.' : 'Belum siap. Buka sekali saat online, nanti tersimpan sendiri.';
+  }
+  if (st && navigator.storage && navigator.storage.estimate)
+    try {
+      const e = await navigator.storage.estimate();
+      st.textContent = `Terpakai sekitar ${(e.usage / 1048576).toFixed(1)} MB untuk materi offline dan progres.`;
+    } catch (e) {}
 }
 function setSheet() {
   const s = setG();
@@ -6529,19 +7085,60 @@ function setSheet() {
   const lit = (v) => (typeof v == 'number' ? String(v) : `'${v}'`);
   const seg = (fn, opts, cur) =>
     `<div class="setseg" role="group">${opts.map((o) => `<button class="${cur === o[0] ? 'on' : ''}" aria-pressed="${cur === o[0]}" onclick="${fn.replace('$V', lit(o[0]))}">${o[1]}</button>`).join('')}</div>`;
-  const row = (ic, t, d, ctl) => `<div class="setr"><span class="ic">${I(ic)}</span><div class="sett"><b>${t}</b><small>${d}</small></div>${ctl}</div>`;
-  return `<p class="mgh">Tampilan</p>
-${row('doc', 'Ukuran teks', 'Gedein kalau tulisannya kekecilan.', seg("setOpt('fs',$V)", [['sm', 'Kecil'], ['md', 'Normal'], ['lg', 'Besar'], ['xl', 'Paling besar']], s.fs))}
-${row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap, lebih gampang dibaca.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc))}
-${row('spark', 'Animasi', 'Matikan kalau bikin pusing atau HP terasa berat.', seg("setOpt('calm',$V)", [[0, 'Biasa'], [1, 'Tenang']], s.calm))}
-${row('grid', 'Sidebar di laptop', 'Mau lebar, cuma ikon, atau ikut ukuran layar.', seg("setSide($V)", [['', 'Otomatis'], ['max', 'Lebar'], ['min', 'Ikon saja']], side))}
-<p class="mgh">Belajar</p>
-${row('book', 'Cara baca materi', 'Cerita: slide satu per satu. Ringkasan: semua poin dalam satu halaman.', seg("S.mode=$V;save();sheet('set')", [['story', 'Cerita'], ['list', 'Ringkasan']], S.mode || 'story'))}
-${row('play', 'Suara efek', 'Bunyi kecil waktu klik dan jawab benar atau salah.', seg("setOpt('sound',$V)", [[1, 'Nyala'], [0, 'Mati']], s.sound))}
-${row('info', 'Tur panduan', 'Tampilkan lagi petunjuk singkat di tiap halaman.', `<button class="btn g sm" onclick="setTour()">Ulangi tur</button>`)}
-<p class="mgh">Data</p>
-${row('dl', 'Cadangan progres', 'Simpan progres ke file, lalu pulihkan di HP atau laptop lain.', `<button class="btn g sm" onclick="sheet('acc')">Buka</button>`)}
-${row('rst', 'Mulai dari awal', 'Hapus semua progres di browser ini.', `<button class="btn g sm" onclick="sheet('reset')">Hapus</button>`)}
-<p class="small" style="margin-top:12px">Pengaturan ini cuma berlaku di browser ini.</p>`;
+  const row = (ic, t, d, ctl, x) => `<div class="setr ${x || ''}"><span class="ic">${I(ic)}</span><div class="sett"><b>${t}</b><small>${d}</small></div>${ctl}</div>`;
+  const rng = (k, lbl, dis) =>
+    `<div class="setrg"><input type="range" min="0" max="100" step="5" value="${s[k]}" aria-label="${lbl}" ${dis ? 'disabled' : ''} oninput="setVol('${k}',this.value)" onchange="setVol('${k}',this.value,1)"><output id="sv-${k}">${s[k]}%</output></div>`;
+  const TABS = [
+    ['tam', 'pal', 'Tampilan'],
+    ['sua', 'music', 'Suara'],
+    ['bel', 'book', 'Belajar'],
+    ['dat', 'cloud', 'Data'],
+  ];
+  const tabs = `<div class="settabs" role="tablist">${TABS.map((t) => `<button role="tab" aria-selected="${SETTAB == t[0]}" class="${SETTAB == t[0] ? 'on' : ''}" onclick="setTabGo('${t[0]}')">${I(t[1])}<span>${t[2]}</span></button>`).join('')}</div>`;
+  let body = '';
+  if (SETTAB == 'tam') {
+    const sw = Object.keys(THM)
+      .map((k) => {
+        const dh = thDh(k);
+        return `<button class="thsw ${s.th == k ? 'on' : ''}" aria-pressed="${s.th == k}" ${THFILE ? 'disabled' : ''} onclick="setOpt('th','${k}')"><i data-thx style="--a:${thCol('#2d6fd6', dh)};--b:${thCol('#93c5fd', dh)};--c:${thCol('#e3effd', dh)}"></i><span>${THM[k][0]}</span>${s.th == k ? I('chk') : ''}</button>`;
+      })
+      .join('');
+    body =
+      row('pal', 'Tema warna', THFILE ? 'Tema warna cuma bisa dipakai kalau FolioKit dibuka lewat link.' : 'Semua tetap terang. Warna hijau dan merah untuk benar/salah nggak ikut berubah.', `<div class="thgrid">${sw}</div>`, 'full') +
+      row('doc', 'Ukuran teks', 'Gedein kalau tulisannya kekecilan.', seg("setOpt('fs',$V)", [['sm', 'Kecil'], ['md', 'Normal'], ['lg', 'Besar'], ['xl', 'Paling besar']], s.fs)) +
+      row('lines', 'Spasi baca', 'Jarak antarbaris dan antarkata lebih lega, enak buat bacaan panjang.', seg("setOpt('sp',$V)", [[0, 'Normal'], [1, 'Lega']], s.sp)) +
+      row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc)) +
+      row('spark', 'Animasi', 'Pilih Tenang kalau bikin pusing atau HP terasa berat.', seg("setOpt('calm',$V)", [[0, 'Biasa'], [1, 'Tenang']], s.calm)) +
+      row('grid', 'Sidebar di laptop', 'Mau lebar, cuma ikon, atau ikut ukuran layar.', seg('setSide($V)', [['', 'Otomatis'], ['max', 'Lebar'], ['min', 'Ikon saja']], side));
+  } else if (SETTAB == 'sua') {
+    const mus = [['', 'Mati', 'mute', 'Sepi aja']].concat(Object.keys(MUSK).map((k) => [k, MUSK[k][0], MUSK[k][1], MUSK[k][2]]));
+    body =
+      row(
+        'music',
+        'Musik latar',
+        'Dibuat langsung di browser, jadi tetap jalan saat offline. Berhenti sendiri kalau tab ditinggal.',
+        `<div class="mugrid">${mus.map((m) => `<button class="muop ${s.mus == m[0] ? 'on' : ''}" aria-pressed="${s.mus == m[0]}" onclick="setOpt('mus','${m[0]}')"><span class="ic">${I(m[2])}</span><b>${m[1]}</b><small>${m[3]}</small>${s.mus == m[0] && m[0] ? '<i class="eq" aria-hidden="true"><u></u><u></u><u></u></i>' : ''}</button>`).join('')}</div>`,
+        'full',
+      ) +
+      row('vol', 'Volume musik', s.mus ? 'Geser sampai pas di telinga.' : 'Pilih musik dulu di atas.', rng('mv', 'Volume musik', !s.mus)) +
+      row('play', 'Pelankan saat video diputar', 'Musik otomatis mengecil waktu kamu buka video materi.', seg("setOpt('duck',$V)", [[1, 'Nyala'], [0, 'Mati']], s.duck)) +
+      row('spark', 'Suara efek', 'Bunyi kecil waktu klik dan jawab benar atau salah.', seg("setOpt('sound',$V)", [[1, 'Nyala'], [0, 'Mati']], s.sound)) +
+      row('vol', 'Volume suara efek', s.sound ? 'Lepas slider buat dengar contohnya.' : 'Suara efek lagi mati.', rng('sv', 'Volume suara efek', !s.sound)) +
+      (VIBOK ? row('phone', 'Getar', 'HP bergetar pelan waktu jawaban benar atau salah.', seg("setOpt('vib',$V)", [[1, 'Nyala'], [0, 'Mati']], s.vib)) : '');
+  } else if (SETTAB == 'bel') {
+    body =
+      row('book', 'Cara baca materi', 'Cerita: slide satu per satu. Ringkasan: semua poin dalam satu halaman.', seg("S.mode=$V;save();setRe()", [['story', 'Cerita'], ['list', 'Ringkasan']], S.mode || 'story')) +
+      row('info', 'Tur panduan', 'Tampilkan lagi petunjuk singkat di tiap halaman.', `<button class="btn g sm" onclick="setTour()">Ulangi tur</button>`) +
+      row('chat', 'Tanya Kak Folio', 'Bingung soal materi atau Canva? Tanya di sini.', `<button class="btn g sm" onclick="sheet('ai')">Buka</button>`) +
+      row('target', 'Peta materi', 'Lihat semua materi dan mana yang udah kelar.', `<button class="btn g sm" onclick="sheet('mlist')">Lihat</button>`);
+  } else {
+    body =
+      row('cloud', 'Versi offline', '<span id="set-of">Ngecek...</span>', `<button class="btn g sm" onclick="setUpd()">${I('rst')} Perbarui sekarang</button>`) +
+      row('dl', 'Penyimpanan', '<span id="set-st">Progres tersimpan di browser ini.</span>', `<button class="btn g sm" onclick="sheet('acc')">Cadangkan progres</button>`) +
+      row('gear', 'Pengaturan bawaan', 'Balikin tema, suara, dan tampilan ke awal. Progres aman.', `<button class="btn g sm" onclick="setDef()">Kembalikan</button>`) +
+      row('rst', 'Mulai dari awal', 'Hapus semua progres di browser ini.', `<button class="btn g sm" onclick="sheet('reset')">Hapus progres</button>`);
+    setTimeout(setInfo, 0);
+  }
+  return `${tabs}<div class="setbody">${body}</div><p class="small setft">Pengaturan ini cuma berlaku di browser ini.</p>`;
 }
 setApply();

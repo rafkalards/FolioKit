@@ -11,7 +11,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 
 - Terasa seperti aplikasi: satu layar tanpa scroll halaman. Isi panjang menggulir di dalam kartunya sendiri.
 - Semua menu ada di kiri seperti LMS. Laptop dan tablet lanskap (lebar 900px ke atas) memakai sidebar kiri `#side` berisi semua menu (Cari, Belajar, Bantuan, Lainnya) dengan tombol buka/tutup `.stog`: lebar ↔ ramping (kelas `html.srail`, diatur `sideMode()`/`sideTog()`, pilihan disimpan di localStorage `pdc_side`). Default lebar di 1200px ke atas, ramping di 900–1199px. HP dan tablet berdiri memakai header atas `.top` dengan tombol ☰ di kiri yang membuka laci menu dari kiri (sheet `menu` dengan kelas `.drawer`). Halaman awal (`welcome`) tanpa sidebar.
-- Palet biru muda (v8). Tidak ada mode gelap.
+- Palet biru muda (v8) sebagai bawaan. Tidak ada mode gelap. Tema warna lain di Pengaturan hanya opsional dan tetap terang.
 - Teks bahasa Indonesia santai dan manusiawi, tanpa kalimat yang tidak perlu.
 - Isi dibuka lewat klik. Aktivitas terkunci sampai semua materi selesai, lalu praktik, evaluasi, dan refleksi berurutan (`lock()`).
 - Animasi banyak tapi ringan. Hormati `prefers-reduced-motion`, kelas `.lite` (perangkat lemah), dan `.hid` (tab tersembunyi).
@@ -35,6 +35,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
   - Video YouTube **selalu diputar di dalam halaman** (`ytB`, `vLoad`, `vPick` + sheet `vplay`). Jangan tambahkan tombol atau tulisan yang membuka YouTube di tab baru (permintaan pemilik).
   - Efek: `fx()` memberi `.tilt` + `.glow` (kartu miring mengikuti kursor), loading antar halaman (`#ldb` + kelas `.ldsk`) di akhir file, dan ilustrasi 3D halaman awal `w3d()`/`w3dRun()`.
   - Studio portofolio (`SCR.studio`, fungsi `st*`, data di `S.st`) ada di paling akhir file: alat bikin portofolio mandiri, **terpisah dari alur belajar** (tidak dikunci, tidak masuk garis waktu, progres, atau praktik). Simpan PDF lewat `stPrint()` (CSS `@media print` + `html.stprinting`). Foto dikecilkan maks 720px JPEG sebelum disimpan.
+  - Pengaturan (sheet `set`, fungsi `set*`, data di `S.set`, bawaan `SETD`) ada setelah Studio, dibagi tab Tampilan, Suara, Belajar, Data. Tema warna `thApply()` memutar warna kebiruan di CSSOM dan atribut style/fill ke rona lain lewat OKLCH (tidak jalan dari file:// karena CSSOM diblokir, jadi pilihannya dimatikan di sana). Elemen bertanda `data-thx` tidak ikut diwarnai. Musik latar `mu*()` dibuat dengan Web Audio tanpa file lagu, berhenti saat tab disembunyikan, dan mengecil saat video YouTube terbuka.
   - Mode offline ada di paling akhir file: pendaftaran `sw.js` (ditunda sampai halaman tenang) dan pesan "butuh internet" untuk YouTube, Canva, dan tautan luar.
 - `vendor/three-folio.min.js`: Three.js (MIT) berisi bagian yang dipakai `w3dRun()` saja, dimuat hanya di halaman awal lewat http/https. Dibuat dari `vendor/three-folio.entry.js` dengan `npx esbuild vendor/three-folio.entry.js --bundle --minify --format=esm --legal-comments=inline --outfile=vendor/three-folio.min.js` (butuh `npm install three esbuild`). Kalau `w3dRun()` memakai kelas Three.js baru, tambahkan ke file entry lalu buat ulang.
 - `intro.mp4` dan `intro-poster.jpg`: video intro. Alamat `/_blob/...` hanya ada di claude.ai, di hosting lain otomatis memakai file lokal.
