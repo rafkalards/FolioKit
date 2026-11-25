@@ -653,13 +653,13 @@ function hdr() {
     home: '<b>Beranda</b>',
     materi: `Materi <b>${cur.i + 1}/8</b>`,
     akt: '<b>Aktivitas</b>',
-    latih: '<b>Latihan</b>',
     praktik: '<b>Praktik</b>',
     evaluasi: '<b>Evaluasi</b>',
     refleksi: '<b>Refleksi</b>',
     rapor: '<b>Rapor</b>',
     pre: '<b>Tes awal</b>',
     konsep: '<b>Peta konsep</b>',
+    studio: '<b>Studio</b>',
   };
   document.documentElement.dataset.r = cur.r;
   {
@@ -706,7 +706,6 @@ function sideR() {
     it('materi', 'book', 'Materi', r == 'materi', 'go(\'materi\',firstM())', '', fr(mN(), 8)),
     it('konsep', 'map', 'Peta konsep', r == 'konsep', "go('konsep')", lock('konsep')),
     it('akt', 'task', 'Aktivitas', r == 'akt' || /^a\d$/.test(r), "go('akt')", lock('akt'), fr(aN(), 7)),
-    it('latih', 'spark', 'Latihan', r == 'latih', "go('latih')", lock('latih'), S.lt && S.lt.done ? I('chk') : ''),
     it('praktik', 'lap', 'Praktik', r == 'praktik', "go('praktik')", lock('praktik'), fr(prN(), 4)),
     it('evaluasi', 'flag', 'Evaluasi', r == 'evaluasi', "go('evaluasi')", lock('evaluasi'), S.ev.tries ? String(S.ev.best) : ''),
     it('refleksi', 'ref', 'Refleksi', r == 'refleksi', "go('refleksi')", lock('refleksi'), S.rf.done ? I('chk') : ''),
@@ -732,7 +731,7 @@ function sideR() {
     (ROLE.owner ? `<button class="stag" onclick="sheet('owner')">Pemilik</button>` : '') +
     (S.prev && ROLE.edit ? `<button class="stag pv" onclick="sheet('prev')">Mode pratinjau</button>` : '');
   sd.innerHTML = `<div class="sbrow"><button class="sbrand" onclick="go('welcome',0,'b')" aria-label="Ke halaman awal" title="Halaman awal"><span class="logo"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M7 9h4M7 13h7"/></svg></span><span class="sbt"><b>FolioKit</b><small>Belajar portofolio</small></span></button><button class="stog" onclick="sideTog()" aria-label="${rail ? 'Lebarkan menu' : 'Ciutkan menu'}" title="${rail ? 'Lebarkan menu' : 'Ciutkan menu'}" aria-expanded="${!rail}">${I(rail ? 'arr' : 'bk')}</button></div>
-<div class="snav">${it('cari', 'search', 'Cari', 0, 'mCari()')}<p class="slab">Belajar</p>${learn}<p class="slab">Bantuan</p>${help}<p class="slab">Lainnya</p>${etc}</div>
+<div class="snav">${it('cari', 'search', 'Cari', 0, 'mCari()')}<p class="slab">Belajar</p>${learn}<p class="slab">Studio</p>${it('studio', 'spark', 'Bikin portofolio', r == 'studio', "go('studio')")}<p class="slab">Bantuan</p>${help}<p class="slab">Lainnya</p>${etc}</div>
 <div class="sfoot">${tags ? `<div class="stags">${tags}</div>` : ''}<div class="sprog" title="Progres belajar ${p}%"><div class="spt"><span>Progres</span><b>${p}%</b></div><div class="spb"><i style="width:${p}%"></i></div></div><button class="sacc" onclick="sheet('acc')" title="Profil"><span class="sav">${ac.pic ? `<img src="${esc(ac.pic)}" alt="" referrerpolicy="no-referrer">` : `<b>${esc((S.name || 'T')[0].toUpperCase())}</b>`}</span><span class="stx"><b>${esc(S.name || 'Tamu')}</b><small>Profil</small></span></button></div>`;
 }
 /* Sidebar lebar atau ramping (ikon saja). Default: lebar di layar 1200px ke atas, ramping di 900–1199px.
@@ -827,11 +826,11 @@ const ORD = [
   'a5',
   'a6',
   'a7',
-  'latih',
   'praktik',
   'evaluasi',
   'refleksi',
   'rapor',
+  'studio',
 ];
 const SCR = {},
   AFT = {};
@@ -873,11 +872,11 @@ function go(r, i = 0, dir) {
       home: 'Beranda',
       materi: 'Materi ' + (i + 1),
       akt: 'Aktivitas',
-      latih: 'Latihan',
       praktik: 'Praktik',
       evaluasi: 'Evaluasi',
       refleksi: 'Refleksi',
       rapor: 'Rapor',
+      studio: 'Studio portofolio',
     }[r] || 'Aktivitas ' + r[1]) + ' · FolioKit';
 }
 document.addEventListener('keydown', (e) => {
@@ -932,7 +931,7 @@ const estM = (r, i = 0) =>
     ? Math.max(3, Math.round((M[i].p.length + 5) * 0.8))
     : /^a\d$/.test(r)
       ? 3
-      : ({ pre: 4, latih: 10, praktik: 20, evaluasi: 8, refleksi: 3 }[r] ?? 0);
+      : ({ pre: 4, praktik: 20, evaluasi: 8, refleksi: 3 }[r] ?? 0);
 const doneN = () => mN() + aN() + (prN() == 4 ? 1 : 0) + (S.ev.tries ? 1 : 0) + (S.rf.done ? 1 : 0);
 const sisaM = () =>
   [0, 1, 2, 3, 4, 5, 6, 7].reduce((t, i) => t + (S.md[i] ? 0 : estM('materi', i)), 0) +
@@ -984,12 +983,11 @@ SCR.home = () => {
   const st = [
     ['Materi', 'book', 'materi', mN() / 8, `${mN()} dari 8 materi`],
     ['Aktivitas', 'task', 'akt', aN() / 7, `${aN()} dari 7 latihan`],
-    ['Latihan', 'spark', 'latih', S.lt && S.lt.done ? 1 : ((S.lt && S.lt.st) || 0) / 6, S.lt && S.lt.done ? 'Udah dicoba' : 'Coba bikin dulu di sini'],
     ['Praktik', 'lap', 'praktik', prN() / 4, `${prN()} dari 4 langkah di Canva`],
     ['Evaluasi', 'flag', 'evaluasi', S.ev.tries ? 1 : 0, S.ev.tries ? `Nilai terbaik ${S.ev.best}` : '8 soal singkat'],
     ['Refleksi', 'ref', 'refleksi', S.rf.done ? 1 : 0, S.rf.done ? 'Sudah diisi' : '2 pertanyaan untuk dirimu'],
   ];
-  const ci = { materi: 0, latih: 2, praktik: 3, evaluasi: 4, refleksi: 5 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
+  const ci = { materi: 0, praktik: 2, evaluasi: 3, refleksi: 4 }[n.r] ?? (/^a\d$/.test(n.r) ? 1 : -1);
   return `<div class="home home2"><div class="card hello"><div class="htop">${buildH()}${skyH()}</div><div class="hmid stagger"><span class="tag">${I('home')} Beranda</span><h2 data-type>${salam()}${nm}.</h2><p class="lead">${msg}</p>
  <div class="nextc glowb"><span class="ic">${I(n.ic)}</span><div style="flex:1;min-width:0"><small>${p == 0 ? 'Mulai dari' : p >= 100 ? 'Sudah selesai' : n.r == 'materi' && S.sr && S.sr[n.i] > 0 ? 'Lanjut dari terakhir' : 'Berikutnya'}</small><b>${n.l}</b>${lanjut || durN ? `<span class="nxs">${lanjut ? `Slide ${S.sr[n.i] + 1} dari ${M[n.i].p.length + 5}` : ''}${lanjut && durN ? ', ' : ''}${durN ? `sekitar ${durN} menit${lanjut ? ' lagi' : ''}` : ''}</span>` : ''}</div></div>
  <div class="row" style="margin-top:6px">${!S.iv && mN() == 0 ? `<button class="btn big shim" onclick="sheet('intro')">${I('play')} Tonton intro, lalu mulai</button><button class="link" onclick="S.iv=1;save();goNext()">Lewati intro</button>` : ''}<button class="btn big shim" ${!S.iv && mN() == 0 ? 'hidden' : ''} onclick="go('${n.r}',${n.i})">${p == 0 ? 'Mulai belajar' : p >= 100 ? 'Buka rapor' : 'Lanjut belajar'} ${I('arr')}</button></div></div><div class="hring" title="Progres belajar ${p}%"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bgc" cx="18" cy="18" r="15"/><circle class="fgc" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="${(94.25 * (1 - p / 100)).toFixed(2)}"/></svg><b>${p}%</b><small>progres</small></div></div>
@@ -1003,7 +1001,6 @@ SCR.home = () => {
      const firstLock = lk && st.findIndex((x) => lock(x[2])) == k;
      const SINGKAT = {
        akt: `Kebuka setelah ${8 - mN()} materi lagi`,
-       latih: 'Kebuka setelah semua aktivitas beres',
        praktik: 'Kebuka setelah semua aktivitas beres',
        evaluasi: 'Kebuka setelah praktik beres',
        refleksi: 'Kebuka setelah evaluasi',
@@ -1018,10 +1015,11 @@ SCR.home = () => {
    ['goal', 'target', 'Tujuan', 'belajar', '#0891b2,#22d3ee'],
    ['how', 'map', 'Panduan', 'cara pakai', '#15803d,#4ade80'],
    ['badges', 'star', 'Lencana', bdN() + '/' + BD.length, '#d97706,#fbbf24'],
+   ['studio', 'spark', 'Studio', 'bikin sendiri', '#be123c,#fb7185'],
  ]
    .map(
      (q, k) =>
-       `<button class="qki" style="--g:linear-gradient(135deg,${q[4]});--k:${k}" onclick="sheet('${q[0]}')"><span class="qic">${I(q[1])}</span><span class="qtx"><b>${q[2]}</b><small>${q[3]}</small></span></button>`,
+       `<button class="qki" style="--g:linear-gradient(135deg,${q[4]});--k:${k}" onclick="${q[0] == 'studio' ? "go('studio')" : `sheet('${q[0]}')`}"><span class="qic">${I(q[1])}</span><span class="qtx"><b>${q[2]}</b><small>${q[3]}</small></span></button>`,
    )
    .join('')}</div></div><div class="card hsc hst"><h3>Ringkasan</h3><div class="hstg">${[['Materi', mN() + '/8'], ['Aktivitas', aN() + '/7'], ['Lencana', bdN() + '/' + BD.length], ['Nilai evaluasi', S.ev.tries ? String(S.ev.best) : '-']].map((x) => `<div><b>${x[1]}</b><small>${x[0]}</small></div>`).join('')}</div></div></div></div></div>`;
 };
@@ -1660,7 +1658,7 @@ SCR.praktik = () => {
   return `<div class="prak ${R.pm == 'sim' ? 'one' : ''}"><article class="card pane"><div class="ph"><span class="tag">Praktik · ${prN()} dari 4 langkah</span><h2>Bikin portofoliomu di Canva</h2><p>${R.pm == 'sim' ? 'Atur di sini, hasilnya langsung kelihatan.' : 'Buka Canva di tab lain, kerjakan langkahnya, lalu centang di sini.'}</p></div><div class="pb scroll">${pmSeg()}${
     R.pm == 'sim'
       ? simH()
-      : `${S.lt && S.lt.done ? `<div class="ltbr">${I('spark')}<span>Dari latihanmu: template <b>${LTPL[S.lt.tpl][0]}</b>, ${S.lt.w.length} karya, huruf ${LFONT[S.lt.f][0]}. Cari template "portfolio ${LTPL[S.lt.tpl][0].toLowerCase()}" di Canva biar mirip.</span><button class="link" onclick="go('latih')">Lihat lagi</button></div>` : ''}<div class="steps">${PR.map((s, j) => `<button class="${j == k ? 'on' : ''} ${S.pr[j] ? 'ok' : ''}" onclick="R.pk=${j};go('praktik')"><span>${S.pr[j] ? '✓' : j + 1}</span>${s.t}</button>`).join('')}</div>
+      : `<div class="steps">${PR.map((s, j) => `<button class="${j == k ? 'on' : ''} ${S.pr[j] ? 'ok' : ''}" onclick="R.pk=${j};go('praktik')"><span>${S.pr[j] ? '✓' : j + 1}</span>${s.t}</button>`).join('')}</div>
  <h3 class="pp" style="font-size:19px">${k + 1}. ${p.t}</h3><p class="small">${p.d}</p><ul class="do">${p.l.map((x, j) => `<li><span>${j + 1}</span>${x}</li>`).join('')}</ul><button class="tick ${S.pr[k] ? 'on' : ''}" onclick="tick(${k})"><span class="bx">${I('chk')}</span>${S.pr[k] ? 'Langkah ini sudah selesai' : 'Tandai langkah ini selesai'}</button>
  ${all ? `<div class="fb ok">${I('chk')}<span>Keren, portofoliomu sudah jadi. Evaluasi sudah terbuka.</span></div>` : ''}`
   }</div>
@@ -1803,7 +1801,6 @@ function sheet(k) {
           ['home', 'Beranda', 'home', ''],
           ['book', 'Materi', 'materi', `${mN()}/8`],
           ['task', 'Aktivitas', 'akt', `${aN()}/7`],
-          ['spark', 'Latihan bikin portofolio', 'latih', S.lt && S.lt.done ? 'Selesai' : ''],
           ['lap', 'Praktik', 'praktik', `${prN()}/4`],
           ['flag', 'Evaluasi', 'evaluasi', S.ev.best != null ? 'Nilai ' + S.ev.best : ''],
           ['ref', 'Refleksi', 'refleksi', S.rf.done ? 'Selesai' : ''],
@@ -1835,7 +1832,7 @@ function sheet(k) {
           (ROLE.owner
             ? `<button class="mi own" onclick="sheet('owner')"><span class="ic">${I('crown')}</span><b>Panel pemilik</b><small>Khusus kamu</small></button>`
             : '') +
-          `<p class="mgh">Belajar</p>${nav}<p class="mgh">Bantuan</p>${help}<p class="mgh">Lainnya</p><div class="mgo">${etc}</div></div>`
+          `<p class="mgh">Belajar</p>${nav}<p class="mgh">Studio</p>${mi('spark', 'Bikin portofolio sendiri', "go('studio')", 'Studio')}<p class="mgh">Bantuan</p>${help}<p class="mgh">Lainnya</p><div class="mgo">${etc}</div></div>`
         );
       },
     ],
@@ -6107,197 +6104,369 @@ Object.keys(AKM).forEach((r) => {
   };
 });
 
-/* ===== Latihan bikin portofolio (tahap sendiri sebelum Praktik di Canva) ===== */
-/* Editor mini 6 langkah dengan pratinjau langsung. Data disimpan di S.lt. Jalan tanpa internet dan tanpa AI. */
-const LTPL = [
-  ['Minimalis', 'Bersih, banyak ruang kosong, fokus ke karya.'],
-  ['Kreatif', 'Warna berani dan bentuk dinamis, tapi tetap rapi.'],
-  ['Profesional', 'Formal dan terstruktur, gampang dipindai perekrut.'],
+/* ===== Studio Portofolio: bikin portofolio sendiri, terpisah dari alur belajar ===== */
+/* Bisa dibuka kapan saja (tidak dikunci). Data di S.st, foto dikecilkan dulu supaya muat di penyimpanan browser.
+   Hasil bisa disimpan sebagai PDF lewat jendela cetak browser. Jalan tanpa internet dan tanpa AI. */
+const STPL = [
+  ['Minimalis', 'Bersih dan lega, fokus ke karya.'],
+  ['Kreatif', 'Warna berani dan bentuk dinamis.'],
+  ['Profesional', 'Formal, rapi, gampang dipindai.'],
 ];
-const LCOL = ['#1e4fb0', '#0f766e', '#7c3aed', '#be123c', '#c2410c'];
-const LFONT = [
+const STCOL = ['#1e4fb0', '#0f766e', '#7c3aed', '#be123c', '#c2410c', '#111827'];
+const STFONT = [
   ['Modern', 'Poppins, sans-serif', 'Inter, sans-serif'],
   ['Klasik', 'Georgia, serif', 'Inter, sans-serif'],
   ['Tegas', 'Poppins, sans-serif', 'Poppins, sans-serif'],
 ];
-const LSEC = ['Profil', 'Pendidikan & pengalaman', 'Skill', 'Karya', 'Kontak'];
-const LWORK = [
-  ['Poster acara kampus', 1, 'linear-gradient(160deg,#1e4fb0,#7c3aed)'],
-  ['Logo UMKM kopi', 1, 'linear-gradient(160deg,#fde68a,#f59e0b)'],
-  ['Feed Instagram organisasi', 1, 'linear-gradient(160deg,#a5f3fc,#38bdf8)'],
-  ['Desain kemasan keripik', 1, 'linear-gradient(160deg,#bbf7d0,#16a34a)'],
-  ['Foto liburan ke Bali', 0, 'linear-gradient(160deg,#fecaca,#f87171)'],
-  ['Sertifikat ikut seminar', 0, 'linear-gradient(160deg,#e5e7eb,#9ca3af)'],
+const STSEC = [
+  ['riwayat', 'Pendidikan & pengalaman'],
+  ['skill', 'Skill'],
+  ['karya', 'Karya'],
+  ['kontak', 'Kontak'],
 ];
-const LBIO = [
+const STTAB = [
+  ['profil', 'Profil', 'home'],
+  ['riwayat', 'Riwayat', 'book'],
+  ['skill', 'Skill', 'star'],
+  ['karya', 'Karya', 'grid'],
+  ['kontak', 'Kontak', 'chat'],
+  ['tampilan', 'Tampilan', 'spark'],
+  ['cek', 'Cek & simpan', 'chk'],
+];
+const STPRE = [
+  ['linear-gradient(160deg,#1e4fb0,#7c3aed)', 'Poster'],
+  ['linear-gradient(160deg,#fde68a,#f59e0b)', 'Logo'],
+  ['linear-gradient(160deg,#a5f3fc,#38bdf8)', 'Media sosial'],
+  ['linear-gradient(160deg,#bbf7d0,#16a34a)', 'Kemasan'],
+  ['linear-gradient(160deg,#fecdd3,#e11d48)', 'Ilustrasi'],
+  ['linear-gradient(160deg,#e9d5ff,#7c3aed)', 'Presentasi'],
+];
+const STBIO = [
   'Fresh graduate yang suka bikin desain sederhana tapi jelas pesannya.',
-  'Desainer grafis pemula, terbiasa bikin konten media sosial untuk organisasi kampus.',
-  'Suka merapikan informasi jadi visual yang gampang dipahami.',
+  'Terbiasa bikin konten media sosial untuk organisasi kampus, dari ide sampai unggah.',
+  'Suka merapikan informasi jadi visual yang gampang dipahami orang awam.',
 ];
-const LSTEP = ['Kenalan', 'Template', 'Susunan', 'Karya', 'Rapikan', 'Cek hasil'];
-const ltD = () => {
-  if (!S.lt) S.lt = { st: 0, nm: S.name || '', pos: '', bio: '', tpl: 0, sec: [0, 1, 2, 3, 4], w: [], wt: {}, c: 0, f: 0, done: 0 };
-  return S.lt;
+const STSKILL = ['Canva', 'Adobe Illustrator', 'Tipografi', 'Layout', 'Copywriting', 'Fotografi', 'Microsoft Office', 'Komunikasi', 'Kerja tim', 'Manajemen waktu'];
+const stD = () => {
+  if (!S.st)
+    S.st = {
+      tab: 'profil',
+      pg: 0,
+      nm: S.name || '',
+      pos: '',
+      bio: '',
+      foto: '',
+      edu: [{ t: '', s: '', y: '' }],
+      exp: [],
+      skill: [],
+      karya: [],
+      kontak: { em: '', hp: '', li: '', web: '' },
+      tpl: 0,
+      c: 0,
+      f: 0,
+      sec: ['riwayat', 'skill', 'karya', 'kontak'],
+    };
+  return S.st;
 };
-const ltWords = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
-function ltChecks(d) {
-  const sel = d.w.map((j) => LWORK[j]);
+const stW = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+/* ---------- daftar cek ---------- */
+function stChecks(d) {
+  const k = d.karya;
   return [
-    [d.nm.trim().length >= 2, 'Nama udah diisi'],
-    [d.pos.trim().length >= 3, 'Posisi yang dilamar udah jelas'],
-    [ltWords(d.bio) >= 5 && ltWords(d.bio) <= 25, 'Kalimat tentang diri pendek dan jelas (5 sampai 25 kata)'],
-    [d.sec[0] === 0, 'Profil ada di bagian paling awal'],
-    [d.sec.includes(3) && d.sec.includes(4), 'Ada bagian Karya dan Kontak'],
-    [d.w.length >= 3 && d.w.length <= 6, 'Jumlah karya 3 sampai 6'],
-    [d.w.length > 0 && sel.every((x) => x[1]), 'Semua karya nyambung sama posisi yang dilamar'],
-    [d.w.length > 0 && d.w.every((j) => d.wt[j] && d.wt[j].p && d.wt[j].p.trim()), 'Tiap karya ada keterangan peranmu'],
+    [d.nm.trim().length >= 2, 'Nama udah diisi', 'profil'],
+    [d.pos.trim().length >= 3, 'Posisi yang dilamar udah jelas', 'profil'],
+    [stW(d.bio) >= 5 && stW(d.bio) <= 30, 'Kalimat tentang diri pendek dan jelas (5 sampai 30 kata)', 'profil'],
+    [!!d.foto, 'Ada foto profil yang rapi', 'profil'],
+    [d.edu.some((x) => x.t.trim()) || d.exp.some((x) => x.t.trim()), 'Ada minimal satu riwayat pendidikan atau pengalaman', 'riwayat'],
+    [d.skill.length >= 3, 'Ada minimal 3 skill', 'skill'],
+    [k.length >= 3 && k.length <= 6, 'Jumlah karya 3 sampai 6', 'karya'],
+    [k.length > 0 && k.every((x) => x.t.trim() && x.p.trim()), 'Tiap karya ada judul dan peranmu', 'karya'],
+    [!!(d.kontak.em.trim() || d.kontak.hp.trim()), 'Ada kontak yang bisa dihubungi', 'kontak'],
+    [d.sec.includes('karya') && d.sec.includes('kontak'), 'Halaman Karya dan Kontak dipakai', 'tampilan'],
   ];
 }
-function ltFb(d, st) {
-  const c = ltChecks(d);
-  const pick = { 0: [0, 1, 2], 1: [], 2: [3, 4], 3: [5, 6, 7], 4: [], 5: [0, 1, 2, 3, 4, 5, 6, 7] }[st];
-  if (st == 1) return [[true, `${LTPL[d.tpl][0]}: ${LTPL[d.tpl][1]}`]];
-  if (st == 4) return [[true, `Warna utama dipakai buat judul dan aksen aja, sisanya netral.`], [true, `Pasangan huruf ${LFONT[d.f][0]}: maksimal dua jenis, jadi tetap rapi.`]];
-  return pick.map((k) => c[k]);
+/* ---------- halaman-halaman portofolio ---------- */
+function stPages(d) {
+  const P = [['sampul', 'Sampul']];
+  d.sec.forEach((s) => P.push([s, STSEC.find((x) => x[0] == s)[1]]));
+  return P;
 }
-function ltStepH(d) {
-  const st = d.st;
-  if (st == 0)
-    return `<label class="lf">Nama<input class="inp" maxlength="30" value="${esc(d.nm)}" placeholder="Nama lengkap atau panggilan" oninput="ltD().nm=this.value;save();ltU()"></label>
-<label class="lf">Posisi yang dilamar<input class="inp" maxlength="36" value="${esc(d.pos)}" placeholder="Contoh: Desainer Grafis" oninput="ltD().pos=this.value;save();ltU()"></label>
-<label class="lf">Satu kalimat tentang dirimu<textarea class="inp" rows="3" maxlength="200" placeholder="Tulis singkat, 5 sampai 25 kata" oninput="ltD().bio=this.value;save();ltU()">${esc(d.bio)}</textarea></label>
-<p class="lfh">Bingung? Klik salah satu contoh:</p><div class="chips">${LBIO.map((b, j) => `<button class="chip" onclick="ltBio(${j})">${b.split(' ').slice(0, 4).join(' ')}…</button>`).join('')}</div>`;
-  if (st == 1)
-    return `<div class="ltpl">${LTPL.map((t, j) => `<button class="${d.tpl == j ? 'on' : ''}" onclick="ltD().tpl=${j};save();go('latih')"><span class="ltth t${j}"><i></i><i></i><i></i></span><b>${t[0]}</b><small>${t[1]}</small></button>`).join('')}</div>`;
-  if (st == 2)
-    return `<p class="lfh">Centang bagian yang mau dipakai, lalu atur urutannya.</p><div class="lsec">${d.sec
+function stFoto(d, cls) {
+  return d.foto ? `<span class="${cls}" style="background-image:url('${d.foto}')"></span>` : `<span class="${cls} sil"></span>`;
+}
+function stPage(d, key) {
+  const nm = esc(d.nm.trim() || 'Nama Kamu'),
+    pos = esc(d.pos.trim() || 'Posisi yang dilamar'),
+    bio = esc(d.bio.trim() || 'Tulis satu kalimat tentang dirimu di bagian Profil.');
+  const head = (t) => `<div class="sth"><span class="stk">${t}</span></div>`;
+  const li = (a) =>
+    a.filter((x) => x.t.trim()).map((x) => `<li><b>${esc(x.t)}</b>${x.s.trim() ? `<span>${esc(x.s)}</span>` : ''}${x.y.trim() ? `<em>${esc(x.y)}</em>` : ''}</li>`).join('') ||
+    '<li class="ste">Belum diisi</li>';
+  let in_ = '';
+  if (key == 'sampul')
+    in_ = `<div class="stcov">${stFoto(d, 'stph')}<div><span class="stk">Portofolio</span><h1>${nm}</h1><p class="stpos">${pos}</p><p class="stbio">${bio}</p></div></div>`;
+  if (key == 'riwayat')
+    in_ = `${head('Pendidikan &amp; pengalaman')}<div class="st2c"><div><h3>Pendidikan</h3><ul class="stl">${li(d.edu)}</ul></div><div><h3>Pengalaman</h3><ul class="stl">${li(d.exp)}</ul></div></div>`;
+  if (key == 'skill')
+    in_ = `${head('Skill')}<div class="stsk">${d.skill.map((x) => `<span>${esc(x)}</span>`).join('') || '<p class="ste">Tambahkan skill di bagian Skill.</p>'}</div>`;
+  if (key == 'karya')
+    in_ = `${head('Karya')}<div class="stkr n${Math.min(Math.max(d.karya.length, 1), 6)}">${
+      d.karya
+        .map(
+          (k) =>
+            `<figure><span class="stim" style="${k.img ? `background-image:url('${k.img}')` : `background:${STPRE[k.pre || 0][0]}`}">${k.img ? '' : '<i></i>'}</span><figcaption><b>${esc(k.t || 'Judul karya')}</b><small>${esc(k.p || 'Peranmu')}</small>${k.d.trim() ? `<span>${esc(k.d)}</span>` : ''}</figcaption></figure>`,
+        )
+        .join('') || '<p class="ste">Tambahkan 3 sampai 6 karya di bagian Karya.</p>'
+    }</div>`;
+  if (key == 'kontak') {
+    const K = d.kontak,
+      rows = [
+        ['Email', K.em],
+        ['WhatsApp', K.hp],
+        ['LinkedIn', K.li],
+        ['Web / Behance', K.web],
+      ].filter((r) => r[1].trim());
+    in_ = `<div class="stend"><span class="stk">Mari terhubung</span><h1>Terima kasih</h1><p class="stpos">${nm} · ${pos}</p><div class="stct">${rows.map((r) => `<p><b>${r[0]}</b>${esc(r[1])}</p>`).join('') || '<p class="ste">Isi kontakmu di bagian Kontak.</p>'}</div></div>`;
+  }
+  return `<div class="stpg t${d.tpl}" style="--c:${STCOL[d.c] || d.c};--fh:${STFONT[d.f][1]};--fb:${STFONT[d.f][2]}"><i class="std1"></i><i class="std2"></i><div class="stin">${in_}</div></div>`;
+}
+/* ---------- isian tiap tab ---------- */
+const stIn = (lab, key, val, ph, max = 60) =>
+  `<label class="stf">${lab}<input class="inp" maxlength="${max}" value="${esc(val)}" placeholder="${ph}" oninput="stSet('${key}',this.value)"></label>`;
+function stTabH(d) {
+  const t = d.tab;
+  if (t == 'profil')
+    return `<div class="stfoto">${stFoto(d, 'stfp')}<div><b>Foto profil</b><small>Pakai foto setengah badan, latar polos, wajah kelihatan jelas.</small><div class="row"><label class="btn g sm stup">${I('dl')} Pilih foto<input type="file" accept="image/*" onchange="stImg(this,'foto')"></label>${d.foto ? `<button class="link" onclick="stSet('foto','');go('studio')">Hapus</button>` : ''}</div></div></div>
+${stIn('Nama', 'nm', d.nm, 'Nama lengkap atau panggilan', 30)}${stIn('Posisi yang dilamar', 'pos', d.pos, 'Contoh: Desainer Grafis', 40)}
+<label class="stf">Satu kalimat tentang dirimu<textarea class="inp" rows="3" maxlength="220" placeholder="5 sampai 30 kata" oninput="stSet('bio',this.value)">${esc(d.bio)}</textarea></label>
+<p class="sth2">Bingung? Pakai contoh ini lalu ubah sesukamu:</p><div class="chips">${STBIO.map((b, j) => `<button class="chip" onclick="stSet('bio',STBIO[${j}]);go('studio')">${b.split(' ').slice(0, 4).join(' ')}…</button>`).join('')}</div>`;
+  if (t == 'riwayat') {
+    const L = (arr, key, lab, ph) =>
+      `<div class="stgrp"><div class="stgh"><b>${lab}</b><button class="btn g sm" onclick="stAdd('${key}')">+ Tambah</button></div>${arr
+        .map(
+          (x, j) =>
+            `<div class="stitem"><input class="inp" maxlength="60" value="${esc(x.t)}" placeholder="${ph[0]}" oninput="stRow('${key}',${j},'t',this.value)"><div class="st2i"><input class="inp" maxlength="60" value="${esc(x.s)}" placeholder="${ph[1]}" oninput="stRow('${key}',${j},'s',this.value)"><input class="inp" maxlength="20" value="${esc(x.y)}" placeholder="Tahun" oninput="stRow('${key}',${j},'y',this.value)"></div><button class="ib stdel" onclick="stDel('${key}',${j})" aria-label="Hapus">${I('x')}</button></div>`,
+        )
+        .join('') || '<p class="sth2">Belum ada. Klik Tambah.</p>'}</div>`;
+    return L(d.edu, 'edu', 'Pendidikan', ['Contoh: S1 Teknologi Pendidikan', 'Kampus atau sekolah']) + L(d.exp, 'exp', 'Pengalaman', ['Contoh: Desainer konten (magang)', 'Tempat atau organisasi']);
+  }
+  if (t == 'skill')
+    return `<div class="stskin"><input class="inp" id="stsk" maxlength="30" placeholder="Ketik skill lalu tekan Enter" onkeydown="if(event.key=='Enter'){event.preventDefault();stSkill(this.value)}"><button class="btn sm" onclick="stSkill(document.getElementById('stsk').value)">Tambah</button></div>
+<div class="stchips">${d.skill.map((x, j) => `<span class="chip on">${esc(x)}<button onclick="stSkDel(${j})" aria-label="Hapus ${esc(x)}">${I('x')}</button></span>`).join('') || '<p class="sth2">Belum ada skill.</p>'}</div>
+<p class="sth2">Saran skill (klik buat nambah):</p><div class="chips">${STSKILL.filter((x) => !d.skill.includes(x)).map((x) => `<button class="chip" onclick="stSkill('${x}')">+ ${x}</button>`).join('')}</div>`;
+  if (t == 'karya')
+    return `<div class="stgh"><b>Karya (${d.karya.length}/6)</b><button class="btn sm" ${d.karya.length >= 6 ? 'disabled' : ''} onclick="stKAdd()">+ Tambah karya</button></div>${d.karya
+      .map(
+        (k, j) =>
+          `<div class="stkitem"><label class="stkimg" style="${k.img ? `background-image:url('${k.img}')` : `background:${STPRE[k.pre || 0][0]}`}" title="Ganti gambar"><input type="file" accept="image/*" onchange="stImg(this,'karya',${j})"><span>${I('dl')} ${k.img ? 'Ganti' : 'Unggah'}</span></label><div class="stkf"><input class="inp" maxlength="50" value="${esc(k.t)}" placeholder="Judul karya" oninput="stKSet(${j},'t',this.value)"><input class="inp" maxlength="60" value="${esc(k.p)}" placeholder="Peranmu, misalnya: desain dari nol" oninput="stKSet(${j},'p',this.value)"><textarea class="inp" rows="2" maxlength="140" placeholder="Hasilnya (opsional), misalnya: dipakai buat acara 300 peserta" oninput="stKSet(${j},'d',this.value)">${esc(k.d)}</textarea></div><div class="stkbt"><button class="ib" ${j == 0 ? 'disabled' : ''} onclick="stKMove(${j},-1)" aria-label="Naikkan">${I('bk')}</button><button class="ib" ${j == d.karya.length - 1 ? 'disabled' : ''} onclick="stKMove(${j},1)" aria-label="Turunkan">${I('arr')}</button><button class="ib" onclick="stKDel(${j})" aria-label="Hapus karya">${I('x')}</button></div></div>`,
+      )
+      .join('') || '<p class="sth2">Belum ada karya. Klik Tambah karya, lalu unggah gambar karyamu sendiri. Kalau belum ada gambarnya, pakai warna contoh dulu.</p>'}<p class="sth2">Taruh karya paling kuat di urutan pertama.</p>`;
+  if (t == 'kontak') {
+    const K = d.kontak;
+    return `${stIn('Email', 'kontak.em', K.em, 'nama@email.com', 60)}${stIn('WhatsApp', 'kontak.hp', K.hp, '08xx xxxx xxxx', 20)}${stIn('LinkedIn', 'kontak.li', K.li, 'linkedin.com/in/namamu', 60)}${stIn('Web atau Behance (opsional)', 'kontak.web', K.web, 'behance.net/namamu', 60)}<p class="sth2">Pakai email yang kelihatan profesional, misalnya nama.lengkap@email.com.</p>`;
+  }
+  if (t == 'tampilan')
+    return `<p class="stlb">Template</p><div class="sttpl">${STPL.map((x, j) => `<button class="${d.tpl == j ? 'on' : ''}" onclick="stSet('tpl',${j});go('studio')"><span class="stth t${j}"><i></i><i></i><i></i></span><b>${x[0]}</b><small>${x[1]}</small></button>`).join('')}</div>
+<p class="stlb">Warna utama</p><div class="sw">${STCOL.map((c, j) => `<button style="--c:${c}" class="${d.c === j ? 'on' : ''}" aria-label="Warna ${j + 1}" onclick="stSet('c',${j});go('studio')"></button>`).join('')}<label class="stcc" title="Warna lain"><input type="color" value="${typeof d.c == 'string' ? d.c : STCOL[d.c]}" oninput="stSet('c',this.value)"></label></div>
+<p class="stlb">Pasangan huruf</p><div class="chips">${STFONT.map((f, j) => `<button class="chip ${d.f == j ? 'on' : ''}" style="font-family:${f[1]}" onclick="stSet('f',${j});go('studio')">${f[0]}</button>`).join('')}</div>
+<p class="stlb">Halaman dan urutannya</p><div class="stsec">${d.sec
       .map(
         (s, k) =>
-          `<div class="lsr"><span class="lsn">${k + 1}</span><b>${LSEC[s]}</b><button class="ib" ${k == 0 ? 'disabled' : ''} onclick="ltMove(${k},-1)" aria-label="Naikkan ${LSEC[s]}">${I('bk')}</button><button class="ib" ${k == d.sec.length - 1 ? 'disabled' : ''} onclick="ltMove(${k},1)" aria-label="Turunkan ${LSEC[s]}">${I('arr')}</button><button class="ib" onclick="ltSec(${s})" aria-label="Hapus ${LSEC[s]}">${I('x')}</button></div>`,
+          `<div class="stsr"><span>${k + 2}</span><b>${STSEC.find((x) => x[0] == s)[1]}</b><button class="ib" ${k == 0 ? 'disabled' : ''} onclick="stSMove(${k},-1)" aria-label="Naikkan">${I('bk')}</button><button class="ib" ${k == d.sec.length - 1 ? 'disabled' : ''} onclick="stSMove(${k},1)" aria-label="Turunkan">${I('arr')}</button><button class="ib" onclick="stSTog('${s}')" aria-label="Sembunyikan">${I('x')}</button></div>`,
       )
-      .join('')}</div>${
-      LSEC.some((_, s) => !d.sec.includes(s))
-        ? `<p class="lfh">Bagian yang belum dipakai:</p><div class="chips">${LSEC.map((x, s) => (d.sec.includes(s) ? '' : `<button class="chip" onclick="ltSec(${s})">+ ${x}</button>`)).join('')}</div>`
-        : ''
-    }`;
-  if (st == 3)
-    return `<p class="lfh">Pilih 3 sampai 6 karya yang paling nyambung sama posisi${d.pos ? ' <b>' + esc(d.pos) + '</b>' : ''}.</p><div class="lwk">${LWORK.map(
-      (w, j) =>
-        `<button class="${d.w.includes(j) ? 'on' : ''}" onclick="ltWork(${j})"><span class="lwi" style="background:${w[2]}"></span><b>${w[0]}</b></button>`,
-    ).join('')}</div>${d.w
-      .map(
-        (j) =>
-          `<div class="lwt"><b>${LWORK[j][0]}</b><input class="inp" maxlength="60" placeholder="Peranmu di karya ini, misalnya: desain dari nol" value="${esc((d.wt[j] && d.wt[j].p) || '')}" oninput="ltWT(${j},this.value)"></div>`,
-      )
-      .join('')}`;
-  if (st == 4)
-    return `<span class="lb">Warna utama</span><div class="sw">${LCOL.map((c, j) => `<button style="--c:${c}" class="${d.c == j ? 'on' : ''}" aria-label="Warna ${j + 1}" onclick="ltD().c=${j};save();only(this,'button');ltU()"></button>`).join('')}</div>
-<span class="lb">Pasangan huruf</span><div class="chips">${LFONT.map((f, j) => `<button class="chip ${d.f == j ? 'on' : ''}" style="font-family:${f[1]}" onclick="ltD().f=${j};save();only(this,'.chip');ltU()">${f[0]}</button>`).join('')}</div>`;
-  const c = ltChecks(d),
+      .join('')}</div>${STSEC.some((x) => !d.sec.includes(x[0])) ? `<div class="chips" style="margin-top:8px">${STSEC.filter((x) => !d.sec.includes(x[0])).map((x) => `<button class="chip" onclick="stSTog('${x[0]}')">+ ${x[1]}</button>`).join('')}</div>` : ''}<p class="sth2">Halaman 1 selalu sampul.</p>`;
+  const c = stChecks(d),
     ok = c.filter((x) => x[0]).length;
-  return `<div class="lscore"><b>${ok}<small>/${c.length}</small></b><div><p>${ok == c.length ? 'Mantap, semuanya udah oke. Tinggal dibikin beneran di Canva.' : ok >= 6 ? 'Udah bagus. Benerin yang belum dicentang, terus lanjut ke Canva.' : 'Masih ada beberapa yang perlu dibenerin. Klik langkahnya di atas buat balik.'}</p></div></div>`;
+  return `<div class="stscore"><b>${ok}<small>/${c.length}</small></b><p>${ok == c.length ? 'Lengkap. Simpan jadi PDF, lalu bikin versi finalnya di Canva.' : ok >= 7 ? 'Udah bagus. Benerin yang oranye biar makin kuat.' : 'Masih ada yang kosong. Klik baris oranye buat langsung ke bagiannya.'}</p></div>
+<ul class="stck">${c.map((x) => `<li class="${x[0] ? 'ok' : ''}"><button onclick="stTab('${x[2]}')">${I(x[0] ? 'chk' : 'info')}<span>${x[1]}</span></button></li>`).join('')}</ul>
+<div class="stact"><button class="btn" onclick="stPrint()">${I('dl')} Simpan sebagai PDF</button><button class="btn g" onclick="stCopy()">${I('copy')} Salin semua teks</button><a class="btn g" href="https://www.canva.com" target="_blank" rel="noopener">${I('ext')} Buka Canva</a><button class="link" onclick="stReset()">Mulai dari kosong</button></div>
+<p class="sth2">PDF-nya bisa langsung dikirim, atau dipakai sebagai contekan waktu bikin di Canva. Teks yang disalin tinggal ditempel ke template Canva.</p>`;
 }
-function ltPrev(d) {
-  const col = LCOL[d.c],
-    fo = LFONT[d.f],
-    nm = esc(d.nm.trim() || 'Nama Kamu'),
-    pos = esc(d.pos.trim() || 'Posisi yang dilamar'),
-    slug = (d.nm.trim() || 'namakamu').toLowerCase().replace(/[^a-z0-9]+/g, '');
-  const SEC = {
-    0: `<div class="lpp"><span class="lpa"></span><div><h4>${nm}</h4><p class="lpr">${pos}</p><p>${esc(d.bio.trim() || 'Satu kalimat tentang dirimu muncul di sini.')}</p></div></div>`,
-    1: `<h5>Pendidikan &amp; pengalaman</h5><ul><li><b>S1 Teknologi Pendidikan</b>, Universitas Negeri Jakarta, 2021 sampai 2025</li><li><b>Magang desain</b>, studio kreatif lokal, 2024</li></ul>`,
-    2: `<h5>Skill</h5><div class="lps">${['Canva', 'Tipografi', 'Layout', 'Komunikasi'].map((x) => `<span>${x}</span>`).join('')}</div>`,
-    3: `<h5>Karya</h5><div class="lpk">${(d.w.length ? d.w : [])
-      .map((j) => `<div><span style="background:${LWORK[j][2]}"></span><b>${LWORK[j][0]}</b><small>${esc((d.wt[j] && d.wt[j].p) || 'Peranmu di karya ini')}</small></div>`)
-      .join('') || '<p class="lpe">Belum ada karya yang dipilih.</p>'}</div>`,
-    4: `<h5>Kontak</h5><p>${slug}@email.com · linkedin.com/in/${slug}</p>`,
-  };
-  const body = d.sec.map((s) => `<section class="lpsec">${SEC[s]}</section>`).join('');
-  return `<div class="lpv t${d.tpl}" style="--lc:${col};--lh:${fo[1]};--lb:${fo[2]}"><div class="lpband"></div>${body || '<p class="lpe">Belum ada bagian yang dipakai.</p>'}</div>`;
-}
-function ltU() {
-  const d = ltD(),
-    v = document.getElementById('ltv'),
-    f = document.getElementById('ltfb');
-  if (v) v.innerHTML = ltPrev(d);
-  if (f) f.innerHTML = ltFb(d, d.st).map((x) => `<li class="${x[0] ? 'ok' : ''}">${I(x[0] ? 'chk' : 'info')}<span>${x[1]}</span></li>`).join('');
-}
-function ltBio(j) {
-  ltD().bio = LBIO[j];
+/* ---------- aksi ---------- */
+function stSet(key, v) {
+  const d = stD();
+  if (key.startsWith('kontak.')) d.kontak[key.slice(7)] = v;
+  else d[key] = v;
   save();
-  go('latih');
+  stU();
 }
-function ltMove(k, dir) {
-  const s = ltD().sec,
+function stTab(t) {
+  stD().tab = t;
+  save();
+  go('studio');
+}
+function stAdd(key) {
+  stD()[key].push({ t: '', s: '', y: '' });
+  save();
+  go('studio');
+}
+function stRow(key, j, f, v) {
+  stD()[key][j][f] = v;
+  save();
+  stU();
+}
+function stDel(key, j) {
+  stD()[key].splice(j, 1);
+  save();
+  go('studio');
+}
+function stSkill(v) {
+  v = String(v || '').trim();
+  const d = stD();
+  if (!v) return;
+  if (d.skill.length >= 12) return toast('Cukup 12 skill, pilih yang paling kuat.');
+  if (!d.skill.includes(v)) d.skill.push(v);
+  save();
+  go('studio');
+  setTimeout(() => document.getElementById('stsk')?.focus(), 50);
+}
+function stSkDel(j) {
+  stD().skill.splice(j, 1);
+  save();
+  go('studio');
+}
+function stKAdd() {
+  const d = stD();
+  if (d.karya.length >= 6) return;
+  d.karya.push({ t: '', p: '', d: '', img: '', pre: d.karya.length % STPRE.length });
+  save();
+  go('studio');
+}
+function stKSet(j, f, v) {
+  stD().karya[j][f] = v;
+  save();
+  stU();
+}
+function stKMove(j, dir) {
+  const a = stD().karya,
+    k = j + dir;
+  if (k < 0 || k >= a.length) return;
+  [a[j], a[k]] = [a[k], a[j]];
+  save();
+  go('studio');
+}
+function stKDel(j) {
+  stD().karya.splice(j, 1);
+  save();
+  go('studio');
+}
+function stSMove(k, dir) {
+  const a = stD().sec,
     j = k + dir;
-  if (j < 0 || j >= s.length) return;
-  [s[k], s[j]] = [s[j], s[k]];
+  if (j < 0 || j >= a.length) return;
+  [a[k], a[j]] = [a[j], a[k]];
   save();
-  go('latih');
+  go('studio');
 }
-function ltSec(s) {
-  const d = ltD(),
-    i = d.sec.indexOf(s);
-  if (i < 0) d.sec.push(s);
-  else d.sec.splice(i, 1);
+function stSTog(s) {
+  const a = stD().sec,
+    i = a.indexOf(s);
+  if (i < 0) a.push(s);
+  else a.splice(i, 1);
+  stD().pg = 0;
   save();
-  go('latih');
+  go('studio');
 }
-function ltWork(j) {
-  const d = ltD(),
-    i = d.w.indexOf(j);
-  if (i < 0) {
-    if (d.w.length >= 6) return toast('Cukup 6 karya. Lepas satu dulu kalau mau ganti.');
-    d.w.push(j);
-  } else d.w.splice(i, 1);
+function stPg(i) {
+  const d = stD(),
+    n = stPages(d).length;
+  d.pg = (i + n) % n;
   save();
-  go('latih');
+  stU();
 }
-function ltWT(j, v) {
-  const d = ltD();
-  d.wt[j] = { p: v };
+/* foto dikecilkan dulu (maks 720px, JPEG) supaya penyimpanan browser tidak penuh */
+function stImg(inp, where, j) {
+  const f = inp.files && inp.files[0];
+  if (!f) return;
+  if (!/^image\//.test(f.type)) return toast('Pilih file gambar ya (JPG atau PNG).');
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const m = 720,
+        sc = Math.min(1, m / Math.max(im.width, im.height)),
+        c = document.createElement('canvas');
+      c.width = Math.round(im.width * sc);
+      c.height = Math.round(im.height * sc);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      const url = c.toDataURL('image/jpeg', 0.78);
+      const d = stD();
+      if (where == 'foto') d.foto = url;
+      else if (d.karya[j]) d.karya[j].img = url;
+      try {
+        save();
+      } catch (e) {
+        toast('Penyimpanan browser penuh. Coba pakai gambar yang lebih kecil.');
+      }
+      go('studio');
+    };
+    im.onerror = () => toast('Gambarnya nggak bisa dibuka. Coba file lain.');
+    im.src = r.result;
+  };
+  r.readAsDataURL(f);
+}
+function stText(d) {
+  const L = [];
+  L.push(d.nm, d.pos, d.bio, '');
+  if (d.edu.some((x) => x.t)) L.push('PENDIDIKAN', ...d.edu.filter((x) => x.t).map((x) => [x.t, x.s, x.y].filter(Boolean).join(', ')), '');
+  if (d.exp.some((x) => x.t)) L.push('PENGALAMAN', ...d.exp.filter((x) => x.t).map((x) => [x.t, x.s, x.y].filter(Boolean).join(', ')), '');
+  if (d.skill.length) L.push('SKILL', d.skill.join(', '), '');
+  if (d.karya.length) L.push('KARYA', ...d.karya.map((k) => [k.t, k.p, k.d].filter(Boolean).join(' | ')), '');
+  const K = d.kontak;
+  L.push('KONTAK', ...[K.em, K.hp, K.li, K.web].filter(Boolean));
+  return L.join('\n').trim();
+}
+function stCopy() {
+  const t = stText(stD());
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+    .then(() => toast('Semua teks udah disalin. Tinggal tempel di Canva.', 'chk'))
+    .catch(() => toast('Browser ini nggak bisa nyalin otomatis. Salin manual aja ya.'));
+}
+function stPrint() {
+  const d = stD(),
+    box = document.createElement('div');
+  box.id = 'stprint';
+  box.innerHTML = stPages(d).map((p) => stPage(d, p[0])).join('');
+  document.body.appendChild(box);
+  document.documentElement.classList.add('stprinting');
+  const done = () => {
+    document.documentElement.classList.remove('stprinting');
+    box.remove();
+    removeEventListener('afterprint', done);
+  };
+  addEventListener('afterprint', done);
+  setTimeout(() => {
+    window.print();
+    setTimeout(done, 1500);
+  }, 150);
+}
+function stReset() {
+  if (!confirm('Hapus semua isian di Studio dan mulai dari kosong?')) return;
+  S.st = null;
   save();
-  ltU();
+  go('studio');
 }
-function ltGo(st) {
-  ltD().st = Math.max(0, Math.min(5, st));
-  save();
-  go('latih');
+/* ---------- tampilan ---------- */
+function stU() {
+  const d = stD(),
+    P = stPages(d);
+  if (d.pg >= P.length) d.pg = 0;
+  const v = document.getElementById('stv'),
+    th = document.getElementById('stth'),
+    pn = document.getElementById('stpn');
+  if (v) v.innerHTML = stPage(d, P[d.pg][0]);
+  if (pn) pn.textContent = `Halaman ${d.pg + 1} dari ${P.length}: ${P[d.pg][1]}`;
+  if (th) th.innerHTML = P.map((p, i) => `<button class="${i == d.pg ? 'on' : ''}" onclick="stPg(${i})" aria-label="Halaman ${i + 1}: ${p[1]}"><span class="stmini">${stPage(d, p[0])}</span><small>${i + 1}. ${p[1]}</small></button>`).join('');
+  const c = stChecks(d),
+    ok = c.filter((x) => x[0]).length,
+    b = document.getElementById('stsc');
+  if (b) b.textContent = ok + '/' + c.length;
 }
-function ltDone() {
-  const d = ltD();
-  d.done = 1;
-  save();
-  sfx('ok');
-  toast('Latihan beres. Sekarang bikin yang beneran di Canva.', 'chk');
-  go('praktik');
-}
-SCR.latih = () => {
-  const d = ltD(),
-    st = d.st,
-    mv = R.lv || 'form';
-  return `<div class="lat ${mv == 'prev' ? 'showp' : ''}"><article class="card pane ltf"><div class="ph"><span class="tag">${I('spark')} Latihan · langkah ${st + 1} dari 6</span><h2>${LSTEP[st]}</h2><p>Latihan dulu di sini sebelum bikin beneran di Canva. Hasilnya langsung kelihatan di sebelah.</p><div class="lsteps">${LSTEP.map((x, j) => `<button class="${j == st ? 'on' : ''} ${j < st ? 'ok' : ''}" onclick="ltGo(${j})" aria-label="Langkah ${j + 1}: ${x}"><span>${j < st ? I('chk') : j + 1}</span><em>${x}</em></button>`).join('')}</div></div>
-<div class="pb scroll">${ltStepH(d)}<ul class="ltfb" id="ltfb"></ul></div>
-<div class="pf"><button class="btn g" ${st == 0 ? 'disabled' : ''} onclick="ltGo(${st - 1})">${I('bk')}<span class="lbl">Sebelumnya</span></button><button class="btn g ltpv" onclick="R.lv='prev';go('latih')">${I('eye')}<span class="lbl">Lihat hasil</span></button>${st < 5 ? `<button class="btn" onclick="ltGo(${st + 1})"><span class="lbl">Berikutnya</span>${I('arr')}</button>` : `<button class="btn shim" onclick="ltDone()">Bikin di Canva ${I('arr')}</button>`}</div></article>
-<article class="card ltp"><div class="ltph"><b>Pratinjau portofoliomu</b><button class="btn g sm ltbk" onclick="R.lv='form';go('latih')">${I('bk')} Balik isi</button></div><div class="ltpw scroll"><div id="ltv"></div></div></article></div>`;
+SCR.studio = () => {
+  const d = stD(),
+    mv = R.sv || 'form';
+  return `<div class="stud ${mv == 'prev' ? 'showp' : ''}"><article class="card pane stfrm"><div class="ph"><div class="row" style="justify-content:space-between;align-items:center"><span class="tag">${I('spark')} Studio portofolio</span><span class="stscp">Kelengkapan <b id="stsc"></b></span></div><h2>Bikin portofoliomu sendiri</h2><p>Isi bagian di bawah, hasilnya langsung kelihatan. Tersimpan otomatis di browser ini.</p><div class="sttabs" role="tablist">${STTAB.map((x) => `<button role="tab" aria-selected="${d.tab == x[0]}" class="${d.tab == x[0] ? 'on' : ''}" onclick="stTab('${x[0]}')">${I(x[2])}<span>${x[1]}</span></button>`).join('')}</div></div>
+<div class="pb scroll">${stTabH(d)}</div><div class="pf stpfm"><button class="btn g" onclick="R.sv='prev';go('studio')">${I('eye')} Lihat hasil</button></div></article>
+<article class="card stprv"><div class="stpvh"><b id="stpn"></b><div class="row"><button class="ib" onclick="stPg(stD().pg-1)" aria-label="Halaman sebelumnya">${I('bk')}</button><button class="ib" onclick="stPg(stD().pg+1)" aria-label="Halaman berikutnya">${I('arr')}</button><button class="btn g sm stbk" onclick="R.sv='form';go('studio')">${I('bk')} Balik isi</button></div></div><div class="stvw"><div id="stv"></div></div><div class="stthumbs" id="stth"></div></article></div>`;
 };
-AFT.latih = () => ltU();
-/* kunci: kebuka setelah semua aktivitas, sama seperti praktik (praktik tetap bisa dibuka tanpa latihan) */
-{
-  const lock0 = lock;
-  lock = function (r, i) {
-    if (r == 'latih') {
-      if (S.prev && ROLE.edit) return '';
-      if (mN() < 8) return `Latihan kebuka setelah semua materi beres. Tinggal ${8 - mN()} materi lagi.`;
-      if (aN() < 7) return `Latihan kebuka setelah semua aktivitas beres. Tinggal ${7 - aN()} lagi.`;
-      return '';
-    }
-    return lock0(r, i);
-  };
-  const nxt0 = nxt;
-  nxt = function () {
-    const n = nxt0();
-    if (n.r == 'praktik' && prN() == 0 && !(S.lt && S.lt.done)) return { r: 'latih', i: 0, l: 'Latihan bikin portofolio', ic: 'spark' };
-    return n;
-  };
-}
+AFT.studio = () => stU();
