@@ -4811,15 +4811,15 @@ async function aiSend(q) {
     ans.content = '';
     ans.note = note || '';
     ans.sug = f.sug;
-    await new Promise((r) => setTimeout(r, 350));
+    await new Promise((r) => setTimeout(r, 900)); // titik "lagi ngetik" dulu
     const full = f.t;
     if (RM.matches) {
       ans.content = full;
     } else {
-      for (let i = 0; i < full.length; i += 6) {
+      for (let i = 0; i < full.length; i += 3) {
         ans.content = full.slice(0, i);
         upd();
-        await new Promise((r) => setTimeout(r, 14));
+        await new Promise((r) => setTimeout(r, 16));
       }
       ans.content = full;
     }
@@ -7410,4 +7410,105 @@ function radSheet() {
 // tombol ☰: buka menu sesuai setelan Gaya menu
 function navMenu() {
   sheet(setG().nav == 'radial' ? 'radial' : 'menu');
+}
+
+/* ===== Efek belajar tambahan =====
+   B angka berjalan (Beranda, Rapor), D kartu peta konsep terbalik saat dipilih, F selebrasi selesai materi,
+   H petunjuk menu terkunci di sidebar. A (jawaban), C (lencana), E (progres), dan denyut tombol lanjut ada di CSS.
+   Semua mati di mode Tenang dan reduced motion. */
+const fxCalm = () => setG().calm || RM.matches;
+/* B: angka berjalan dari 0 */
+function cntUp(root) {
+  if (!root || fxCalm()) return;
+  root.querySelectorAll('b, strong, .num, .rnum').forEach((el) => {
+    if (el.children.length || el.closest('.side,.top,svg,.stpg,.pg')) return;
+    const m = el.textContent.trim().match(/^(\d{1,3})(%|\/\d{1,3})?$/);
+    if (!m || +m[1] == 0) return;
+    const to = +m[1],
+      suf = m[2] || '',
+      t0 = performance.now(),
+      dur = 900;
+    el.textContent = '0' + suf;
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur),
+        e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(to * e) + suf;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+['home', 'rapor'].forEach((r) => {
+  const a0 = AFT[r];
+  AFT[r] = function () {
+    const o = a0 && a0.apply(this, arguments);
+    setTimeout(() => cntUp(document.querySelector(`#view .scr[data-r="${r}"]`)), 60);
+    return o;
+  };
+});
+/* D: kartu peta konsep terbalik sekali saat dipilih */
+{
+  const k0 = kSel;
+  kSel = function (k) {
+    const o = k0.apply(this, arguments);
+    if (!fxCalm()) {
+      const n = document.querySelectorAll('.knote')[k];
+      if (n) {
+        n.classList.remove('kflip');
+        void n.offsetWidth;
+        n.classList.add('kflip');
+        setTimeout(() => n.classList.remove('kflip'), 700);
+      }
+    }
+    return o;
+  };
+}
+/* F: selebrasi selesai materi */
+{
+  const d0 = doneM;
+  doneM = function (i) {
+    const was = S.md[i];
+    const o = d0.apply(this, arguments);
+    if (!was && !fxCalm()) {
+      const el = document.createElement('div');
+      el.className = 'mcele';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = `<span class="mck">${I('chk')}</span><b>Materi ${i + 1} beres</b><small>${i < 7 ? 'Lanjut ke Materi ' + (i + 2) : 'Semua materi selesai'}</small>`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1900);
+    }
+    return o;
+  };
+}
+/* H: petunjuk menu terkunci (sidebar laptop): goyang kecil + alasan kenapa masih terkunci */
+{
+  const tip = document.createElement('div');
+  tip.id = 'lktip';
+  tip.setAttribute('role', 'tooltip');
+  document.body.appendChild(tip);
+  const why = (k) => lock(k == 'akt' ? 'akt' : k) || '';
+  const show = (b) => {
+    const t = why(b.dataset.k);
+    if (!t) return;
+    const r = b.getBoundingClientRect();
+    tip.textContent = t;
+    tip.style.left = r.right + 10 + 'px';
+    tip.style.top = r.top + r.height / 2 + 'px';
+    tip.classList.add('on');
+    if (!fxCalm()) {
+      b.classList.remove('lknud');
+      void b.offsetWidth;
+      b.classList.add('lknud');
+    }
+  };
+  const hide = () => tip.classList.remove('on');
+  document.addEventListener('pointerover', (e) => {
+    const b = e.target.closest && e.target.closest('.side .sit.lk');
+    b ? show(b) : hide();
+  });
+  document.addEventListener('focusin', (e) => {
+    const b = e.target.closest && e.target.closest('.side .sit.lk');
+    b ? show(b) : hide();
+  });
+  document.addEventListener('scroll', hide, { capture: true, passive: true });
 }

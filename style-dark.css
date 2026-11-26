@@ -2846,3 +2846,73 @@ html.dark .radi.lk .radc { background: rgba(52, 70, 111, 0.7); color: rgb(142, 1
   html.navr .side { display: none; }
   html.navr #app > .top { display: flex; }
 }
+.op.ok { animation: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0s 1 normal none running okpop; }
+.op.no, .kc.no, .mt button.no { animation: 0.45s ease 0s 1 normal none running shk2; }
+@keyframes okpop { 
+  0% { transform: scale(1); }
+  40% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+@keyframes shk2 { 
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+.fb { animation: 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) 0s 1 normal none running fbin; }
+@keyframes fbin { 
+  0% { opacity: 0; transform: translateY(8px); }
+}
+#bdp.on .md { animation: 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s 1 normal both running bdspin; box-shadow: rgba(251, 191, 36, 0.28) 0px 0px 0px 6px, rgba(251, 191, 36, 0.55) 0px 0px 22px; }
+@keyframes bdspin { 
+  0% { transform: perspective(300px) rotateY(0deg) scale(0.5); }
+  70% { transform: perspective(300px) rotateY(360deg) scale(1.15); }
+  100% { transform: perspective(300px) rotateY(360deg) scale(1); }
+}
+.dotsl i { position: relative; overflow: hidden; }
+.dotsl i::after { content: ""; position: absolute; inset: 0px; border-radius: inherit; background: linear-gradient(90deg, rgb(45, 111, 214), rgb(124, 58, 237)); transform: scaleX(0); transform-origin: 0px 50%; transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.dotsl i.on::after, .dotsl i.done::after { transform: scaleX(1); }
+.dotsl i.done::after { opacity: 0.55; }
+.mprog .tr i { transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.knote.kflip { animation: 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) 0s 1 normal none running kflip; }
+@keyframes kflip { 
+  0% { transform: perspective(700px) rotate(var(--rot, 0deg)) rotateY(0); }
+  50% { transform: perspective(700px) rotate(0deg) rotateY(180deg) scale(1.05); }
+  100% { transform: perspective(700px) rotate(0deg) rotateY(360deg) scale(1.05); }
+}
+.mcele { position: fixed; left: 50%; top: 50%; z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 22px 30px; border-radius: 22px; background: rgba(168, 190, 245, 0.125); box-shadow: rgba(15, 43, 102, 0.5) 0px 24px 50px -20px; pointer-events: none; transform: translate(-50%, -50%); animation: 1.9s ease 0s 1 normal both running mcele; }
+.mcele .mck { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; background: rgb(22, 163, 74); color: rgb(255, 255, 255); animation: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0s 1 normal both running mck; }
+.mcele .mck .i { width: 30px; height: 30px; }
+.mcele b { font: 700 16px Poppins, sans-serif; color: rgb(167, 212, 178); }
+.mcele small { font-size: 12.5px; color: rgb(172, 186, 219); }
+@keyframes mcele { 
+  0% { opacity: 0; transform: translate(-50%, -46%) scale(0.9); }
+  14%, 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54%) scale(0.98); }
+}
+@keyframes mck { 
+  0% { transform: scale(0.3) rotate(-30deg); }
+}
+html.dark .mcele { background: rgba(47, 62, 99, 0.97); }
+html.dark .mcele b { color: rgb(187, 247, 208); }
+html.dark .mcele small { color: rgb(169, 188, 230); }
+#lktip { position: fixed; z-index: 30; max-width: 240px; padding: 7px 11px; border-radius: 10px; background: rgb(18, 58, 143); color: rgb(255, 255, 255); font: 500 12px / 1.4 Inter, sans-serif; box-shadow: rgba(10, 30, 90, 0.6) 0px 10px 24px -10px; pointer-events: none; opacity: 0; transform: translate(-6px, -50%) scale(0.92); transform-origin: 0px 50%; transition: opacity 0.18s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+#lktip.on { opacity: 1; transform: translate(0px, -50%) scale(1); }
+#lktip::before { content: ""; position: absolute; left: -5px; top: 50%; width: 10px; height: 10px; margin-top: -5px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+.sit.lknud .sic { animation: 0.4s ease 0s 1 normal none running lknud; }
+@keyframes lknud { 
+  25% { transform: translateX(-3px) rotate(-6deg); }
+  75% { transform: translateX(3px) rotate(6deg); }
+}
+@media (max-width: 899px) {
+  #lktip { display: none; }
+}
+.scr[data-r="home"] .hello .btn:not(.g) { animation: 2.2s ease-out 1.2s infinite normal none running cta; }
+@keyframes cta { 
+  0% { box-shadow: rgba(45, 111, 214, 0.5) 0px 0px 0px 0px; }
+  70%, 100% { box-shadow: rgba(45, 111, 214, 0) 0px 0px 0px 14px; }
+}
+html.calm .scr[data-r="home"] .hello .btn:not(.g), html.calm .op.ok, html.calm #bdp.on .md, html.calm .mcele, html.calm .mcele .mck { animation: auto ease 0s 1 normal none running none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .scr[data-r="home"] .hello .btn:not(.g), .op.ok, .op.no, #bdp.on .md, .knote.kflip, .mcele, .mcele .mck, .sit.lknud .sic { animation: auto ease 0s 1 normal none running none !important; }
+}
