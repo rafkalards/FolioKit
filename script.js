@@ -7286,17 +7286,21 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
     'IntersectionObserver' in window
       ? new IntersectionObserver(
           (es) => {
-            // yang masuk layar bersamaan muncul berurutan (jeda 70ms), maksimal 6 jeda
+            // berulang: keluar layar = disembunyikan lagi, masuk lagi = muncul memantul lagi.
+            // yang masuk bersamaan muncul berurutan (jeda 70ms, maksimal 6 jeda)
             let k = 0;
             es.forEach((x) => {
-              if (!x.isIntersecting) return;
-              x.target.style.transitionDelay = Math.min(k++, 6) * 70 + 'ms';
-              x.target.classList.add('in');
-              io.unobserve(x.target);
-              setTimeout(() => (x.target.style.transitionDelay = ''), 1400);
+              const el = x.target;
+              if (!x.isIntersecting) {
+                el.style.transitionDelay = '';
+                el.classList.remove('in');
+              } else if (x.intersectionRatio >= 0.1 && !el.classList.contains('in')) {
+                el.style.transitionDelay = Math.min(k++, 6) * 70 + 'ms';
+                el.classList.add('in');
+              }
             });
           },
-          { threshold: 0.08 },
+          { threshold: [0, 0.1] },
         )
       : null;
   const SEL = '.card, .opt, .setr, .muop, li, .knote, .kv > *, .stitem, .tln > *, .refs a, .mi, .bdg, .chip, .stx2, .pchki, .ckl > *, .qk, .hst, .tag, .vcard, .src a, .srcv, .ahint, .pf, p, h2, h3, img, figure, details, blockquote, table, .row';
@@ -7321,8 +7325,10 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
           break;
         }
       }
-      if (!r.height || r.top < lim - 4) return; // yang sudah kelihatan tidak diubah
-      el.classList.add('rv');
+      if (!r.height) return;
+      // yang sudah kelihatan langsung tampil (tanpa animasi pertama), tapi tetap ikut efek saat digulir bolak-balik
+      if (r.top < lim - 4) el.classList.add('rv', 'in');
+      else el.classList.add('rv');
       io.observe(el);
     });
   };
