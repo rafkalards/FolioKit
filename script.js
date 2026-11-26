@@ -7189,7 +7189,7 @@ setApply();
 /* ===== Efek kursor dan scroll =====
    Kursor (hanya mouse/trackpad): tombol ketarik halus ke arah kursor (magnet) dan riak kecil saat klik.
    Kursor asli tetap dipakai.
-   Scroll: isi yang belum kelihatan muncul dengan zoom lembut saat digulir, plus garis progres tipis di atas layar.
+   Scroll: isi yang belum kelihatan muncul dengan zoom memantul saat digulir, plus garis progres tipis di atas layar.
    Mati otomatis di mode Animasi Tenang, perangkat lemah (.lite), prefers-reduced-motion, atau lewat Pengaturan. */
 SETD.fx = 1;
 const fxOn = () => setG().fx && !document.documentElement.classList.contains('lite') && !RM.matches;
@@ -7283,12 +7283,17 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
   const io =
     'IntersectionObserver' in window
       ? new IntersectionObserver(
-          (es) =>
+          (es) => {
+            // yang masuk layar bersamaan muncul berurutan (jeda 70ms), maksimal 6 jeda
+            let k = 0;
             es.forEach((x) => {
               if (!x.isIntersecting) return;
+              x.target.style.transitionDelay = Math.min(k++, 6) * 70 + 'ms';
               x.target.classList.add('in');
               io.unobserve(x.target);
-            }),
+              setTimeout(() => (x.target.style.transitionDelay = ''), 1400);
+            });
+          },
           { threshold: 0.08 },
         )
       : null;
