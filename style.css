@@ -13359,13 +13359,13 @@ html.dark .curRip {
   transform: none;
 }
 html.nofx #scrb,
-html.lite #scrb,
+html.calm #scrb,
 html.nofx .curRip,
-html.lite .curRip {
+html.calm .curRip {
   display: none !important;
 }
 html.nofx .rv,
-html.lite .rv {
+html.calm .rv {
   opacity: 1 !important;
   transform: none !important;
 }

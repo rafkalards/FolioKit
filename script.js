@@ -6663,12 +6663,28 @@ function thTree(root, on) {
   if (root.hasAttribute('style') && ok(root)) thEl(root, on);
   root.querySelectorAll('[style]').forEach((e) => ok(e) && thEl(e, on));
 }
+// dibuka dari file: CSSOM diblokir, jadi pakai salinan gelap yang sudah jadi (style-dark.css, dibuat tests/build-dark.js)
+function thFileCss(on) {
+  let l = document.getElementById('dcss');
+  if (on && !l) {
+    l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.id = 'dcss';
+    l.href = 'style-dark.css';
+    const m = document.querySelector('link[href$="style.css"]');
+    m ? m.after(l) : document.head.appendChild(l);
+  }
+  if (!on && l) l.remove();
+}
 const thMode = (k) => (k == 'dark' || (k == 'auto' && MQD.matches) ? 1 : 0);
 function thApply(k) {
-  const on = THFILE ? 0 : thMode(k);
+  const on = thMode(k);
   if (on == THK) return;
-  if (!THO) thScan();
-  for (const [st, p, v, pr] of THO) st.setProperty(p, on ? thStr(v, p) : v, pr);
+  if (THFILE) thFileCss(on);
+  else {
+    if (!THO) thScan();
+    for (const [st, p, v, pr] of THO) st.setProperty(p, on ? thStr(v, p) : v, pr);
+  }
   thTree(document.body, on);
   if (on && !THMO) {
     THMO = new MutationObserver((ms) => {
@@ -7147,7 +7163,7 @@ function setSheet() {
   let body = '';
   if (SETTAB == 'tam') {
     body =
-      row('pal', 'Tema', THFILE ? 'Tema gelap cuma bisa dipakai kalau FolioKit dibuka lewat link.' : 'Ikuti perangkat: ikut mode terang/gelap HP atau laptopmu.', seg("setOpt('th',$V)", [['light', 'Terang'], ['dark', 'Gelap'], ['auto', 'Ikuti perangkat']], s.th)) +
+      row('pal', 'Tema', 'Ikuti perangkat: ikut mode terang/gelap HP atau laptopmu.', seg("setOpt('th',$V)", [['light', 'Terang'], ['dark', 'Gelap'], ['auto', 'Ikuti perangkat']], s.th)) +
       row('doc', 'Ukuran teks', 'Gedein kalau tulisannya kekecilan.', seg("setOpt('fs',$V)", [['sm', 'Kecil'], ['md', 'Normal'], ['lg', 'Besar'], ['xl', 'Paling besar']], s.fs)) +
       row('lines', 'Spasi baca', 'Jarak antarbaris dan antarkata lebih lega, enak buat bacaan panjang.', seg("setOpt('sp',$V)", [[0, 'Normal'], [1, 'Lega']], s.sp)) +
       row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc)) +
@@ -7194,7 +7210,8 @@ setApply();
    Scroll: isi yang belum kelihatan muncul dengan zoom memantul saat digulir, plus garis progres tipis di atas layar.
    Mati otomatis di mode Animasi Tenang, perangkat lemah (.lite), prefers-reduced-motion, atau lewat Pengaturan. */
 SETD.fx = 1;
-const fxOn = () => setG().fx && !document.documentElement.classList.contains('lite') && !RM.matches;
+// efek kursor & scroll ringan, jadi tetap nyala di perangkat yang terdeteksi lemah (.lite); mati lewat setelan, mode Tenang, atau reduced motion
+const fxOn = () => setG().fx && !setG().calm && !RM.matches;
 {
   const FINE = matchMedia('(pointer: fine)').matches;
   /* magnet: tombol ketarik halus ke arah kursor (pakai properti translate, jadi tidak bentrok dengan transform lain) */
@@ -7214,8 +7231,42 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
     const el = magEl;
     el.style.translate = '';
     el.__mx = el.__my = 0;
+    magBox = null;
     setTimeout(() => el !== magEl && el.classList.remove('mag'), 260); // balik pelan dulu baru lepas transisinya
     magEl = null;
+  };
+  let magBox = null,
+    magEv = null,
+    magRaf = 0;
+  const magEnter = (el) => {
+    const r = el.getBoundingClientRect();
+    const mx = el.__mx || 0,
+      my = el.__my || 0;
+    const r0 = { l: r.left - mx, r: r.right - mx, t: r.top - my, b: r.bottom - my, w: r.width, h: r.height };
+    const big = Math.max(r.width, r.height * 2);
+    r0.max = big > 400 ? 2 : big > 180 ? 4 : Math.min(10, Math.max(4, r.width / 12));
+    r0.cl = magClip(el);
+    return r0;
+  };
+  const magFrame = () => {
+    magRaf = 0;
+    const e = magEv;
+    if (!e || !magEl || !magBox) return;
+    const B = magBox,
+      max = B.max;
+    let dx = Math.max(-max, Math.min(max, (e.clientX - (B.l + B.w / 2)) * 0.3));
+    let dy = Math.max(-max, Math.min(max, (e.clientY - (B.t + B.h / 2)) * 0.3));
+    // jangan sampai tombol kepotong oleh pembungkus yang overflow-nya disembunyikan/digulir
+    const cl = B.cl;
+    if (cl) {
+      dx = Math.max(Math.min(dx, cl.right - 2 - B.r), cl.left + 2 - B.l);
+      dy = Math.max(Math.min(dy, cl.bottom - 2 - B.b), cl.top + 2 - B.t);
+      if (B.l < cl.left || B.r > cl.right) dx = 0;
+      if (B.t < cl.top || B.b > cl.bottom) dy = 0;
+    }
+    magEl.__mx = dx;
+    magEl.__my = dy;
+    magEl.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
   };
   if (FINE) {
     document.addEventListener(
@@ -7223,31 +7274,23 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
       (e) => {
         if (e.pointerType != 'mouse' || !fxOn()) return magOff();
         const t = e.target.closest && e.target.closest(MAG);
-        if (t !== magEl) magOff();
-        if (!t || t.disabled) return;
-        const r = t.getBoundingClientRect();
-        if (r.width > 760 || r.height > 260) return; // area klik raksasa tidak digeser
-        magEl = t;
-        t.classList.add('mag');
-        const big = Math.max(r.width, r.height * 2);
-        const max = big > 400 ? 2 : big > 180 ? 4 : Math.min(10, Math.max(4, r.width / 12));
-        let dx = Math.max(-max, Math.min(max, (e.clientX - (r.left + r.width / 2)) * 0.3));
-        let dy = Math.max(-max, Math.min(max, (e.clientY - (r.top + r.height / 2)) * 0.3));
-        // jangan sampai tombol kepotong oleh pembungkus yang overflow-nya disembunyikan/digulir
-        const cl = magClip(t);
-        if (cl) {
-          const r0 = { l: r.left - (t.__mx || 0), r: r.right - (t.__mx || 0), t: r.top - (t.__my || 0), b: r.bottom - (t.__my || 0) };
-          dx = Math.max(Math.min(dx, cl.right - 2 - r0.r), cl.left + 2 - r0.l);
-          dy = Math.max(Math.min(dy, cl.bottom - 2 - r0.b), cl.top + 2 - r0.t);
-          if (r0.l < cl.left || r0.r > cl.right) dx = 0;
-          if (r0.t < cl.top || r0.b > cl.bottom) dy = 0;
+        if (t !== magEl) {
+          magOff();
+          if (!t || t.disabled) return;
+          const B = magEnter(t);
+          if (B.w > 760 || B.h > 260) return; // area klik raksasa tidak digeser
+          magEl = t;
+          magBox = B;
+          t.classList.add('mag');
         }
-        t.__mx = dx;
-        t.__my = dy;
-        t.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
+        if (!magEl) return;
+        magEv = e;
+        if (!magRaf) magRaf = requestAnimationFrame(magFrame);
       },
       { passive: true },
     );
+    // posisi tombol berubah saat digulir: lepas magnet supaya dihitung ulang
+    document.addEventListener('scroll', () => magOff(), { capture: true, passive: true });
     document.addEventListener('pointerdown', (e) => {
       if (e.pointerType != 'mouse' || !fxOn()) return;
       const r = document.createElement('i');
@@ -7333,13 +7376,17 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
     });
   };
   let rvT = 0;
-  new MutationObserver(() => {
+  const rvIdle = window.requestIdleCallback ? (f) => requestIdleCallback(f, { timeout: 500 }) : (f) => setTimeout(f, 0);
+  new MutationObserver((ms) => {
+    // abaikan elemen kecil yang datang dan pergi (riak klik, toast, garis progres)
+    if (ms.every((m) => [...m.addedNodes, ...m.removedNodes].every((n) => n.nodeType != 1 || n.matches('.curRip,#toast,#scrb,.toast,i')))) return;
+    if (!fxOn()) return;
     clearTimeout(rvT);
-    rvT = setTimeout(() => {
+    rvT = setTimeout(() => rvIdle(() => {
       rvScan(document.getElementById('view'));
       const sh = document.getElementById('sh');
       if (sh && sh.classList.contains('on')) rvScan(sh);
-    }, 120);
+    }), 120);
   }).observe(document.body, { childList: true, subtree: true });
 }
 
