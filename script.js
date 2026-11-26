@@ -1787,6 +1787,7 @@ function sheet(k) {
   // jendela menu tampil sebagai laci yang geser dari kiri (menu utama di HP, pencarian di laptop)
   // menu, profil, dan daftar materi tampil sebagai laci dari kiri supaya nyambung dengan sidebar kiri
   sh.classList.toggle('drawer', k == 'menu' || k == 'acc' || k == 'mlist');
+  sh.classList.toggle('radial', k == 'radial');
   if (k != 'owner' && OWU) {
     OWU();
     OWU = null;
@@ -1879,6 +1880,7 @@ function sheet(k) {
     ],
     src: ['Sumber materi', srcSheet],
     set: ['Pengaturan', setSheet],
+    radial: ['Menu', radSheet],
     about: [
       'Tentang',
       () =>
@@ -7326,4 +7328,31 @@ const fxOn = () => setG().fx && !document.documentElement.classList.contains('li
       if (sh && sh.classList.contains('on')) rvScan(sh);
     }, 120);
   }).observe(document.body, { childList: true, subtree: true });
+}
+
+/* ===== Menu radial (HP dan tablet berdiri) =====
+   Tombol ☰ di header membuka sheet 'radial': menu melingkar yang keluar dari tengah layar.
+   Tombol tutup (×) jadi lingkaran di tengah. Karena memakai sheet biasa, kunci fokus, Esc, dan tombol kembali tetap jalan.
+   "Menu lengkap" membuka laci menu lama (sheet 'menu') yang berisi pencarian dan semua bantuan. */
+function radSheet() {
+  const r = cur.r;
+  const L = [
+    ['home', 'Beranda', r == 'home', "go('home')", 0],
+    ['book', 'Materi', r == 'materi', "go('materi',firstM())", 0],
+    ['task', 'Aktivitas', r == 'akt' || /^a\d$/.test(r), "go('akt')", lock('akt')],
+    ['lap', 'Praktik', r == 'praktik', "go('praktik')", lock('praktik')],
+    ['flag', 'Evaluasi', r == 'evaluasi', "go('evaluasi')", lock('evaluasi')],
+    ['ref', 'Refleksi', r == 'refleksi', "go('refleksi')", lock('refleksi')],
+    ['star', 'Rapor', r == 'rapor', "go('rapor')", 0],
+    ['spark', 'Studio', r == 'studio', "go('studio')", 0],
+    ['chat', 'Kak Folio', 0, "sheet('ai')", 0, 1],
+    ['grid', 'Lainnya', 0, "sheet('menu')", 0, 1],
+  ];
+  const n = L.length;
+  return `<div class="rad" style="--n:${n}">${L.map((x, i) => {
+    const a = ((-90 + (360 / n) * i) * Math.PI) / 180;
+    // klik: tutup dulu (kecuali yang membuka jendela lain), lalu pindah halaman
+    const on = x[5] ? x[3] : `closeSh();${x[3]}`;
+    return `<button class="radi ${x[2] ? 'on' : ''} ${x[4] ? 'lk' : ''}" style="--i:${i};--cx:${Math.cos(a).toFixed(3)};--cy:${Math.sin(a).toFixed(3)}" onclick="${on}" aria-label="${x[1]}${x[4] ? ' (terkunci)' : ''}"${x[2] ? ' aria-current="page"' : ''}><span class="radc">${I(x[4] ? 'lock' : x[0])}</span><span class="radl">${x[1]}</span></button>`;
+  }).join('')}</div>`;
 }
