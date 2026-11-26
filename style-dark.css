@@ -2786,7 +2786,7 @@ html.dark #splash .lwt { color: rgb(207, 224, 255) !important; background: rgba(
 html.dark .curRip { border-color: rgba(196, 181, 253, 0.7); }
 #scrb { position: fixed; left: 0px; right: 0px; top: 0px; height: 3px; z-index: 9997; transform-origin: 0px 50%; transform: scaleX(0); background: linear-gradient(90deg, rgb(45, 111, 214), rgb(90, 163, 240), rgb(167, 139, 250)); box-shadow: rgba(90, 163, 240, 0.6) 0px 0px 10px; opacity: 0; pointer-events: none; transition: opacity 0.35s, transform 0.12s linear; }
 #scrb.on { opacity: 1; }
-.rv { opacity: 0; transform: scale(0.6); transform-origin: 50% 60%; transition: opacity 0.5s, transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.rv { opacity: 0; transform: translateY(36px) scale(0.5); transform-origin: 50% 60%; transition: opacity 0.55s, transform 0.95s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .rv.in { opacity: 1; transform: none; }
 html.nofx #scrb, html.calm #scrb, html.nofx .curRip, html.calm .curRip { display: none !important; }
 html.nofx .rv, html.calm .rv { opacity: 1 !important; transform: none !important; }

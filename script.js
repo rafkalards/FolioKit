@@ -1085,7 +1085,7 @@ function exH(i) {
   if (i == 0)
     return `<p>Dua pelamar Desainer Grafis sama-sama menulis "mahir desain". Kalau kamu HRD-nya, mana yang lebih meyakinkan?</p><div class="two"><button class="pv" data-x="0" onclick="ex0(0)"><h5>Pelamar A: CV saja</h5><div class="ln" style="width:80%"></div><div class="ln" style="width:60%"></div><p style="margin-top:8px">"Mahir desain, kreatif, cepat belajar."</p></button><button class="pv" data-x="1" onclick="ex0(1)"><h5>Pelamar B: CV dan portofolio</h5><div class="ln" style="width:70%"></div><div class="tiles"><i style="background:#93c5fd"></i><i style="background:#c4b5fd"></i><i style="background:#fcd34d"></i></div><p style="margin-top:6px">3 poster acara dan 1 logo UMKM</p></button></div><div id="ex0s"></div>`;
   if (i == 1)
-    return `<p>Klik tiap bagian di menu kiri untuk melihat contoh isinya.</p><div class="mock"><nav>${['Profil', 'Pendidikan', 'Skill', 'Karya', 'Kontak'].map((x, j) => `<button class="${j ? '' : 'on'}" onclick="ex1(${j},this)">${j + 1}. ${x}</button>`).join('')}</nav><div class="scn" id="ex1s"></div></div><p class="small">Nama dan isi di atas hanya contoh.</p>`;
+    return `<p>Klik tiap bagian di menu kiri untuk melihat contoh isinya.</p><div class="mock"><nav>${['Profil', 'Pendidikan', 'Skill', 'Karya', 'Kontak'].map((x, j) => `<button class="${j ? '' : 'on'}" onclick="ex1(${j},this)">${j + 1}. ${x}</button>`).join('')}</nav><div class="scn" id="ex1s"></div></div>`;
   if (i == 2)
     return `<p>Pilih satu karya, lalu lihat apakah lolos tiga saringan.</p><div class="chips">${['Poster acara kampus', 'Foto liburan ke pantai', 'Logo UMKM tanpa keterangan'].map((x, j) => `<button class="chip" onclick="ex2(${j},this)">${x}</button>`).join('')}</div><div id="ex2s"></div>`;
   if (i == 3) {
@@ -1876,7 +1876,7 @@ function sheet(k) {
             (x) =>
               `<div class="goal"><span>${I(x[0])}</span><div><b>${x[1]}</b><p class="small">${x[2]}</p></div></div>`,
           )
-          .join('') + `<p class="small" style="margin-top:10px">Pakai menu di kanan atas buat pindah bagian.</p>`,
+          .join('') + ``,
     ],
     src: ['Sumber materi', srcSheet],
     set: ['Pengaturan', setSheet],
@@ -1884,7 +1884,7 @@ function sheet(k) {
     about: [
       'Tentang',
       () =>
-        `<div class="team">${TEAM.map((x) => `<div><span class="av">${x[0][0]}</span><b>${x[0]}</b>${x[1]}</div>`).join('')}</div><div class="kv"><b>Judul</b><span>Pembelajaran Pembuatan Portofolio Digital Menggunakan Canva bagi Fresh Graduate</span><b>Jenis</b><span>Multimedia pembelajaran interaktif</span><b>Mata kuliah</b><span>Pengembangan Multimedia Pembelajaran</span><b>Prodi</b><span>Teknologi Pendidikan, Universitas Negeri Jakarta</span><b>Model</b><span>Hannafin and Peck</span></div><p style="font-weight:600;font-size:14px;margin-bottom:4px">Rujukan</p><div class="refs">${REFS.map((r) => `<a href="${r[1]}" target="_blank" rel="noopener">${r[0]}</a>`).join('')}</div><p class="small" style="margin-top:10px">Video di dalam materi berasal dari kanal YouTube lain.</p>${ROLE.edit ? `<div class="sep"></div><button class="mi" onclick="sheet('prev')"><span class="ic">${I('eye')}</span><b>Mode pratinjau</b><small>${S.prev ? 'Aktif' : 'Mati'}</small></button>` : ''}`,
+        `<div class="team">${TEAM.map((x) => `<div><span class="av">${x[0][0]}</span><b>${x[0]}</b>${x[1]}</div>`).join('')}</div><div class="kv"><b>Judul</b><span>Pembelajaran Pembuatan Portofolio Digital Menggunakan Canva bagi Fresh Graduate</span><b>Jenis</b><span>Multimedia pembelajaran interaktif</span><b>Mata kuliah</b><span>Pengembangan Multimedia Pembelajaran</span><b>Prodi</b><span>Teknologi Pendidikan, Universitas Negeri Jakarta</span><b>Model</b><span>Hannafin and Peck</span></div><p style="font-weight:600;font-size:14px;margin-bottom:4px">Rujukan</p><div class="refs">${REFS.map((r) => `<a href="${r[1]}" target="_blank" rel="noopener">${r[0]}</a>`).join('')}</div>${ROLE.edit ? `<div class="sep"></div><button class="mi" onclick="sheet('prev')"><span class="ic">${I('eye')}</span><b>Mode pratinjau</b><small>${S.prev ? 'Aktif' : 'Mati'}</small></button>` : ''}`,
     ],
     vid: [
       'Tutorial membuat portofolio',
@@ -2194,7 +2194,7 @@ function svSheet() {
   const v = S.sv || { r: {}, t: '' };
   if (v.at) {
     const avg = (SVQ.reduce((a, _, i) => a + (v.r[i] || 0), 0) / SVQ.length).toFixed(1);
-    return `<div class="svdone"><span class="md" style="width:56px;height:56px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff">${I('star')}</span><b class="pp" style="font-size:18px;color:#123a8f">Terima kasih atas penilaianmu!</b><div class="big2">${avg}<span class="small"> / 5</span></div><p class="small">Rata-rata dari ${SVQ.length} pertanyaan. Jawabanmu tersimpan di browser ini.</p></div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn g" onclick="S.sv.at=0;save();sheet('survey')">${I('rst')} Ubah jawaban</button><button class="btn" onclick="loadBtn(this,svCopy,'Menyalin...',1)">${I('copy')} Salin jawaban</button></div>`;
+    return `<div class="svdone"><span class="md" style="width:56px;height:56px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff">${I('star')}</span><b class="pp" style="font-size:18px;color:#123a8f">Terima kasih atas penilaianmu!</b><div class="big2">${avg}<span class="small"> / 5</span></div><p class="small">Rata-rata dari ${SVQ.length} pertanyaan.</p></div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn g" onclick="S.sv.at=0;save();sheet('survey')">${I('rst')} Ubah jawaban</button><button class="btn" onclick="loadBtn(this,svCopy,'Menyalin...',1)">${I('copy')} Salin jawaban</button></div>`;
   }
   return `<p class="small" style="margin-bottom:6px">1 = sangat tidak setuju, 5 = sangat setuju.</p>${SVQ.map((q, i) => `<div class="svq"><p>${i + 1}. ${q}</p><div class="sv5">${[1, 2, 3, 4, 5].map((n) => `<button class="${v.r[i] == n ? 'on' : ''}" onclick="svSet(${i},${n},this)" aria-label="Nilai ${n}">${n}</button>`).join('')}</div><div class="svl"><span>Sangat tidak setuju</span><span>Sangat setuju</span></div></div>`).join('')}<div class="svq"><p>6. Ada saran atau bagian yang bikin bingung?</p><textarea class="inp" maxlength="500" placeholder="Boleh dikosongkan" oninput="svD().t=this.value;save()">${esc(v.t || '')}</textarea></div><div class="row" style="justify-content:space-between;margin-top:8px"><span class="small" id="svh">${Object.keys(v.r).length}/${SVQ.length} dijawab</span><button class="btn" id="svb" ${Object.keys(v.r).length < SVQ.length ? 'disabled' : ''} onclick="loadBtn(this,svSend,'Mengirim...')">Kirim penilaian ${I('arr')}</button></div>`;
 }
@@ -6472,7 +6472,7 @@ function stU() {
 SCR.studio = () => {
   const d = stD(),
     mv = R.sv || 'form';
-  return `<div class="stud ${mv == 'prev' ? 'showp' : ''}"><article class="card pane stfrm"><div class="ph"><div class="row" style="justify-content:space-between;align-items:center"><span class="tag">${I('spark')} Studio portofolio</span><span class="stscp">Kelengkapan <b id="stsc"></b></span></div><h2>Bikin portofoliomu sendiri</h2><p>Isi bagian di bawah, hasilnya langsung kelihatan. Tersimpan otomatis di browser ini.</p><div class="sttabs" role="tablist">${STTAB.map((x) => `<button role="tab" aria-selected="${d.tab == x[0]}" class="${d.tab == x[0] ? 'on' : ''}" onclick="stTab('${x[0]}')">${I(x[2])}<span>${x[1]}</span></button>`).join('')}</div></div>
+  return `<div class="stud ${mv == 'prev' ? 'showp' : ''}"><article class="card pane stfrm"><div class="ph"><div class="row" style="justify-content:space-between;align-items:center"><span class="tag">${I('spark')} Studio portofolio</span><span class="stscp">Kelengkapan <b id="stsc"></b></span></div><h2>Bikin portofoliomu sendiri</h2><p>Isi bagian di bawah, hasilnya langsung kelihatan.</p><div class="sttabs" role="tablist">${STTAB.map((x) => `<button role="tab" aria-selected="${d.tab == x[0]}" class="${d.tab == x[0] ? 'on' : ''}" onclick="stTab('${x[0]}')">${I(x[2])}<span>${x[1]}</span></button>`).join('')}</div></div>
 <div class="pb scroll">${stTabH(d)}</div><div class="pf stpfm"><button class="btn g" onclick="R.sv='prev';go('studio')">${I('eye')} Lihat hasil</button></div></article>
 <article class="card stprv"><div class="stpvh"><b id="stpn"></b><div class="row"><button class="ib" onclick="stPg(stD().pg-1)" aria-label="Halaman sebelumnya">${I('bk')}</button><button class="ib" onclick="stPg(stD().pg+1)" aria-label="Halaman berikutnya">${I('arr')}</button><button class="btn g sm stbk" onclick="R.sv='form';go('studio')">${I('bk')} Balik isi</button></div></div><div class="stvw"><div id="stv"></div></div><div class="stthumbs" id="stth"></div></article></div>`;
 };
@@ -7200,7 +7200,7 @@ function setSheet() {
       row('rst', 'Mulai dari awal', 'Hapus semua progres di browser ini.', `<button class="btn g sm" onclick="sheet('reset')">Hapus progres</button>`);
     setTimeout(setInfo, 0);
   }
-  return `${tabs}<div class="setbody">${body}</div><p class="small setft">Pengaturan ini cuma berlaku di browser ini.</p>`;
+  return `${tabs}<div class="setbody">${body}</div>`;
 }
 setApply();
 
@@ -7334,16 +7334,17 @@ const fxOn = () => setG().fx && !setG().calm && !RM.matches;
             let k = 0;
             es.forEach((x) => {
               const el = x.target;
-              if (!x.isIntersecting) {
+              // baru muncul setelah sepertiga bagiannya masuk, jadi gerakannya terjadi di depan mata, bukan di tepi
+              if (!x.isIntersecting || x.intersectionRatio < 0.02) {
                 el.style.transitionDelay = '';
                 el.classList.remove('in');
-              } else if (x.intersectionRatio >= 0.1 && !el.classList.contains('in')) {
-                el.style.transitionDelay = Math.min(k++, 6) * 70 + 'ms';
+              } else if (x.intersectionRatio >= 0.3 && !el.classList.contains('in')) {
+                el.style.transitionDelay = Math.min(k++, 6) * 90 + 'ms';
                 el.classList.add('in');
               }
             });
           },
-          { threshold: [0, 0.1] },
+          { threshold: [0, 0.02, 0.3] },
         )
       : null;
   const SEL = '.card, .opt, .setr, .muop, li, .knote, .kv > *, .stitem, .tln > *, .refs a, .mi, .bdg, .chip, .stx2, .pchki, .ckl > *, .qk, .hst, .tag, .vcard, .src a, .srcv, .ahint, .pf, p, h2, h3, img, figure, details, blockquote, table, .row';
@@ -7357,8 +7358,16 @@ const fxOn = () => setG().fx && !setG().calm && !RM.matches;
       if (s != 'auto' && s != 'scroll') return;
       for (const k of a.children) if (k.offsetHeight > 20) cand.add(k);
     });
-    [...cand].sort((x, y) => (x.compareDocumentPosition(y) & 4 ? -1 : 1)).forEach((el) => {
-      if (el.parentElement && el.parentElement.closest('.rv')) return; // induknya sudah ikut muncul
+    // pembungkus yang berisi kandidat lain dilewati, supaya yang beranimasi itu item-itemnya (kelihatan berurutan), bukan satu blok besar
+    const wrap = new Set();
+    cand.forEach((c) => {
+      for (let p = c.parentElement; p && p !== root; p = p.parentElement) {
+        if (wrap.has(p)) break;
+        wrap.add(p);
+      }
+    });
+    [...cand].forEach((el) => {
+      if (wrap.has(el) || (el.parentElement && el.parentElement.closest('.rv'))) return;
       if (el.classList.contains('rv') || el.closest('.stpg,.pg,svg,.sld:not(.on)')) return;
       const r = el.getBoundingClientRect();
       let lim = vh;
