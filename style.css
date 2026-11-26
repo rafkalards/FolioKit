@@ -13607,61 +13607,17 @@ html.dark .radi.lk .radc {
     animation: none;
   }
 }
-/* tombol menu cepat (radial) di laptop: tab kecil di tepi kanan, tidak menutupi isi kartu */
-.radb {
-  display: none;
-}
+
+/* ===== Gaya menu: Radial (setelan) =====
+   Di laptop sidebar disembunyikan dan header atas dengan tombol menu dipakai, sama seperti di HP. */
 @media (min-width: 900px) {
-  .radb {
-    position: fixed;
-    right: 0;
-    top: 50%;
-    z-index: 15;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    height: 56px;
-    padding: 0 10px 0 11px;
-    border-radius: 18px 0 0 18px;
-    background: linear-gradient(135deg, #2d6fd6, #7c3aed);
-    color: #fff;
-    font: 600 13px Poppins, sans-serif;
-    box-shadow: 0 10px 24px -10px rgba(30, 40, 120, 0.7);
-    transform: translateY(-50%);
-    transition:
-      padding 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-      box-shadow 0.25s;
+  html.navr #app {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .radb .i {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .radb span {
-    max-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: max-width 0.25s;
-  }
-  .radb:hover,
-  .radb:focus-visible {
-    padding-right: 14px;
-    box-shadow: 0 12px 28px -10px rgba(30, 40, 120, 0.85);
-  }
-  .radb:hover span,
-  .radb:focus-visible span {
-    max-width: 60px;
-  }
-  .radb:hover .i {
-    transform: rotate(72deg);
-  }
-  html[data-r='welcome'] .radb,
-  html.stprinting .radb {
+  html.navr .side {
     display: none;
   }
-}
-@media print {
-  .radb {
-    display: none !important;
+  html.navr #app > .top {
+    display: flex;
   }
 }

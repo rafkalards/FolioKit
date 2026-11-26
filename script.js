@@ -6495,7 +6495,7 @@ P.drop = '<path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/>';
 P.wave = '<path d="M2.5 9c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2M2.5 15c2.4 0 2.4-2 4.8-2s2.4 2 4.7 2 2.4-2 4.7-2 2.4 2 4.8 2"/>';
 P.piano =
   '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M8 4.5v15M13 4.5v15M18 4.5v15M6.5 4.5v8h3v-8M11.5 4.5v8h3v-8M16.5 4.5v8h3v-8"/>';
-const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0, th: 'light', sp: 0, mus: '', mv: 50, sv: 70, duck: 1, vib: 1 };
+const SETD = { fs: 'md', calm: 0, sound: 1, hc: 0, th: 'light', sp: 0, mus: '', mv: 50, sv: 70, duck: 1, vib: 1, nav: 'side' };
 const setG = () => Object.assign({}, SETD, S.set || {});
 const LITE0 = document.documentElement.classList.contains('lite');
 const VIBOK = 'vibrate' in navigator && matchMedia('(pointer: coarse)').matches;
@@ -7021,6 +7021,7 @@ function setApply() {
   h.classList.toggle('hc', !!s.hc);
   h.classList.toggle('sp', !!s.sp);
   h.classList.toggle('nofx', s.fx === 0);
+  h.classList.toggle('navr', s.nav == 'radial');
   thApply(s.th);
   h.classList.toggle('dark', !!THK); // rapikan kelas yang dipasang lebih awal dari <head>
   try {
@@ -7152,6 +7153,7 @@ function setSheet() {
       row('eye', 'Kontras lebih tegas', 'Teks abu-abu dan garis jadi lebih gelap.', seg("setOpt('hc',$V)", [[0, 'Mati'], [1, 'Nyala']], s.hc)) +
       row('spark', 'Animasi', 'Pilih Tenang kalau bikin pusing atau HP terasa berat.', seg("setOpt('calm',$V)", [[0, 'Biasa'], [1, 'Tenang']], s.calm)) +
       row('target', 'Efek kursor & scroll', 'Tombol ketarik halus ke arah kursor, riak saat klik, dan isi yang muncul halus saat digulir.', seg("setOpt('fx',$V)", [[1, 'Nyala'], [0, 'Mati']], s.fx)) +
+      row('grid', 'Gaya menu', 'Sidebar: menu selalu di kiri. Radial: menu melingkar dari tombol ☰ di atas, layar jadi lebih lega.', seg("setOpt('nav',$V);sideR&&sideR()", [['side', 'Sidebar'], ['radial', 'Radial']], s.nav)) +
       row('grid', 'Sidebar di laptop', 'Mau lebar, cuma ikon, atau ikut ukuran layar.', seg('setSide($V)', [['', 'Otomatis'], ['max', 'Lebar'], ['min', 'Ikon saja']], side));
   } else if (SETTAB == 'sua') {
     const mus = [['', 'Mati', 'mute', 'Sepi aja']].concat(Object.keys(MUSK).map((k) => [k, MUSK[k][0], MUSK[k][1], MUSK[k][2]]));
@@ -7360,4 +7362,9 @@ function radSheet() {
     const on = x[5] ? x[3] : `closeSh();${x[3]}`;
     return `<button class="radi ${x[2] ? 'on' : ''} ${x[4] ? 'lk' : ''}" style="--i:${i};--cx:${Math.cos(a).toFixed(3)};--cy:${Math.sin(a).toFixed(3)}" onclick="${on}" aria-label="${x[1]}${x[4] ? ' (terkunci)' : ''}"${x[2] ? ' aria-current="page"' : ''}><span class="radc">${I(x[4] ? 'lock' : x[0])}</span><span class="radl">${x[1]}</span></button>`;
   }).join('')}</div>`;
+}
+
+// tombol ☰: buka menu sesuai setelan Gaya menu
+function navMenu() {
+  sheet(setG().nav == 'radial' ? 'radial' : 'menu');
 }
