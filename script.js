@@ -7207,7 +7207,7 @@ setApply();
 /* ===== Efek kursor dan scroll =====
    Kursor (hanya mouse/trackpad): tombol ketarik halus ke arah kursor (magnet) dan riak kecil saat klik.
    Kursor asli tetap dipakai.
-   Scroll: isi yang belum kelihatan muncul dengan zoom memantul saat digulir, plus garis progres tipis di atas layar.
+   Scroll: isi yang belum kelihatan muncul dengan zoom memantul saat digulir.
    Mati otomatis di mode Animasi Tenang, perangkat lemah (.lite), prefers-reduced-motion, atau lewat Pengaturan. */
 SETD.fx = 1;
 // efek kursor & scroll ringan, jadi tetap nyala di perangkat yang terdeteksi lemah (.lite); mati lewat setelan, mode Tenang, atau reduced motion
@@ -7305,25 +7305,6 @@ const fxOn = () => setG().fx && !setG().calm && !RM.matches;
     window.addEventListener('blur', magOff);
   }
 
-  /* scroll: garis progres tipis di atas layar */
-  const bar = document.createElement('div');
-  bar.id = 'scrb';
-  bar.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(bar);
-  let hideT = 0;
-  document.addEventListener(
-    'scroll',
-    (e) => {
-      const el = e.target;
-      if (!fxOn() || !(el instanceof Element) || el.scrollHeight - el.clientHeight < 80) return;
-      const p = el.scrollTop / (el.scrollHeight - el.clientHeight);
-      bar.style.transform = `scaleX(${Math.min(1, Math.max(0, p))})`;
-      bar.classList.add('on');
-      clearTimeout(hideT);
-      hideT = setTimeout(() => bar.classList.remove('on'), 900);
-    },
-    { capture: true, passive: true },
-  );
   // isi di bawah lipatan (belum kelihatan) diberi kelas .rv lalu muncul saat masuk layar
   const io =
     'IntersectionObserver' in window
@@ -7388,7 +7369,7 @@ const fxOn = () => setG().fx && !setG().calm && !RM.matches;
   const rvIdle = window.requestIdleCallback ? (f) => requestIdleCallback(f, { timeout: 500 }) : (f) => setTimeout(f, 0);
   new MutationObserver((ms) => {
     // abaikan elemen kecil yang datang dan pergi (riak klik, toast, garis progres)
-    if (ms.every((m) => [...m.addedNodes, ...m.removedNodes].every((n) => n.nodeType != 1 || n.matches('.curRip,#toast,#scrb,.toast,i')))) return;
+    if (ms.every((m) => [...m.addedNodes, ...m.removedNodes].every((n) => n.nodeType != 1 || n.matches('.curRip,#toast,.toast,i')))) return;
     if (!fxOn()) return;
     clearTimeout(rvT);
     rvT = setTimeout(() => rvIdle(() => {

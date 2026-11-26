@@ -13323,27 +13323,6 @@ html.dark #splash .lwt {
 html.dark .curRip {
   border-color: rgba(196, 181, 253, 0.7);
 }
-/* garis progres scroll */
-#scrb {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  z-index: 9997;
-  transform-origin: 0 50%;
-  transform: scaleX(0);
-  background: linear-gradient(90deg, #2d6fd6, #5aa3f0, #a78bfa);
-  box-shadow: 0 0 10px rgba(90, 163, 240, 0.6);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 0.35s,
-    transform 0.12s linear;
-}
-#scrb.on {
-  opacity: 1;
-}
 /* isi muncul bertahap saat digulir */
 /* zoom memantul: membesar dari 60%, lewat sedikit, lalu pas */
 .rv {
@@ -13358,8 +13337,6 @@ html.dark .curRip {
   opacity: 1;
   transform: none;
 }
-html.nofx #scrb,
-html.calm #scrb,
 html.nofx .curRip,
 html.calm .curRip {
   display: none !important;
@@ -13370,7 +13347,6 @@ html.calm .rv {
   transform: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  #scrb,
   .curRip {
     display: none !important;
   }
