@@ -1989,7 +1989,7 @@ document.addEventListener(
 );
 /* kartu sedikit miring dan bercahaya mengikuti kursor */
 function fx() {
-  if (!HOV.matches || RM.matches) return;
+  if (!HOV.matches || RM.matches || document.documentElement.classList.contains('lite')) return; // kartu miring dilewati di perangkat lemah
   document.querySelectorAll('.at,.stg,.pv,.vm,.qki,.nextc,.kc,.op').forEach((el) => {
     if (el._fx) return;
     el._fx = 1;
@@ -2585,6 +2585,9 @@ function wNet() {
       return;
     }
     t = t || performance.now();
+    f.t0 = f.t0 || t;
+    // perangkat lemah: titik-titik bergerak 6 detik lalu diam, supaya halaman awal tidak terus menggambar ulang
+    if (LITE && t - f.t0 > 6000) return;
     if (document.hidden || (LITE && t - lt < 32)) {
       wnRaf = requestAnimationFrame(f);
       return;
@@ -5521,7 +5524,7 @@ let pxF = 0,
 document.addEventListener(
   'pointermove',
   (e) => {
-    if (!HOV.matches || RM.matches) return;
+    if (!HOV.matches || RM.matches || document.documentElement.classList.contains('lite')) return; // perangkat lemah: lewati
     pxE = e;
     if (pxF) return;
     pxF = requestAnimationFrame(() => {
@@ -7511,4 +7514,39 @@ function cntUp(root) {
     b ? show(b) : hide();
   });
   document.addEventListener('scroll', hide, { capture: true, passive: true });
+}
+
+/* ===== Kinerja: perangkat lemah =====
+   Di perangkat yang terdeteksi lemah (.lite) atau mode Tenang, animasi hiasan yang berulang tanpa henti
+   (gelombang, kilau, titik berdenyut) dihentikan beberapa detik setelah halaman/jendela dibuka, jadi saat diam layar benar-benar diam.
+   Animasi yang punya fungsi (titik mengetik, putaran loading, bar musik) dibiarkan. */
+function calmLoops() {
+  if (!document.documentElement.classList.contains('lite')) return;
+  document.getAnimations().forEach((a) => {
+    const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : null,
+      el = a.effect && a.effect.target;
+    if (!t || t.iterations !== Infinity || a.playState != 'running' || !el || !el.closest) return;
+    if (el.closest('#splash,.dots3,.dots,.eq,.run,.ldb,#ldb,.sh.radial')) return;
+    a.pause();
+  });
+}
+{
+  let cT = 0;
+  const later = () => {
+    clearTimeout(cT);
+    cT = setTimeout(calmLoops, 5000);
+  };
+  const g0 = go;
+  go = function () {
+    const o = g0.apply(this, arguments);
+    later();
+    return o;
+  };
+  const s0 = sheet;
+  sheet = function () {
+    const o = s0.apply(this, arguments);
+    later();
+    return o;
+  };
+  later();
 }

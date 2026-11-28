@@ -2916,3 +2916,22 @@ html.calm .scr[data-r="home"] .hello .btn:not(.g), html.calm .op.ok, html.calm #
 @media (prefers-reduced-motion: reduce) {
   .scr[data-r="home"] .hello .btn:not(.g), .op.ok, .op.no, #bdp.on .md, .knote.kflip, .mcele, .mcele .mck, .sit.lknud .sic { animation: auto ease 0s 1 normal none running none !important; }
 }
+.btn:not(.g)::after { left: -70% !important; animation-name: sweep2 !important; }
+@keyframes sweep2 { 
+  0% { transform: translateX(0px); }
+  30%, 100% { transform: translateX(460%); }
+}
+.glowb { --ang: 210deg; animation: auto ease 0s 1 normal none running none !important; }
+@keyframes cta { 
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+.mnd.on button, .hb-dot, .bk2c .hsp.bad { animation: auto ease 0s 1 normal none running none !important; }
+.mnd.on button::after, .hb-dot::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid rgba(59, 130, 246, 0.45); pointer-events: none; animation: 2s ease-out 0s infinite normal none running ring2; }
+.mnd.on button { position: relative; }
+@keyframes ring2 { 
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+html.lite .hsp, html.lite .mnd.on button::after, html.lite .hb-dot::after, html.lite .btn:not(.g)::after, html.lite .scr[data-r="home"] .hello .btn:not(.g) { animation-iteration-count: 2 !important; }
+html.lite .js .ji { animation: auto ease 0s 1 normal none running none !important; }

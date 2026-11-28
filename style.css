@@ -13858,3 +13858,77 @@ html.calm .mcele .mck {
     animation: none !important;
   }
 }
+
+/* ===== Kinerja: animasi yang jalan terus pakai transform/opacity saja =====
+   Animasi yang mengubah left, box-shadow, atau properti kustom (--ang) memaksa browser menghitung ulang tiap frame
+   walau halaman sedang diam, dan itu yang bikin laptop berat. Versi di bawah memakai transform/opacity (dikerjakan GPU). */
+/* kilau tombol: geser pakai transform, bukan left */
+.btn:not(.g):after {
+  left: -70% !important;
+  animation-name: sweep2 !important;
+}
+@keyframes sweep2 {
+  0% {
+    transform: translateX(0);
+  }
+  30%,
+  100% {
+    transform: translateX(460%);
+  }
+}
+/* bingkai gradasi kartu "Berikutnya": diam (tidak berputar) */
+.glowb {
+  animation: none !important;
+  --ang: 210deg;
+}
+/* tombol Lanjut belajar: denyut lewat skala, bukan bayangan */
+@keyframes cta {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+/* denyut lingkaran (peta materi, titik penanda, ilustrasi): cincin semu yang membesar lewat transform */
+.mnd.on button,
+.hb-dot,
+.bk2c .hsp.bad {
+  animation: none !important;
+}
+.mnd.on button::after,
+.hb-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.45);
+  pointer-events: none;
+  animation: ring2 2s ease-out infinite;
+}
+.mnd.on button {
+  position: relative;
+}
+@keyframes ring2 {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+/* perangkat lemah: animasi hiasan yang berulang terus berhenti setelah dua putaran */
+html.lite .hsp,
+html.lite .mnd.on button::after,
+html.lite .hb-dot::after,
+html.lite .btn:not(.g):after,
+html.lite .scr[data-r='home'] .hello .btn:not(.g) {
+  animation-iteration-count: 2 !important;
+}
+/* perangkat lemah: denyut ikon tahap belajar di halaman awal (bayangan berdenyut) dimatikan */
+html.lite .js .ji {
+  animation: none !important;
+}

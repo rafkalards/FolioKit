@@ -14,7 +14,7 @@ Web multimedia pembelajaran "Pembelajaran Portofolio Digital Menggunakan Canva" 
 - Palet biru muda (v8) sebagai bawaan (tema Terang). Pengaturan punya pilihan Tema: Terang, Gelap, Ikuti perangkat (permintaan pemilik). Tidak ada tema warna lain.
 - Teks bahasa Indonesia santai dan manusiawi, tanpa kalimat yang tidak perlu.
 - Isi dibuka lewat klik. Aktivitas terkunci sampai semua materi selesai, lalu praktik, evaluasi, dan refleksi berurutan (`lock()`).
-- Animasi banyak tapi ringan. Hormati `prefers-reduced-motion`, kelas `.lite` (perangkat lemah), dan `.hid` (tab tersembunyi).
+- Animasi banyak tapi ringan. Hormati `prefers-reduced-motion`, kelas `.lite` (perangkat lemah), dan `.hid` (tab tersembunyi). **Animasi yang berulang terus wajib pakai transform/opacity saja** (jangan left/top/width, box-shadow, background-position, atau properti kustom seperti --ang), karena yang lain memaksa hitung ulang tiap frame walau halaman diam. Di `.lite`, `calmLoops()` menjeda animasi hiasan tak berujung 5 detik setelah halaman/jendela dibuka, kartu miring (`fx()`) dan cahaya mendekat dimatikan, dan titik-titik halaman awal berhenti setelah 6 detik.
 - Login sudah dihapus. Akses pemilik dan pengguna dibedakan lewat peran artifact (`ROLE`).
 - Jangan mengubah fungsi yang tidak diminta.
 
